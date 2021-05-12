@@ -1,8 +1,14 @@
 package nl.utwente.m4.lossprevention;
 
-import java.sql.*;
+import nl.utwente.m4.lossprevention.sql.DbConnector;
 
-public class Main {
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class DatabaseConnectionTestMain {
     public static void driverLoader() {
         try {
             Class.forName("org.postgresql.Driver");
@@ -12,19 +18,12 @@ public class Main {
     }
 
     public static void getConnection() {
-        String host = "bronto.ewi.utwente.nl";
-        String dbName = "dab_di20212b_225";
-        String url = String.format("jdbc:postgresql://%s:5432/%s?currentSchema=movies", host, dbName);
-
-        String username = "dab_di20212b_225";
-        String password = "4gPNr326lyRQcR1J";
-
         String query =
             "SELECT DISTINCT dir.name " +
                 "FROM movies.movie mv, movies.acts ac, movies.person p, movies.writes d, movies.person dir " +
                 "WHERE (mv.mid = ac.mid AND p.pid = ac.pid) AND (p.name LIKE ?) AND (mv.mid = d.mid AND d.pid=dir.pid)";
 
-        try(Connection connection = DriverManager.getConnection(url, username, password)) {
+        try(Connection connection = DbConnector.connect("databases/movies.properties")) {
             PreparedStatement st = connection.prepareStatement(query);
             st.setString(1, "Bruce Willis");
 
@@ -33,7 +32,7 @@ public class Main {
                     System.out.println(set.getString(1));
                 }
             }
-        } catch(SQLException sqle) {
+        } catch(SQLException | IOException sqle) {
             System.err.println("Error connecting: " + sqle);
         }
     }
