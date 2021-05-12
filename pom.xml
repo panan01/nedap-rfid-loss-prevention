@@ -17,6 +17,11 @@
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
+            <!-- Compiler, WAR -->
+            <!--
+                Note: IntellIJ might say these plugins do not exist, but they
+                do work fine nonetheless.
+             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -33,6 +38,26 @@
                 <version>2.6</version>
                 <configuration>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                </configuration>
+            </plugin>
+
+            <!-- Compiles SCSS -->
+            <plugin>
+                <groupId>com.github.warmuuh</groupId>
+                <artifactId>libsass-maven-plugin</artifactId>
+                <version>0.2.10-libsass_3.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <inputPath>${basedir}/src/main/scss/</inputPath>
+                    <outputPath>${basedir}/target/loss-prevention/css/</outputPath>
+                    <includePath>${basedir}/src/main/sass/plugins/</includePath>
                 </configuration>
             </plugin>
         </plugins>
