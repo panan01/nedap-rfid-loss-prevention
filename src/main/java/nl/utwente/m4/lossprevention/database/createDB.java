@@ -19,12 +19,12 @@ public class createDB {
     public static void getConnection() {
         try {
             String host = "bronto.ewi.utwente.nl";
-            String dbName = "";
+            String dbName = "dab_di20212b";
             String url = "jdbc:postgresql://"
-                    + host + ":5432/" + dbName + "?currentSchema=";
+                    + host + ":5432/" + dbName + "?currentSchema=Nedap";
 
-            String username = "";
-            String password = "";
+            String username = "dab_di20212b_225";
+            String password = "4gPNr326lyRQcR1J";
             Connection connection =
                     DriverManager.getConnection(url, username, password);
 
