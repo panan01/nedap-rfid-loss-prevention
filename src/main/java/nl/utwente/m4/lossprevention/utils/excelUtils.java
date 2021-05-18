@@ -11,7 +11,7 @@ import java.io.IOException;
 public class excelUtils {
 
     public static void main(String[] args) {
-        System.out.println(getRowCount("20210503_UTwente_Nedap_Stores.xlsx"));
+        System.out.println(getRowCount("20210503_UTwente_Nedap_Stores.xlsx")); 
     }
 
     public static int getRowCount(String sheetName) {
