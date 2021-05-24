@@ -11,12 +11,20 @@ import java.io.IOException;
 
 public class excelUtils {
 
+    /**
+     * For testing purposes
+     */
     public static void main(String[] args) {
         System.out.println(getRowCount(read("20210503_UTwente_Nedap_Stores.xlsx")));
         System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"),0,0));
         System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"),1,1));
     }
 
+    /**
+     * Function for retrieving the excel file from the data folder
+     * @param sheetName name of the sheet
+     * @return null if something went wrong otherwise an XSSFSheet of the excel file
+     */
     public static XSSFSheet read(String sheetName) {
         try {
             //Get the Excel File
