@@ -93,7 +93,10 @@ public class sqlUtils {
      * For importing data from the excel file and adding this to the database
      *
      * @param sheet excel file to be imported into the DB
-     * @return returns "Status-0" if successfully executed and "Status-1" if empty file was used
+     * @return returns status-code
+     * "Status-0" if successfully executed
+     * "Status-1" if empty file was used
+     * "Status-2" if columns don't all match any of the required labels
      */
     public static String XSSFSheet_to_DB(XSSFSheet sheet) {
 
@@ -101,15 +104,70 @@ public class sqlUtils {
         ArrayList<String> columnLabels = getColumnLabels(sheet);
         if (!columnLabels.get(0).equals("Empty file")) {
             int fileType = -1;
-            for (String label : columnLabels) {
 
-                return "Status-0";
+            //TODO clean code below up so it's not all in here
+
+            // Type one is of alarm type
+            ArrayList<String> requiredLabelsType1 = new ArrayList<>();
+            requiredLabelsType1.add("Store ID (UT)");
+            requiredLabelsType1.add("Timestamp");
+            requiredLabelsType1.add("EPC (UT)");
+            requiredLabelsType1.add("Article ID (UT)");
+
+            // Type two is of article type
+            ArrayList<String> requiredLabelsType2 = new ArrayList<>();
+            requiredLabelsType2.add("Article ID (UT)");
+            requiredLabelsType2.add("Category (UT)");
+            requiredLabelsType2.add("Article (UT)");
+            requiredLabelsType2.add("Color");
+            requiredLabelsType2.add("Size");
+            requiredLabelsType2.add("Price (EUR)");
+
+            // Type three is of store type
+            ArrayList<String> requiredLabelsType3 = new ArrayList<>();
+            requiredLabelsType3.add("Store ID (UT)");
+            requiredLabelsType3.add("Latitude (UT)");
+            requiredLabelsType3.add("Longitude (UT)");
+
+            if (checkLabels(columnLabels, requiredLabelsType1)) {
+                //TODO insert function for parsing and pushing for type 1 file
+            } else if (checkLabels(columnLabels, requiredLabelsType2)) {
+                //TODO insert function for parsing and pushing for type 2 file
+            } else if (checkLabels(columnLabels, requiredLabelsType3)) {
+                //TODO insert function for parsing and pushing for type 3 file
+            } else {
+                return "Status-2";
             }
-            return "Status-2";
+
+            return "Status-0";
         } else {
             return "Status-1";
         }
 
 
+    }
+
+    /**
+     * Function for checking if the labels correspond to the required labels of a given type
+     *
+     * @param columnLabels
+     * @param requiredLabels
+     * @return
+     */
+    public static boolean checkLabels(ArrayList<String> columnLabels, ArrayList<String> requiredLabels) {
+        int requiredFoundCount = 0;
+        for (String label : columnLabels) {
+            for (String requiredLabel : requiredLabels) {
+                if (requiredLabel.equals(label)) {
+                    //TODO make more efficient
+                    requiredFoundCount++;
+                }
+            }
+        }
+        if (requiredFoundCount == requiredLabels.size()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
