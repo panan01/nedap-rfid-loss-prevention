@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class excelUtils {
 
@@ -16,7 +17,7 @@ public class excelUtils {
      */
     public static void main(String[] args) {
         System.out.println(getRowCount(read("20210503_UTwente_Nedap_Stores.xlsx")));
-        System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"),0,0));
+        System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"),0,5));
         System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"),1,1));
     }
 
@@ -71,6 +72,28 @@ public class excelUtils {
         // As just retrieving the cell content trough a getNumeric/getString value requires multiple functions and checks a dataFormatter is the optimal solution as it returns a string from any datainput from the cell.
         DataFormatter dataFormatter = new DataFormatter();
         return dataFormatter.formatCellValue(sheet.getRow(row).getCell(column));
+    }
+
+    /**
+     * Function for retrieving the content of the column labels
+     * @param sheet
+     * @return returns Arraylist with the column labels, returns "Empty file" if no labels are found
+     */
+    public static ArrayList<String> getColumnLabels(XSSFSheet sheet){
+        int row = 0;
+        int column = 0;
+        ArrayList<String> columnLabels = new ArrayList<String>();
+
+        while (!getCellData(sheet, row, column).equals("")) {
+            columnLabels.add(getCellData(sheet, row, column));
+            column++;
+        }
+
+        if(columnLabels.size()<1){
+            columnLabels.add("Empty file");
+        }
+
+        return columnLabels;
     }
 
 }
