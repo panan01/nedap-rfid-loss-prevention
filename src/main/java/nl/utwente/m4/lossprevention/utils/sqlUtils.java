@@ -171,13 +171,13 @@ public class sqlUtils {
         }
     }
 
-    public static void parsePushToDB(XSSFSheet sheet, ArrayList<String> requiredLabels){
+    public static void parsePushToDB(XSSFSheet sheet, ArrayList<String> requiredLabels) {
         int row = 0;
         int column = 0;
         int requiredLabelIterator = 0;
         ArrayList<Integer> indexArray = new ArrayList<>();
 
-        // Get's the indexes of the required labels.
+        // Get's the indexes of the required labels. //TODO decide if separate function
         while (!getCellData(sheet, row, column).equals("")) {
 
             ArrayList<String> columnLabel = new ArrayList<String>();
@@ -186,16 +186,32 @@ public class sqlUtils {
             ArrayList<String> requiredLabel = new ArrayList<String>();
             requiredLabel.add(requiredLabels.get(requiredLabelIterator));
 
-            if(checkLabels(columnLabel,requiredLabel)){
+            if (checkLabels(columnLabel, requiredLabel)) {
                 indexArray.add(column);
                 requiredLabelIterator++;
             }
 
-            
-
             column++;
         }
 
+        ArrayList<String> parsedSheetRowStrings = new ArrayList<>();
+        String sheetRow = "";
+        row = 1;
+        column = indexArray.get(0); //start with primary key column
+
+        // While a next row is not empty we put all rows into seperate strings
+        while (!getCellData(sheet, row, column).equals("")) {
+            for (Integer index : indexArray) {
+                sheetRow += getCellData(sheet, row, index) + ", ";
+            }
+            parsedSheetRowStrings.add(sheetRow);
+            sheetRow = "";
+            row++;
+        }
+
+        for (String parsedRow : parsedSheetRowStrings) {
+
+        }
     }
 
 }
