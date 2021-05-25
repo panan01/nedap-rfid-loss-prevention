@@ -178,7 +178,7 @@ public class sqlUtils {
         ArrayList<Integer> indexArray = new ArrayList<>();
 
         // Get's the indexes of the required labels. //TODO decide if separate function
-        while (!getCellData(sheet, row, column).equals("")) {
+        while (!getCellData(sheet, row, column).equals("null")) {
 
             ArrayList<String> columnLabel = new ArrayList<String>();
             columnLabel.add(getCellData(sheet, row, column));
@@ -199,8 +199,10 @@ public class sqlUtils {
         row = 1;
         column = indexArray.get(0); //start with primary key column
 
-        // While a next row is not empty we put all rows into seperate strings
-        while (!getCellData(sheet, row, column).equals("")) {
+        // While a next row is not empty we put all rows into separate strings
+
+
+        while (!getCellData(sheet, row, column).equals("null")) {
             for (Integer index : indexArray) {
                 sheetRow += getCellData(sheet, row, index) + ", ";
             }
