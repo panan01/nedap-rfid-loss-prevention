@@ -13,7 +13,7 @@ public class sqlUtils {
      * For testing purposes
      */
     public static void main(String[] args) {
-
+        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
     }
 
     public static void driverLoader() {
@@ -97,6 +97,7 @@ public class sqlUtils {
 
         //Check file contents and the correct method for parsing
         ArrayList<String> columnLabels = getColumnLabels(sheet);
+
         if (!columnLabels.get(0).equals("Empty file")) {
             int fileType = -1;
 
@@ -124,18 +125,21 @@ public class sqlUtils {
             requiredLabelsType3.add("Latitude (UT)");
             requiredLabelsType3.add("Longitude (UT)");
 
+
+
             if (checkLabels(columnLabels, requiredLabelsType1)) {
-                //TODO insert function for parsing and pushing for type 1 file
+                parsePushToDB(sheet, requiredLabelsType1, 1);
             } else if (checkLabels(columnLabels, requiredLabelsType2)) {
-                //TODO insert function for parsing and pushing for type 2 file
+                parsePushToDB(sheet, requiredLabelsType2, 2);
             } else if (checkLabels(columnLabels, requiredLabelsType3)) {
-                //TODO insert function for parsing and pushing for type 3 file
+                parsePushToDB(sheet, requiredLabelsType3, 3);
             } else {
                 return "Status-2";
             }
 
             return "Status-0";
         } else {
+
             return "Status-1";
         }
 
@@ -165,4 +169,67 @@ public class sqlUtils {
             return false;
         }
     }
+
+    public static void parsePushToDB(XSSFSheet sheet, ArrayList<String> requiredLabels, int type) {
+        int row = 0;
+        int column = 0;
+        int requiredLabelIterator = 0;
+        ArrayList<Integer> indexArray = new ArrayList<>();
+
+        // Get's the indexes of the required labels. //TODO decide if separate function
+        while (!getCellData(sheet, row, column).equals("null")) {
+
+            ArrayList<String> columnLabel = new ArrayList<String>();
+            columnLabel.add(getCellData(sheet, row, column));
+
+            ArrayList<String> requiredLabel = new ArrayList<String>();
+            requiredLabel.add(requiredLabels.get(requiredLabelIterator));
+
+            if (checkLabels(columnLabel, requiredLabel)) {
+                indexArray.add(column);
+                requiredLabelIterator++;
+            }
+
+            column++;
+
+        }
+
+        ArrayList<String> parsedSheetRowStrings = new ArrayList<>();
+        String sheetRow = "";
+        row = 1;
+        column = indexArray.get(0); //start with primary key column
+
+        // While a next row is not empty we put all rows into separate strings
+
+
+        while (!getCellData(sheet, row, column).equals("null")) {
+            for (Integer index : indexArray) {
+                sheetRow += getCellData(sheet, row, index) + ", ";
+            }
+            parsedSheetRowStrings.add(sheetRow);
+            sheetRow = "";
+            row++;
+
+        }
+
+        for (String parsedRow : parsedSheetRowStrings) {
+            driverLoader();
+            String insertQuery = "INSERT INTO ";
+            switch (type) {
+                case 1:
+                    insertQuery += "alarm ";
+                    break;
+                case 2:
+                    insertQuery += "article ";
+                    break;
+                case 3:
+                    insertQuery += "store ";
+                    break;
+            }
+            insertQuery += "VALUES (" + parsedRow + ");";
+
+            executeQuery(getConnection(), insertQuery);
+        }
+    }
+
 }
