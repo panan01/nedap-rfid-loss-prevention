@@ -19,6 +19,7 @@ public class excelUtils {
         System.out.println(getRowCount(read("20210503_UTwente_Nedap_Stores.xlsx")));
         System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"),0,5));
         System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"),1,1));
+
     }
 
     /**
