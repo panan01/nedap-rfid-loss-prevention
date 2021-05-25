@@ -4,10 +4,7 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class excelUtils {
@@ -38,15 +35,28 @@ public class excelUtils {
             file.close();
             return sheet;
         }
-
         // Possible exceptions related to accessing the file
-        catch (FileNotFoundException e) {
+        catch (NoClassDefFoundError | IOException e) {
             e.printStackTrace();
             return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (NoClassDefFoundError e) {
+        }
+    }
+
+    /**
+     * Function for retrieving the excel file from the data folder
+     * @param sheetInputStream InputStream object of the excel-sheet
+     * @return null if something went wrong otherwise an XSSFSheet of the excel file
+     */
+    public static XSSFSheet read(InputStream sheetInputStream) {
+        try {
+            //Get the Excel File
+            XSSFWorkbook workbook = new XSSFWorkbook(sheetInputStream);
+
+            // Get the sheet, which is for now the first one
+            return workbook.getSheetAt(0);
+        }
+        // Possible exceptions related to accessing the file
+        catch (NoClassDefFoundError | IOException e) {
             e.printStackTrace();
             return null;
         }

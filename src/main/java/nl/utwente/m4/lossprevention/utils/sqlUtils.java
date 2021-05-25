@@ -35,17 +35,12 @@ public class sqlUtils {
             // Sets basis for connection
             String host = "bronto.ewi.utwente.nl";
             String dbName = "dab_di20212b_225";
-            String url = "jdbc:postgresql://"
-                    + host + ":5432/" + dbName + "?currentSchema=nedap";
+            String url = "jdbc:postgresql://" + host + ":5432/" + dbName + "?currentSchema=nedap";
 
             // Sets credentials
-            String username = "dab_di20212b_225";
+            String username = "dab_di20212b_225";  // TODO: make these system variables or something
             String password = "4gPNr326lyRQcR1J";
-            Connection connection =
-                    DriverManager.getConnection(url, username, password);
-            return connection;
-
-
+            return DriverManager.getConnection(url, username, password);
         } catch (SQLException sqlE) {
             System.err.println("Error connecting: " + sqlE);
             return null;
