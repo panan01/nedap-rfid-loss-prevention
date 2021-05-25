@@ -102,6 +102,7 @@ public class sqlUtils {
 
         //Check file contents and the correct method for parsing
         ArrayList<String> columnLabels = getColumnLabels(sheet);
+
         if (!columnLabels.get(0).equals("Empty file")) {
             int fileType = -1;
 
@@ -129,6 +130,8 @@ public class sqlUtils {
             requiredLabelsType3.add("Latitude (UT)");
             requiredLabelsType3.add("Longitude (UT)");
 
+
+
             if (checkLabels(columnLabels, requiredLabelsType1)) {
                 parsePushToDB(sheet, requiredLabelsType1, 1);
             } else if (checkLabels(columnLabels, requiredLabelsType2)) {
@@ -141,6 +144,7 @@ public class sqlUtils {
 
             return "Status-0";
         } else {
+
             return "Status-1";
         }
 
@@ -192,6 +196,7 @@ public class sqlUtils {
             }
 
             column++;
+
         }
 
         ArrayList<String> parsedSheetRowStrings = new ArrayList<>();
@@ -209,6 +214,7 @@ public class sqlUtils {
             parsedSheetRowStrings.add(sheetRow);
             sheetRow = "";
             row++;
+
         }
 
         for (String parsedRow : parsedSheetRowStrings) {
@@ -226,6 +232,7 @@ public class sqlUtils {
                     break;
             }
             insertQuery += "VALUES (" + parsedRow + ");";
+
             executeQuery(getConnection(), insertQuery);
         }
     }

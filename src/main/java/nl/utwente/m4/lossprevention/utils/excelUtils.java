@@ -93,7 +93,9 @@ public class excelUtils {
         int column = 0;
         ArrayList<String> columnLabels = new ArrayList<String>();
 
-        while (!getCellData(sheet, row, column).equals("null")) {
+        while (!getCellData(sheet, row, column).equals("null")) { //TODO Apparently infinite loop check tomorrow am too tired now, apparently never returns null even with large column
+            System.out.println("Col "+column);
+            System.out.println("Row "+row);
             columnLabels.add(getCellData(sheet, row, column));
             column++;
         }
