@@ -170,4 +170,32 @@ public class sqlUtils {
             return false;
         }
     }
+
+    public static void parsePushToDB(XSSFSheet sheet, ArrayList<String> requiredLabels){
+        int row = 0;
+        int column = 0;
+        int requiredLabelIterator = 0;
+        ArrayList<Integer> indexArray = new ArrayList<>();
+
+        // Get's the indexes of the required labels.
+        while (!getCellData(sheet, row, column).equals("")) {
+
+            ArrayList<String> columnLabel = new ArrayList<String>();
+            columnLabel.add(getCellData(sheet, row, column));
+
+            ArrayList<String> requiredLabel = new ArrayList<String>();
+            requiredLabel.add(requiredLabels.get(requiredLabelIterator));
+
+            if(checkLabels(columnLabel,requiredLabel)){
+                indexArray.add(column);
+                requiredLabelIterator++;
+            }
+
+            
+
+            column++;
+        }
+
+    }
+
 }
