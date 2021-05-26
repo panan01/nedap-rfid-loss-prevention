@@ -215,16 +215,17 @@ public class sqlUtils {
 
         while (!getCellData(sheet, row, column).equals("null")) {
             for (Integer index : indexArray) {
-                String cellContent = getCellData(sheet, row, index).replace("Store-", "");
-                cellContent = cellContent.replace("Article-", "");
-                cellContent = cellContent.replace("Category-", "");
-
-                cellContent = cellContent.replace("\'", "^");
+                String cellContent = getCellData(sheet, row, index);
 
                 if (cellContent.equals("")) {
                     cellContent = "NULL";
                     sheetRow += cellContent + ", ";
                 } else {
+                    cellContent = cellContent.replace("Store-", "");
+                    cellContent = cellContent.replace("Article-", "");
+                    cellContent = cellContent.replace("Category-", "");
+                    cellContent = cellContent.replace("\'", "^");
+
                     sheetRow += "\'" + cellContent + "\'" + ", ";
                 }
 
