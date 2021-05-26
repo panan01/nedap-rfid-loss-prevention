@@ -10,7 +10,6 @@ public class createDB {
         } catch (ClassNotFoundException cnfE) {
             System.err.println("Error loading driver: " + cnfE);
         }
-
     }
 
     public static void getConnection() {
@@ -28,7 +27,7 @@ public class createDB {
                     DriverManager.getConnection(url, username, password);
 
             // SQL query
-            String query = "CREATE TABLE nedap.Store (id INT PRIMARY KEY CHECK (id >= 0),latitude INT,longitude INT); CREATE TABLE nedap.Alarm (\n" +
+            String query = "CREATE TABLE nedap.Store2 (id INT PRIMARY KEY CHECK (id >= 0),latitude INT,longitude INT); CREATE TABLE nedap.Alarm2 (\n" +
                     "    epc INT PRIMARY KEY,\n" +
                     "    timestamp TIMESTAMP,\n" +
                     "    store_id INT,\n" +
@@ -39,7 +38,7 @@ public class createDB {
                     "    CONSTRAINT fk_article_id\n" +
                     "         FOREIGN KEY(article_id)\n" +
                     "             REFERENCES nedap.Article(id)\n" +
-                    ");CREATE TABLE nedap.Article (\n" +
+                    ");CREATE TABLE nedap.Article2 (\n" +
                     "    id BIGINT PRIMARY KEY CHECK (id > 0),\n" +
                     "    category INT CHECK (category > 0),\n" +
                     "    product INT CHECK (product > 0),\n" +

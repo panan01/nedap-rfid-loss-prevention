@@ -86,6 +86,7 @@ public class excelUtils {
         // As just retrieving the cell content trough a getNumeric/getString value requires multiple functions and checks a dataFormatter is the optimal solution as it returns a string from any datainput from the cell.
         DataFormatter dataFormatter = new DataFormatter();
         try {
+
             return dataFormatter.formatCellValue(sheet.getRow(row).getCell(column));
         } catch (NullPointerException e) {
             return "null";
@@ -103,9 +104,8 @@ public class excelUtils {
         int column = 0;
         ArrayList<String> columnLabels = new ArrayList<String>();
 
-        while (!getCellData(sheet, row, column).equals("null")) { //TODO Apparently infinite loop check tomorrow am too tired now, apparently never returns null even with large column
-            System.out.println("Col "+column);
-            System.out.println("Row "+row);
+        while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet,row,column).equals(""))) { //TODO Apparently infinite loop check tomorrow am too tired now, apparently never returns null even with large column
+
             columnLabels.add(getCellData(sheet, row, column));
             column++;
         }

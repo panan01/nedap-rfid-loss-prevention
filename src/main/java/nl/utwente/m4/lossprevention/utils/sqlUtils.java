@@ -31,6 +31,7 @@ public class sqlUtils {
      * @return
      */
     public static Connection getConnection() {
+        
         try {
             // Sets basis for connection
             String host = "bronto.ewi.utwente.nl";
@@ -40,7 +41,8 @@ public class sqlUtils {
             // Sets credentials
             String username = "dab_di20212b_225";  // TODO: make these system variables or something
             String password = "4gPNr326lyRQcR1J";
-            return DriverManager.getConnection(url, username, password);
+            Connection connection = DriverManager.getConnection(url, username, password);
+            return connection;
         } catch (SQLException sqlE) {
             System.err.println("Error connecting: " + sqlE);
             return null;
@@ -56,8 +58,8 @@ public class sqlUtils {
      */
     public static String executeQuery(Connection connection, String query) {
         try {
-            PreparedStatement st =
-                    connection.prepareStatement(query);
+
+            PreparedStatement st = connection.prepareStatement(query);
 
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
@@ -126,7 +128,6 @@ public class sqlUtils {
             requiredLabelsType3.add("Longitude (UT)");
 
 
-
             if (checkLabels(columnLabels, requiredLabelsType1)) {
                 parsePushToDB(sheet, requiredLabelsType1, 1);
             } else if (checkLabels(columnLabels, requiredLabelsType2)) {
@@ -177,13 +178,18 @@ public class sqlUtils {
         ArrayList<Integer> indexArray = new ArrayList<>();
 
         // Get's the indexes of the required labels. //TODO decide if separate function
-        while (!getCellData(sheet, row, column).equals("null")) {
+        while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
 
             ArrayList<String> columnLabel = new ArrayList<String>();
             columnLabel.add(getCellData(sheet, row, column));
 
             ArrayList<String> requiredLabel = new ArrayList<String>();
-            requiredLabel.add(requiredLabels.get(requiredLabelIterator));
+
+            try {
+                requiredLabel.add(requiredLabels.get(requiredLabelIterator));
+            } catch (IndexOutOfBoundsException ex) {
+
+            }
 
             if (checkLabels(columnLabel, requiredLabel)) {
                 indexArray.add(column);
@@ -193,6 +199,7 @@ public class sqlUtils {
             column++;
 
         }
+
 
         ArrayList<String> parsedSheetRowStrings = new ArrayList<>();
         String sheetRow = "";
@@ -206,6 +213,7 @@ public class sqlUtils {
             for (Integer index : indexArray) {
                 sheetRow += getCellData(sheet, row, index) + ", ";
             }
+            sheetRow = sheetRow.substring(0, sheetRow.length() - 2);
             parsedSheetRowStrings.add(sheetRow);
             sheetRow = "";
             row++;
@@ -213,7 +221,7 @@ public class sqlUtils {
         }
 
         for (String parsedRow : parsedSheetRowStrings) {
-            driverLoader();
+
             String insertQuery = "INSERT INTO ";
             switch (type) {
                 case 1:
@@ -227,6 +235,8 @@ public class sqlUtils {
                     break;
             }
             insertQuery += "VALUES (" + parsedRow + ");";
+            System.out.println(insertQuery);
+
 
             executeQuery(getConnection(), insertQuery);
         }
