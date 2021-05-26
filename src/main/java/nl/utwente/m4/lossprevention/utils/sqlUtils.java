@@ -211,7 +211,11 @@ public class sqlUtils {
 
         while (!getCellData(sheet, row, column).equals("null")) {
             for (Integer index : indexArray) {
-                sheetRow += getCellData(sheet, row, index).replace("Store-", "") + ", ";
+                String cellContent = getCellData(sheet, row, index).replace("Store-", "");
+                if(cellContent.equals("")){
+                    cellContent="NULL";
+                }
+                sheetRow +=  cellContent + ", ";
             }
             sheetRow = sheetRow.substring(0, sheetRow.length() - 2);
             parsedSheetRowStrings.add(sheetRow);
@@ -219,6 +223,8 @@ public class sqlUtils {
             row++;
 
         }
+
+        String finalQuery="";
 
         for (String parsedRow : parsedSheetRowStrings) {
 
@@ -235,11 +241,13 @@ public class sqlUtils {
                     break;
             }
             insertQuery += "VALUES (" + parsedRow + ");";
-            System.out.println(insertQuery);
 
+            finalQuery+=insertQuery;
 
-            executeQuery(getConnection(), insertQuery);
         }
+        Connection connection = getConnection();
+        System.out.println(finalQuery);
+        executeQuery(connection, finalQuery);
     }
 
 }
