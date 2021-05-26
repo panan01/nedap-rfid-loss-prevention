@@ -31,7 +31,7 @@ public class sqlUtils {
      * @return
      */
     public static Connection getConnection() {
-        
+
         try {
             // Sets basis for connection
             String host = "bronto.ewi.utwente.nl";
@@ -211,7 +211,7 @@ public class sqlUtils {
 
         while (!getCellData(sheet, row, column).equals("null")) {
             for (Integer index : indexArray) {
-                sheetRow += getCellData(sheet, row, index) + ", ";
+                sheetRow += getCellData(sheet, row, index).replace("Store-", "") + ", ";
             }
             sheetRow = sheetRow.substring(0, sheetRow.length() - 2);
             parsedSheetRowStrings.add(sheetRow);
@@ -225,13 +225,13 @@ public class sqlUtils {
             String insertQuery = "INSERT INTO ";
             switch (type) {
                 case 1:
-                    insertQuery += "alarm ";
+                    insertQuery += "nedap.alarm ";
                     break;
                 case 2:
-                    insertQuery += "article ";
+                    insertQuery += "nedap.article ";
                     break;
                 case 3:
-                    insertQuery += "store ";
+                    insertQuery += "nedap.store ";
                     break;
             }
             insertQuery += "VALUES (" + parsedRow + ");";

@@ -26,8 +26,8 @@ public class createDB {
             Connection connection =
                     DriverManager.getConnection(url, username, password);
 
-            // SQL query
-            String query = "CREATE TABLE nedap.Store2 (id INT PRIMARY KEY CHECK (id >= 0),latitude INT,longitude INT); CREATE TABLE nedap.Alarm2 (\n" +
+            // SQL query, note that it does weird stuff if no tables are in phpmyadmin
+            String query = "CREATE TABLE nedap.Store (id INT PRIMARY KEY CHECK (id >= 0),latitude INT,longitude INT); CREATE TABLE nedap.Alarm (\n" +
                     "    epc INT PRIMARY KEY,\n" +
                     "    timestamp TIMESTAMP,\n" +
                     "    store_id INT,\n" +
@@ -38,7 +38,7 @@ public class createDB {
                     "    CONSTRAINT fk_article_id\n" +
                     "         FOREIGN KEY(article_id)\n" +
                     "             REFERENCES nedap.Article(id)\n" +
-                    ");CREATE TABLE nedap.Article2 (\n" +
+                    ");CREATE TABLE nedap.Article (\n" +
                     "    id BIGINT PRIMARY KEY CHECK (id > 0),\n" +
                     "    category INT CHECK (category > 0),\n" +
                     "    product INT CHECK (product > 0),\n" +
