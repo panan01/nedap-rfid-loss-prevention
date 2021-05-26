@@ -13,8 +13,12 @@ public class sqlUtils {
      * For testing purposes
      */
     public static void main(String[] args) {
-        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
+        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
     }
+
+    //============================================== Database Utils  ===============================================\\
 
     public static void driverLoader() {
         try {
@@ -107,9 +111,9 @@ public class sqlUtils {
 
             // Type one is of alarm type
             ArrayList<String> requiredLabelsType1 = new ArrayList<>();
-            requiredLabelsType1.add("Store ID (UT)");
-            requiredLabelsType1.add("Timestamp");
             requiredLabelsType1.add("EPC (UT)");
+            requiredLabelsType1.add("Timestamp");
+            requiredLabelsType1.add("Store ID (UT)");
             requiredLabelsType1.add("Article ID (UT)");
 
             // Type two is of article type
@@ -212,10 +216,18 @@ public class sqlUtils {
         while (!getCellData(sheet, row, column).equals("null")) {
             for (Integer index : indexArray) {
                 String cellContent = getCellData(sheet, row, index).replace("Store-", "");
-                if(cellContent.equals("")){
-                    cellContent="NULL";
+                cellContent = cellContent.replace("Article-", "");
+                cellContent = cellContent.replace("Category-", "");
+
+                cellContent = cellContent.replace("\'", "^");
+
+                if (cellContent.equals("")) {
+                    cellContent = "NULL";
+                    sheetRow += cellContent + ", ";
+                } else {
+                    sheetRow += "\'" + cellContent + "\'" + ", ";
                 }
-                sheetRow +=  cellContent + ", ";
+
             }
             sheetRow = sheetRow.substring(0, sheetRow.length() - 2);
             parsedSheetRowStrings.add(sheetRow);
@@ -224,7 +236,7 @@ public class sqlUtils {
 
         }
 
-        String finalQuery="";
+        String finalQuery = "";
 
         for (String parsedRow : parsedSheetRowStrings) {
 
@@ -242,7 +254,7 @@ public class sqlUtils {
             }
             insertQuery += "VALUES (" + parsedRow + ");";
 
-            finalQuery+=insertQuery;
+            finalQuery += insertQuery;
 
         }
         Connection connection = getConnection();
