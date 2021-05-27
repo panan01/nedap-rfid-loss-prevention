@@ -1,0 +1,90 @@
+@import "theme";
+
+@mixin button($color: $col-paper-grey, $hover-darken: 10%, $active-darken: 20%, $inner: $color) {
+    $hover-color: $color;
+    @if $hover-darken < 0 {
+        $hover-color: lighten($color, -$hover-darken)
+    }
+    @if $hover-darken > 0 {
+        $hover-color: darken($color, $hover-darken)
+    }
+
+    $active-color: $color;
+    @if $active-darken < 0 {
+        $active-color: lighten($color, -$active-darken)
+    }
+    @if $active-darken > 0 {
+        $active-color: darken($color, $active-darken)
+    }
+
+    $hover-inner: $inner;
+    @if $hover-darken < 0 {
+        $hover-inner: lighten($inner, -$hover-darken)
+    }
+    @if $hover-darken > 0 {
+        $hover-inner: darken($inner, $hover-darken)
+    }
+
+    $active-inner: $inner;
+    @if $active-darken < 0 {
+        $active-inner: lighten($inner, -$active-darken)
+    }
+    @if $active-darken > 0 {
+        $active-inner: darken($inner, $active-darken)
+    }
+
+    border: 3px solid $color;
+    background-color: $inner;
+
+    &:hover {
+        border-color: $hover-color;
+        background-color: $hover-inner;
+    }
+
+    &:active {
+        background-color: $active-inner;
+    }
+}
+
+button, .btn, input[type=button] {
+    box-sizing: border-box;
+    border-radius: 4px;
+    padding: sz(4pt) sz(12pt);
+    margin: sz(3pt);
+    cursor: pointer;
+
+    text-align: center;
+
+    @include text-body;
+    @include button;
+
+    &:focus {
+        outline: none;
+    }
+
+    &.btn-primary {
+        @include button($color: $col-heritage-blue, $hover-darken: 10%, $active-darken: 30%);
+        color: white;
+    }
+
+    &.btn-secondary {
+        @include button($color: $col-spark-orange);
+        color: white;
+    }
+
+    &.btn-primary-outline {
+        @include button($color: $col-heritage-blue, $inner: $col-paper-grey, $hover-darken: 10%, $active-darken: 30%);
+        color: $col-heritage-blue;
+    }
+
+    &.btn-secondary-outline {
+        @include button($color: $col-spark-orange, $inner: $col-paper-grey);
+        color: $col-spark-orange;
+    }
+
+    &.block {
+        display: block;
+        width: 100%;
+        margin: sz(3pt) sz(0pt);
+    }
+}

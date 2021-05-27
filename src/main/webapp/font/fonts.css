@@ -1,0 +1,119 @@
+/* ObjectivityBold */
+@font-face {
+    font-family: ObjectivityBold;
+    src: url("Objectivity-Bold.woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: ObjectivityBold;
+    src: url("Objectivity-Black.woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: ObjectivityBold;
+    src: url("Objectivity-BoldSlanted.woff2");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: ObjectivityBold;
+    src: url("Objectivity-BlackSlanted.woff2");
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+/* ObjectivityMedium */
+@font-face {
+    font-family: ObjectivityMedium;
+    src: url("Objectivity-Medium.woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: ObjectivityMedium;
+    src: url("Objectivity-Bold.woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: ObjectivityMedium;
+    src: url("Objectivity-MediumSlanted.woff2");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: ObjectivityMedium;
+    src: url("Objectivity-BoldSlanted.woff2");
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+/* Objectivity */
+@font-face {
+    font-family: Objectivity;
+    src: url("Objectivity-Regular.woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Objectivity;
+    src: url("Objectivity-Bold.woff2");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Objectivity;
+    src: url("Objectivity-RegularSlanted.woff2");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: Objectivity;
+    src: url("Objectivity-BoldSlanted.woff2");
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+
+/* IBMPlexSans */
+@font-face {
+    font-family: IBMPlexSans;
+    src: url("IBMPlexSans-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: IBMPlexSans;
+    src: url("IBMPlexSans-Bold.ttf");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: IBMPlexSans;
+    src: url("IBMPlexSans-Italic.ttf");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: IBMPlexSans;
+    src: url("IBMPlexSans-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}

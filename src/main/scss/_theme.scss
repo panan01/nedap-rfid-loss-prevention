@@ -1,0 +1,99 @@
+/*
+ * COLORS
+ */
+
+// Primary colors
+$col-spark-orange:    #FF6C37 !default;
+$col-heritage-blue:   #023A4F !default;
+
+// Support colors
+$col-people:          #F59E1B !default;
+$col-artful:          #CE0F3D !default;
+$col-elegance:        #6A2C70 !default;
+$col-intuitive:       #CCEABB !default;
+$col-attitude:        #2C7998 !default;
+$col-peculiar:        #A6CDDD !default;
+$col-scientific:      #E3EFF3 !default;
+$col-empathy:         #FFF0DB !default;
+$col-paper-grey:      #F4F4F4 !default;
+
+// Essential colors
+$col-white:           #FFFFFF !default;
+$col-black:           #000000 !default;
+
+
+
+/*
+ * MEASURES
+ */
+$overall-scale: 1.2;
+
+@function sz($val, $scale: 1) {
+    @return $val * $scale * $overall-scale;
+}
+
+
+/*
+ * TYPOGRAPHY
+ */
+
+$font-objectivity-bold: ObjectivityBold, sans-serif;
+$font-objectivity-medium: ObjectivityMedium, sans-serif;
+$font-objectivity: Objectivity, sans-serif;
+$font-ibm-plex-sans: IBMPlexSans, sans-serif;
+
+@mixin text-level-1($scale: 1) {
+    color: $col-heritage-blue;
+    font-family: $font-objectivity-bold;
+    font-size: 16pt * $scale * $overall-scale;
+    font-weight: normal;
+    font-style: normal;
+}
+
+@mixin text-level-2($scale: 1) {
+    color: $col-spark-orange;
+    font-family: $font-objectivity-bold;
+    font-size: 11pt * $scale * $overall-scale;
+    font-weight: normal;
+    font-style: normal;
+}
+
+@mixin text-level-3($scale: 1) {
+    color: $col-heritage-blue;
+    font-family: $font-objectivity-bold;
+    font-size: 9pt * $scale * $overall-scale;
+    font-weight: normal;
+    font-style: normal;
+}
+
+@mixin text-level-4($scale: 1) {
+    color: $col-attitude;
+    font-family: $font-objectivity-medium;
+    font-size: 9pt * $scale * $overall-scale;
+    font-weight: normal;
+    font-style: italic;
+}
+
+@mixin text-level-5($scale: 1) {
+    color: $col-heritage-blue;
+    font-family: $font-objectivity;
+    font-size: 9pt * $scale * $overall-scale;
+    font-weight: normal;
+    font-style: italic;
+}
+
+@mixin text-body($scale: 1) {
+    color: $col-heritage-blue;
+    font-family: $font-ibm-plex-sans;
+    font-size: 9pt * $scale * $overall-scale;
+    font-weight: normal;
+    font-style: normal;
+}
+
+@mixin text-footer($scale: 1) {
+    color: $col-attitude;
+    font-family: $font-ibm-plex-sans;
+    font-size: 7pt * $scale * $overall-scale;
+    font-weight: normal;
+    font-style: normal;
+}
