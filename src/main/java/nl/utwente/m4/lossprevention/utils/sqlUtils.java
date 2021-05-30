@@ -183,7 +183,7 @@ public class sqlUtils {
         int requiredLabelIterator = 0;
         ArrayList<Integer> indexArray = new ArrayList<>();
 
-        System.out.println("Requiredlabels: " + requiredLabels);
+
 
         // Get's the indexes of the required labels. //TODO decide if separate function
         while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
@@ -210,7 +210,7 @@ public class sqlUtils {
 
 
         }
-        System.out.println(indexArray);
+
 
 
         ArrayList<String> parsedSheetRowStrings = new ArrayList<>();
@@ -252,7 +252,7 @@ public class sqlUtils {
             String insertQuery = "INSERT INTO ";
             switch (type) {
                 case 1:
-                    insertQuery += "nedap.alarm ";
+                    insertQuery +=  "nedap.alarm ";
                     break;
                 case 2:
                     insertQuery += "nedap.article ";
@@ -263,12 +263,12 @@ public class sqlUtils {
             }
             insertQuery += "VALUES (" + parsedRow + ");";
 
-            finalQuery += insertQuery;
+            finalQuery += "SET datestyle = dmy;" + insertQuery;
 
         }
         Connection connection = getConnection();
 
-        //  executeQuery(connection, finalQuery);
+          executeQuery(connection, finalQuery);
     }
 
 }

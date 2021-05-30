@@ -28,7 +28,7 @@ public class createDB {
 
             // SQL query, note that it does weird stuff if no tables are in phpmyadmin
             String query = "CREATE TABLE nedap.Store (id INT PRIMARY KEY CHECK (id >= 0),latitude INT,longitude INT); CREATE TABLE nedap.Alarm (\n" +
-                    "    epc INT PRIMARY KEY,\n" +
+                    "    epc VARCHAR(80) PRIMARY KEY,\n" +
                     "    timestamp TIMESTAMP,\n" +
                     "    store_id INT,\n" +
                     "    CONSTRAINT fk_store_id\n" +
