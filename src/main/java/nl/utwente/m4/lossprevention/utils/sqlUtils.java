@@ -13,9 +13,10 @@ public class sqlUtils {
      * For testing purposes
      */
     public static void main(String[] args) {
+
+        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
-        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
-        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
     }
 
     //============================================== Database Utils  ===============================================\\
@@ -184,7 +185,6 @@ public class sqlUtils {
         ArrayList<Integer> indexArray = new ArrayList<>();
 
 
-
         // Get's the indexes of the required labels. //TODO decide if separate function
         while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
 
@@ -210,7 +210,6 @@ public class sqlUtils {
 
 
         }
-
 
 
         ArrayList<String> parsedSheetRowStrings = new ArrayList<>();
@@ -252,7 +251,7 @@ public class sqlUtils {
             String insertQuery = "INSERT INTO ";
             switch (type) {
                 case 1:
-                    insertQuery +=  "nedap.alarm ";
+                    insertQuery += "nedap.alarm ";
                     break;
                 case 2:
                     insertQuery += "nedap.article ";
@@ -263,12 +262,13 @@ public class sqlUtils {
             }
             insertQuery += "VALUES (" + parsedRow + ");";
 
-            finalQuery += "SET datestyle = dmy;" + insertQuery;
+            finalQuery += insertQuery;
 
         }
-        Connection connection = getConnection();
-
-          executeQuery(connection, finalQuery);
+        finalQuery = "SET datestyle = dmy;" +finalQuery;
+                Connection connection = getConnection();
+        System.out.println(finalQuery);
+        executeQuery(connection, finalQuery);
     }
 
 }
