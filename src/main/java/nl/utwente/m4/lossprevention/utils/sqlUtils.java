@@ -167,8 +167,10 @@ public class sqlUtils {
                     requiredFoundCount++;
                 }
             }
+
         }
-        if (requiredFoundCount == requiredLabels.size()) {
+
+        if ((requiredFoundCount == requiredLabels.size()) & (requiredLabels.size() != 0)) {
             return true;
         } else {
             return false;
@@ -180,6 +182,8 @@ public class sqlUtils {
         int column = 0;
         int requiredLabelIterator = 0;
         ArrayList<Integer> indexArray = new ArrayList<>();
+
+        System.out.println("Requiredlabels: " + requiredLabels);
 
         // Get's the indexes of the required labels. //TODO decide if separate function
         while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
@@ -198,11 +202,15 @@ public class sqlUtils {
             if (checkLabels(columnLabel, requiredLabel)) {
                 indexArray.add(column);
                 requiredLabelIterator++;
+                column = 0;
+
+            } else {
+                column++;
             }
 
-            column++;
 
         }
+        System.out.println(indexArray);
 
 
         ArrayList<String> parsedSheetRowStrings = new ArrayList<>();
@@ -259,8 +267,8 @@ public class sqlUtils {
 
         }
         Connection connection = getConnection();
-        System.out.println(finalQuery);
-        executeQuery(connection, finalQuery);
+
+        //  executeQuery(connection, finalQuery);
     }
 
 }

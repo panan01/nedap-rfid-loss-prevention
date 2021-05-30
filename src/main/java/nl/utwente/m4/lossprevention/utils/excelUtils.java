@@ -46,6 +46,7 @@ public class excelUtils {
 
     /**
      * Function for retrieving the excel file from the data folder
+     *
      * @param sheetInputStream InputStream object of the excel-sheet
      * @return null if something went wrong otherwise an XSSFSheet of the excel file
      */
@@ -104,7 +105,7 @@ public class excelUtils {
         int column = 0;
         ArrayList<String> columnLabels = new ArrayList<String>();
 
-        while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet,row,column).equals(""))) { //TODO Apparently infinite loop check tomorrow am too tired now, apparently never returns null even with large column
+        while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
 
             columnLabels.add(getCellData(sheet, row, column));
             column++;
