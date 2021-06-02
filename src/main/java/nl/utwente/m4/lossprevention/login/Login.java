@@ -25,10 +25,9 @@ Expected JSON
     public Response login(JSONObject body){
         String email = (String) body.get("email");
         String passw = (String) body.get("password");
-        byte[] hashed_pass = PasswordHasher.instance.hashPassword(passw);
 
-        if (hashed_pass != null){
-            boolean queryResult = Queries.instance.checkUserAndPass(email,hashed_pass);
+        if (passw != null){
+            boolean queryResult = Queries.instance.checkUserAndPass(email,passw);
             return queryResult ? Response.status(200).entity("success").build() : Response.status(200).entity("fail").build();
         }
         return Response.status(200).entity("fail").build();

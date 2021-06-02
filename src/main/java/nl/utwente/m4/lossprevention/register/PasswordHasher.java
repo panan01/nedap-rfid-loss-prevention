@@ -5,16 +5,18 @@ import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Base64;
 
 public enum PasswordHasher {
     instance;
-    private final String SALT = "$1$N8qsKOcF$dWj1idimpoRJbyVJhU4uk1";
+    private final String PEPPER = "$1$N8qsKOcF$dWj1idimpoRJbyVJhU4uk1";
 
-    public byte[] hashPassword(String password){
-        KeySpec spec = new PBEKeySpec(password.toCharArray(), this.SALT.getBytes(), 65536, 128);
+    public byte[] hashPassword(String password, String salt){
+        String salted_Pass = salt + password;
+        KeySpec spec = new PBEKeySpec(salted_Pass.toCharArray(), this.PEPPER.getBytes(), 65536, 128);
         try {
             SecretKeyFactory fact = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            return fact.generateSecret(spec).getEncoded();
+            return Base64.getEncoder().encode(fact.generateSecret(spec).getEncoded());
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
