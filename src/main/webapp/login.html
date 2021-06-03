@@ -6,13 +6,14 @@
 
         <script src="js/jquery.js"></script>
         <script src="js/login.js"></script>
+
         <style>
             #logo-container {
                 width: 250px;
                 margin: 60px auto 40px auto;
             }
 
-            .error-container {
+            .notif-container {
                 width: 350px;
                 margin: 0px auto 10px auto;
             }
@@ -33,9 +34,15 @@
             <img src="svg/nedap_hero_logo_white.svg" style="width: 100%">
         </div>
 
-        <div class="card error-container hidden" id="error-container">
-            <div class="card-content fg-error" id="error-message">
+        <div class="card card-error notif-container hidden" id="error-container">
+            <div class="card-content" id="error-message">
                 Error message goes here.
+            </div>
+        </div>
+
+        <div class="card card-dark notif-container hidden" id="loading-container">
+            <div class="card-content" id="loading-message">
+                Loading message goes here.
             </div>
         </div>
 
@@ -70,7 +77,7 @@
             </div>
             <div class="card-content">
                 <div class="btn btn-primary block" id="reset-button">Request New Password</div>
-                <div class="btn btn-primary-outline block" onclick="openCard('login-container')">Back To Login</div>
+                <div class="btn btn-primary btn-outline block" onclick="openCard('login-container')">Back To Login</div>
             </div>
         </div>
 
@@ -95,7 +102,7 @@
             </div>
             <div class="card-content">
                 <div class="btn btn-primary block" id="signup-button">Request New Account</div>
-                <div class="btn btn-primary-outline block" onclick="openCard('login-container')">Back To Login</div>
+                <div class="btn btn-primary btn-outline block" onclick="openCard('login-container')">Back To Login</div>
             </div>
         </div>
 
@@ -115,6 +122,7 @@
                 $("#" + card_id).removeClass("hidden").addClass("visible");
 
                 hideError();
+                hideLoading();
             }
 
             function showError(error_text) {
@@ -126,25 +134,43 @@
                 $("#error-container").addClass("hidden");
             }
 
+            function showLoading(loading_text) {
+                $("#loading-container").removeClass("hidden");
+                document.getElementById("loading-message").innerText = loading_text;
+            }
+
+            function hideLoading() {
+                $("#loading-container").addClass("hidden");
+            }
+
             (function() {
                 let email_field = document.getElementById("login-email-field");
                 let password_field = document.getElementById("login-password-field");
                 let log_in_button = document.getElementById("login-button");
 
                 function _login() {
-                    var res = onLogin(email_field.value, password_field.value) || {};
+                    var response = false;
+                    hideError();
+                    onLogin(email_field.value, password_field.value, function(res) {
+                        hideLoading();
+                        if (res.error) {
+                            showError(res.error);
 
-                    if (res.error) {
-                        showError(res.error);
+                            if (res.focus === "email") {
+                                email_field.focus();
+                            }
+                            if (res.focus === "password") {
+                                password_field.focus();
+                            }
+                        } else if (res.done) {
+                            // TODO More here
+                            console.log("Login done")
+                        }
+                        response = true;
+                    });
 
-                        if (res.focus === "email") {
-                            email_field.focus();
-                        }
-                        if (res.focus === "password") {
-                            password_field.focus();
-                        }
-                    } else if (res.redirect) {
-                        window.href = res.redirect
+                    if (! response) {
+                        showLoading("Logging in, please wait...");
                     }
                 }
 
@@ -166,16 +192,25 @@
                 let send_button = document.getElementById("reset-button");
 
                 function _reset() {
-                    var res = onSendResetPasswordLink(email_field.value);
+                    var response = false;
+                    hideError();
+                    onSendResetPasswordLink(email_field.value, function(res) {
+                        hideLoading();
+                        if (res.error) {
+                            showError(res.error);
 
-                    if (res.error) {
-                        showError(res.error);
-
-                        if (res.focus === "email") {
-                            email_field.focus();
+                            if (res.focus === "email") {
+                                email_field.focus();
+                            }
+                        } else if (res.done) {
+                            openCard("reset-done-container");
                         }
-                    } else if (res.done) {
-                        openCard("reset-done-container");
+
+                        response = true;
+                    });
+
+                    if (! response) {
+                        showLoading("Loading, please wait...");
                     }
                 }
 
@@ -197,16 +232,26 @@
                 let send_button = document.getElementById("signup-button");
 
                 function _signup() {
-                    var res = onSendSignUpLink(email_field.value);
+                    var response = false;
+                    hideError();
+                    onSendSignUpLink(email_field.value, function(res) {
+                        hideLoading();
 
-                    if (res.error) {
-                        showError(res.error);
+                        if (res.error) {
+                            showError(res.error);
 
-                        if (res.focus === "email") {
-                            email_field.focus();
+                            if (res.focus === "email") {
+                                email_field.focus();
+                            }
+                        } else if (res.done) {
+                            openCard("signup-done-container");
                         }
-                    } else if (res.done) {
-                        openCard("signup-done-container");
+
+                        response = true;
+                    });
+
+                    if (! response) {
+                        showLoading("Loading, please wait...");
                     }
                 }
 
