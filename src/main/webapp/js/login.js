@@ -11,6 +11,18 @@ function onLogin(email, password, result) {
     // Request the server for login and call the 'result' function when the server has responded
     // You can use jQuery ('$.ajax') for the request, see https://api.jquery.com/jquery.ajax/ for documentation
 
+    $.ajax({
+        url: true, // what should the URL be?
+        method: 'POST',
+        data: { username: email, password: password},
+        success: function(data) {
+            console.log(data);
+        },
+        error: function() {
+            // error handling;
+        }
+    })
+
     // Result values
     // {error: "message"} to show error message
     //   - {focus: "email"} will focus the email field on error
