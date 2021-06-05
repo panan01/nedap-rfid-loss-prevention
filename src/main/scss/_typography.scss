@@ -1,0 +1,39 @@
+@import "theme";
+
+body {
+    @include text-body;
+}
+
+h1, .level-1 {
+    @include text-level-1;
+}
+
+h2, .level-2 {
+    @include text-level-2;
+}
+
+h3, .level-3 {
+    @include text-level-3;
+}
+
+h4, .level-4 {
+    @include text-level-4;
+}
+
+h5, .level-5 {
+    @include text-level-5;
+}
+
+h6 {
+    @include text-body;
+}
+
+a {
+    color: $col-attitude;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

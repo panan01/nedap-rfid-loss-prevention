@@ -1,0 +1,60 @@
+@import "theme";
+
+.card {
+    border-radius: sz(4pt);
+    display: block;
+    box-sizing: border-box;
+    background-color: $col-paper-grey;
+    box-shadow: 0px 3px 14px rgba(#000, 0.5);
+    overflow: hidden;
+    position: relative;
+
+    .card-image {
+        background-color: $col-spark-orange;
+        width: 100%;
+        display: block;
+        box-sizing: border-box;
+        position: relative;
+
+        margin-bottom: sz(10pt);
+
+        .card-image-inner {
+            width: 100%;
+        }
+    }
+
+    .card-logo-image {
+        background-color: $col-spark-orange;
+        width: 100%;
+        display: block;
+        box-sizing: border-box;
+        padding: 20% 30%;
+        position: relative;
+
+        margin-bottom: sz(10pt);
+
+        .card-image-inner {
+            width: 100%;
+        }
+    }
+
+    .card-header {
+        display: block;
+        width: 100%;
+        padding: sz(21pt) sz(20pt) sz(21pt) sz(20pt);
+        box-sizing: border-box;
+        @include text-level-1;
+    }
+
+    .card-content {
+        display: block;
+        width: 100%;
+        padding: sz(0pt) sz(20pt) sz(10pt) sz(20pt);
+        box-sizing: border-box;
+        @include text-body;
+
+        &:nth-child(1) {
+            padding-top: sz(10pt);
+        }
+    }
+}
