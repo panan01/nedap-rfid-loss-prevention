@@ -12,7 +12,7 @@ public enum PasswordHasher {
     private final String PEPPER = "$1$N8qsKOcF$dWj1idimpoRJbyVJhU4uk1";
     private SecretKeyFactory fact;
 
-    private PasswordHasher() {
+    PasswordHasher() {
         try {
             fact = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         } catch (NoSuchAlgorithmException e) {
