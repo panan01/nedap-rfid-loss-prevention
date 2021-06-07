@@ -12,6 +12,7 @@ public enum Queries {
     private final String url = "jdbc:postgresql://" + host + "/" + dbName + "?currentSchema=nedap";
     private final String username = "dab_di20212b_225";
     private final String password = "4gPNr326lyRQcR1J";
+//    private final String password = System.getenv("DB_PASS");
     private Connection connection;
     private Statement st;
     private PreparedStatement checkEmailSt;
