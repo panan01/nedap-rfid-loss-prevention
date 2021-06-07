@@ -12,7 +12,7 @@ function onLogin(email, password, result) {
     // You can use jQuery ('$.ajax') for the request, see https://api.jquery.com/jquery.ajax/ for documentation
 
     $.ajax({
-        url: true, // what should the URL be?
+        url: "login", // what should the URL be?
         method: 'POST',
         data: { username: email, password: password},
         success: function(data) {
