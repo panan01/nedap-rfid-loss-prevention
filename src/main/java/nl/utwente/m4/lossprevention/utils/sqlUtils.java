@@ -14,8 +14,8 @@ public class sqlUtils {
      */
     public static void main(String[] args) {
         System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
-        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
-        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
+        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
+        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
     }
 
     //============================================== Database Utils  ===============================================\\
@@ -35,7 +35,7 @@ public class sqlUtils {
      * @return
      */
     public static Connection getConnection() {
-
+        driverLoader();
         try {
             // Sets basis for connection
             String host = "bronto.ewi.utwente.nl";
@@ -45,10 +45,10 @@ public class sqlUtils {
             // Sets credentials
             String username = "dab_di20212b_225";  // TODO: make these system variables or something
             String password = "4gPNr326lyRQcR1J";
-            Connection connection = DriverManager.getConnection(url, username, password);
-            return connection;
+            return DriverManager.getConnection(url, username, password);
         } catch (SQLException sqlE) {
-            System.err.println("Error connecting: " + sqlE);
+            System.err.print("Error connecting to database: ");
+            sqlE.printStackTrace(System.err);
             return null;
         }
     }
@@ -62,7 +62,6 @@ public class sqlUtils {
      */
     public static String executeQuery(Connection connection, String query) {
         try {
-
             PreparedStatement st = connection.prepareStatement(query);
 
             // Check if query needs input for prepared statement.
@@ -70,8 +69,7 @@ public class sqlUtils {
                 //st.setString(); //TODO make conventions for our queries
             }
 
-            ResultSet resultSet =
-                    st.executeQuery();
+            ResultSet resultSet = st.executeQuery();
 
             String result = "";
             // prints query results
@@ -264,9 +262,10 @@ public class sqlUtils {
             finalQuery += insertQuery;
 
         }
-        finalQuery = "SET datestyle = dmy;" +finalQuery;
-                Connection connection = getConnection();
-        System.out.println(finalQuery);
+        finalQuery = "SET datestyle = dmy;" + finalQuery;
+        Connection connection = getConnection();
+        assert connection != null;
+        // System.out.println(finalQuery);
         executeQuery(connection, finalQuery);
     }
 
