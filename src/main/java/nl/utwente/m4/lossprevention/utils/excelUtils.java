@@ -80,32 +80,32 @@ public class excelUtils {
 
         //Create a blank sheet and add name
         String sheetName = "exportedsheet-";
-        String tableName = "";
+
+        //ArrayList<String> subQueryList = new ArrayList<>();
+
         switch (sheetType) {
             case 0:
                 sheetName += "alarm";
-                tableName = "nedap.alarm ";
                 break;
             case 1:
                 sheetName += "article";
-                tableName = "nedap.article ";
                 break;
             case 2:
                 sheetName += "store";
-                tableName = "nedap.store ";
                 break;
             default:
         }
 
         XSSFSheet sheet = workbook.createSheet(sheetName);
 
+        /* String query = "SELECT row_to_json("+tableName+") FROM (SELECT ";
+
+        query += "FROM "+tableName+");";*/
+
+
         //Get and assign the data for the excel sheet
-        String query = "SELECT * FROM " + tableName+";";
-        Connection connection = getConnection();
-        assert connection != null;
-        System.out.println(query);
-        System.out.println(executeQuery(connection, query));
-        // executeQuery(connection, query);
+
+        System.out.println(getTableJsonList(sheetType));
 
 
         //Iterate over data and write it to the sheet

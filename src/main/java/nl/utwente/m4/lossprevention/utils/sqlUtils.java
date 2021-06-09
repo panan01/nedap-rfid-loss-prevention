@@ -81,7 +81,7 @@ public class sqlUtils {
 
             while (resultSet.next()) {
                 for (int i = 1; i < columnsNumber + 1; i++) {
-                   
+
                     result += resultSet.getString(i) + ":";
                 }
 
@@ -95,6 +95,46 @@ public class sqlUtils {
             System.err.println("Error connecting: " + sqlE);
             return "sqlException";
         }
+    }
+
+    /**
+     * Generates a JSON array of objects of the entire table, with each row being converted to a single object.
+     *
+     * For example table:
+     *
+     * create table t (a int, b text)
+     * insert into t values (1, 'value1');
+     * insert into t values (2, 'value2');
+     * insert into t values (3, 'value3');
+     *
+     * Result function
+     * [{"a":1,"b":"value1"},{"a":2,"b":"value2"},{"a":3,"b":"value3"}]
+     * @param sheetType type of table to get data from
+     * @return
+     */
+    public static String getTableJsonList(int sheetType){
+        String tableName = "";
+        switch (sheetType) {
+            case 0:
+                tableName = "nedap.alarm ";
+                break;
+            case 1:
+                tableName = "nedap.article ";
+                break;
+            case 2:
+                tableName = "nedap.store ";
+                break;
+            default:
+        }
+        String query = "SELECT array_to_json(array_agg(t)) FROM " + tableName + " t;";
+
+
+        Connection connection = getConnection();
+        assert connection != null;
+
+
+        return executeQuery(connection, query);
+
     }
 
     //==============================================  Mixed utils ===================================================\\
