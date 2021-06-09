@@ -5,6 +5,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.json.JSONArray;
 
 import java.io.*;
 import java.sql.Connection;
@@ -98,14 +99,8 @@ public class excelUtils {
 
         XSSFSheet sheet = workbook.createSheet(sheetName);
 
-        /* String query = "SELECT row_to_json("+tableName+") FROM (SELECT ";
-
-        query += "FROM "+tableName+");";*/
-
-
         //Get and assign the data for the excel sheet
-
-        System.out.println(getTableJsonList(sheetType));
+        JSONArray jsonarray = getTableJsonList(sheetType);
 
 
         //Iterate over data and write it to the sheet

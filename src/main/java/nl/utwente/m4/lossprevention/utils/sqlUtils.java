@@ -1,9 +1,9 @@
 package nl.utwente.m4.lossprevention.utils;
 
 import java.sql.*;
-
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 import java.util.ArrayList;
 
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
@@ -112,7 +112,7 @@ public class sqlUtils {
      * @param sheetType type of table to get data from
      * @return
      */
-    public static String getTableJsonList(int sheetType){
+    public static JSONArray getTableJsonList(int sheetType){
         String tableName = "";
         switch (sheetType) {
             case 0:
@@ -132,10 +132,11 @@ public class sqlUtils {
         Connection connection = getConnection();
         assert connection != null;
 
-
-        return executeQuery(connection, query);
+        JSONArray jsonarray = new JSONArray(executeQuery(connection, query));
+        return jsonarray;
 
     }
+
 
     //==============================================  Mixed utils ===================================================\\
 
