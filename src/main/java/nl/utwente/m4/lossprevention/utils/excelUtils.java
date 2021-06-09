@@ -3,9 +3,15 @@ package nl.utwente.m4.lossprevention.utils;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 
 import java.io.*;
 import java.util.ArrayList;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class excelUtils {
 
@@ -63,6 +69,35 @@ public class excelUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static XSSFSheet exportSheet(int sheetType) {
+//Create a new Workbook
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        //Create a blank sheet and add name
+        String sheetName = "exportedsheet-";
+        switch (sheetType) {
+            case 0:
+                sheetName += "alarm";
+                break;
+            case 1:
+                sheetName += "article";
+                break;
+            case 2:
+                sheetName += "store";
+                break;
+            default:
+        }
+
+        XSSFSheet sheet = workbook.createSheet(sheetName);
+
+        //Get and assign the data for the excel sheet
+//TODO
+
+        //Iterate over data and write it to the sheet
+//TODO
+        return sheet;
     }
 
     /**
