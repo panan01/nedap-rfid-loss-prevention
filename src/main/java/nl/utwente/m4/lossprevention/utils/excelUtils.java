@@ -7,11 +7,14 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.io.*;
+import java.sql.Connection;
 import java.util.ArrayList;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import static nl.utwente.m4.lossprevention.utils.sqlUtils.*;
 
 public class excelUtils {
 
@@ -19,10 +22,10 @@ public class excelUtils {
      * For testing purposes
      */
     public static void main(String[] args) {
-        System.out.println(getRowCount(read("20210503_UTwente_Nedap_Stores.xlsx")));
-        System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 0, 5));
-        System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 1, 1));
-
+        //System.out.println(getRowCount(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        //System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 0, 5));
+        //System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 1, 1));
+        exportSheet(2);
     }
 
     /**
@@ -77,15 +80,19 @@ public class excelUtils {
 
         //Create a blank sheet and add name
         String sheetName = "exportedsheet-";
+        String tableName = "";
         switch (sheetType) {
             case 0:
                 sheetName += "alarm";
+                tableName = "nedap.alarm ";
                 break;
             case 1:
                 sheetName += "article";
+                tableName = "nedap.article ";
                 break;
             case 2:
                 sheetName += "store";
+                tableName = "nedap.store ";
                 break;
             default:
         }
@@ -93,10 +100,16 @@ public class excelUtils {
         XSSFSheet sheet = workbook.createSheet(sheetName);
 
         //Get and assign the data for the excel sheet
-//TODO
+        String query = "SELECT * FROM " + tableName+";";
+        Connection connection = getConnection();
+        assert connection != null;
+        System.out.println(query);
+        System.out.println(executeQuery(connection, query));
+        // executeQuery(connection, query);
+
 
         //Iterate over data and write it to the sheet
-//TODO
+
         return sheet;
     }
 

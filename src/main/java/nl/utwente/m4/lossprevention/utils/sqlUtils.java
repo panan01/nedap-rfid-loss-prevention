@@ -13,7 +13,7 @@ public class sqlUtils {
      * For testing purposes
      */
     public static void main(String[] args) {
-        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        //System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
     }
@@ -70,12 +70,23 @@ public class sqlUtils {
             }
 
             ResultSet resultSet = st.executeQuery();
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+
+            int columnsNumber = rsmd.getColumnCount();
+
 
             String result = "";
             // prints query results
+
+
             while (resultSet.next()) {
-                result += resultSet.getString(1) + ":";
+                for (int i = 1; i < columnsNumber + 1; i++) {
+                   
+                    result += resultSet.getString(i) + ":";
+                }
+
             }
+
 
             // A wise man once said that if you open a door you should also close it
             connection.close();
@@ -175,6 +186,13 @@ public class sqlUtils {
         }
     }
 
+    /**
+     * Function which using the required columns produces and sends a query for putting in all the data from the sheet into the DB
+     *
+     * @param sheet          sheet to read from
+     * @param requiredLabels required columns/labels
+     * @param type           type of table to push to
+     */
     public static void parsePushToDB(XSSFSheet sheet, ArrayList<String> requiredLabels, int type) {
         int row = 0;
         int column = 0;
@@ -215,8 +233,6 @@ public class sqlUtils {
         column = indexArray.get(0); //start with primary key column
 
         // While a next row is not empty we put all rows into separate strings
-
-
         while (!getCellData(sheet, row, column).equals("null")) {
             for (Integer index : indexArray) {
                 String cellContent = getCellData(sheet, row, index);
@@ -265,7 +281,6 @@ public class sqlUtils {
         finalQuery = "SET datestyle = dmy;" + finalQuery;
         Connection connection = getConnection();
         assert connection != null;
-        // System.out.println(finalQuery);
         executeQuery(connection, finalQuery);
     }
 
