@@ -18,7 +18,6 @@
         <servlet-class>nl.utwente.m4.lossprevention.utils.FileUploadServlet</servlet-class>
         <multipart-config />
     </servlet>
-
     <servlet-mapping>
         <servlet-name>FileUploadServlet</servlet-name>
         <url-pattern>/upload</url-pattern>
