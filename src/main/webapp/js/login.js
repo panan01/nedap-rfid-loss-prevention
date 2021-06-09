@@ -23,7 +23,10 @@ function onLogin(email, password, result) {
                     focus: "email"
                 });
             } else {
-                result({done: true}); // TODO For later
+                result({
+
+                    done: true
+                }); // TODO For later
             }
             console.log(data);
         },
