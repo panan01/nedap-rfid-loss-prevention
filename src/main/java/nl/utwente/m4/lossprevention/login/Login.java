@@ -1,8 +1,6 @@
 package nl.utwente.m4.lossprevention.login;
 
-import nl.utwente.m4.lossprevention.register.PasswordHasher;
 import nl.utwente.m4.lossprevention.sql.Queries;
-import org.json.simple.JSONObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,7 +11,7 @@ import java.util.Date;
 @Path("/login")
 public class Login {
 
-    private static final String SECRET = "69KA420HAH666";
+    private static final String SECRET = "69KA420HAH666R5I3C0K88A0S4H6LEY2XVOALEC321";
 
 /*
 Expected JSON
@@ -51,10 +49,12 @@ Expected JSON
     //Issue token using JWT
     public String issueToken(String email) {
         Date issuedTime = new Date(System.currentTimeMillis());
+        Date expDate = new Date(System.currentTimeMillis() + 100000000);
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(issuedTime)
-                .signWith(SignatureAlgorithm.HS512, SECRET).compact();
+                .setExpiration(expDate)
+                .signWith(SignatureAlgorithm.HS256, SECRET).compact();
     }
 }
 
