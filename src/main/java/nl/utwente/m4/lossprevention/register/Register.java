@@ -1,5 +1,6 @@
 package nl.utwente.m4.lossprevention.register;
 
+import nl.utwente.m4.lossprevention.JWT.JWTNeeded;
 import nl.utwente.m4.lossprevention.sql.Queries;
 import org.json.simple.JSONObject;
 
@@ -19,7 +20,7 @@ public class Register {
     private final String gen = "!\\\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`abcdefghijklmnopqrstuvwxyz{|}~";
     private SecureRandom rnd = new SecureRandom();
     /*
-        JSON FILE SEND FROM FRONT END FOR REGISTER USER
+        JSON FILE SEND FROM FRONT END FOR REGISTERING USER
         {
           "email":
           "password":
@@ -31,6 +32,8 @@ public class Register {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
+    // Requires a filed in the header called "Authorization" that returns the token
+    @JWTNeeded
     public Response register(JSONObject body) {
         String email = (String) body.get("email");
         String password = (String) body.get("password");
@@ -46,6 +49,7 @@ public class Register {
         return Response.status(200).entity("fail").build();
     }
 
+    //Generate a size of 16 salt
     public String saltGenerator(){
         String result = "";
         for (int i = 0; i < 16; i++) {

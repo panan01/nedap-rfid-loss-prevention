@@ -1,5 +1,6 @@
 package nl.utwente.m4.lossprevention.account;
 
+import nl.utwente.m4.lossprevention.JWT.JWTNeeded;
 import nl.utwente.m4.lossprevention.sql.Queries;
 import org.json.simple.JSONObject;
 
@@ -12,17 +13,19 @@ import java.sql.SQLException;
 public class account {
 
     /*
-    returns JSON
-    {
-    "password":
-    "last_name":
-    "type":
-    "first_name":
-    "email":
-    }
+    returns JSON as the following format
+        {
+            "password":
+            "last_name":
+            "type":
+            "first_name":
+            "email":
+        }
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    // Requires a filed in the header called "Authorization" that returns the token
+    @JWTNeeded
     public Response getAccount(@PathParam("email") String email) {
         if(!Queries.instance.checkEmailValidity(email)){
             try {
@@ -39,17 +42,19 @@ public class account {
 
     /*
     Expecting from the front end:
-    {
-    "email": NOT NULL
-    "password": if this filed is not modified pls return ""
-    "last_name": if this filed is not modified pls return ""
-    "type": if this filed is not modified pls return ""
-    "first_name": if this filed is not modified pls return ""
-    }
+        {
+            "email": NOT NULL
+            "password": if this filed is not modified pls return ""
+            "last_name": if this filed is not modified pls return ""
+            "type": if this filed is not modified pls return ""
+            "first_name": if this filed is not modified pls return ""
+        }
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
+    // Requires a filed in the header called "Authorization" that returns the token
+    @JWTNeeded
     public Response modifyAccount(JSONObject body,@PathParam("email") String email) {
         String input_email = (String) body.get("email");
         String password = (String) body.get("password");
@@ -86,6 +91,8 @@ public class account {
 
     @DELETE
     @Produces(MediaType.TEXT_PLAIN)
+    // Requires a filed in the header called "Authorization" that returns the token
+    @JWTNeeded
     public Response deleteAccount(@PathParam("email") String email){
         try {
             System.out.println("Deleting account " + email);
