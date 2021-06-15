@@ -29,8 +29,8 @@ public class excelUtils {
         //System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 1, 1));
 
         /*System.out.println(getRowCount(exportSheet(2)));*/
-        XSSFSheet sheet = exportSheet(0);
-        for (int i = 0; i < 53; i++) {
+        XSSFSheet sheet = exportSheet(1);
+        for (int i = 0; i < getRowCount(sheet); i++) {
             String row = "";
             for (int k = 0; k < getColumnLabels(sheet).size(); k++) {
                 /*System.out.println("size "+ getColumnLabels(exportSheet(2)).size());*/
@@ -138,7 +138,7 @@ public class excelUtils {
 
             //Create empty row at
             Row row = sheet.createRow(rowNumber);
-             columnNumber = 0;
+            columnNumber = 0;
             // create cells
 
             for (String label : getRequiredLabels(sheetType)) {
@@ -149,8 +149,19 @@ public class excelUtils {
 
                 switch (key) {
                     case "store id (ut)":
+                        if (sheetType == 0) {
+                            key = "store_id";
+                        } else {
+                            key = "id";
+                        }
+                        break;
                     case "article id (ut)":
-                        key = "id";
+                        if (sheetType == 0) {
+                            key = "article_id";
+                        } else {
+                            key = "id";
+                        }
+
                         break;
                     case "latitude (ut)":
                         key = "latitude";
