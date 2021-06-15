@@ -103,7 +103,16 @@ public class excelUtils {
         //Get and assign the data for the excel sheet
         JSONArray jsonarray = getTableJsonList(sheetType);
 
-        System.out.println(jsonarray.get(0));
+        for (Object object : jsonarray) {
+            JSONObject jsonObject = new JSONObject(object.toString());
+
+
+
+            ArrayList<JSONObject> rowArray = new ArrayList<>();
+
+
+        }
+
 
         //Iterate over data and write it to the sheet
 

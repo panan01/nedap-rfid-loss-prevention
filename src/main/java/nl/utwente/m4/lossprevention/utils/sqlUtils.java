@@ -22,6 +22,33 @@ public class sqlUtils {
     }
 
     //============================================== Database Utils  ===============================================\\
+    public static ArrayList<String> requiredLabelsType1 = new ArrayList<>();
+    public static ArrayList<String> requiredLabelsType2 = new ArrayList<>();
+    public static ArrayList<String> requiredLabelsType3 = new ArrayList<>();
+
+    private static void fillRequiredLabels() {
+        // Type one is of alarm type
+
+        requiredLabelsType1.add("EPC (UT)");
+        requiredLabelsType1.add("Timestamp");
+        requiredLabelsType1.add("Store ID (UT)");
+        requiredLabelsType1.add("Article ID (UT)");
+
+        // Type two is of article type
+
+        requiredLabelsType2.add("Article ID (UT)");
+        requiredLabelsType2.add("Category (UT)");
+        requiredLabelsType2.add("Article (UT)");
+        requiredLabelsType2.add("Color");
+        requiredLabelsType2.add("Size");
+        requiredLabelsType2.add("Price (EUR)");
+
+        // Type three is of store type
+
+        requiredLabelsType3.add("Store ID (UT)");
+        requiredLabelsType3.add("Latitude (UT)");
+        requiredLabelsType3.add("Longitude (UT)");
+    }
 
     public static void driverLoader() {
         try {
@@ -102,14 +129,14 @@ public class sqlUtils {
 
     /**
      * Generates a JSON array of objects of the entire table, with each row being converted to a single object.
-     * <p>
+     *
      * For example table:
-     * <p>
+     *
      * create table t (a int, b text)
      * insert into t values (1, 'value1');
      * insert into t values (2, 'value2');
      * insert into t values (3, 'value3');
-     * <p>
+     *
      * Result function
      * [{"a":1,"b":"value1"},{"a":2,"b":"value2"},{"a":3,"b":"value3"}]
      *
@@ -117,6 +144,7 @@ public class sqlUtils {
      * @return
      */
     public static JSONArray getTableJsonList(int sheetType) {
+        fillRequiredLabels();
         String tableName = "";
         switch (sheetType) {
             case 0:
@@ -165,30 +193,7 @@ public class sqlUtils {
         if (!columnLabels.get(0).equals("Empty file")) {
             int fileType = -1;
 
-            //TODO clean code below up so it's not all in here
-
-            // Type one is of alarm type
-            ArrayList<String> requiredLabelsType1 = new ArrayList<>();
-            requiredLabelsType1.add("EPC (UT)");
-            requiredLabelsType1.add("Timestamp");
-            requiredLabelsType1.add("Store ID (UT)");
-            requiredLabelsType1.add("Article ID (UT)");
-
-            // Type two is of article type
-            ArrayList<String> requiredLabelsType2 = new ArrayList<>();
-            requiredLabelsType2.add("Article ID (UT)");
-            requiredLabelsType2.add("Category (UT)");
-            requiredLabelsType2.add("Article (UT)");
-            requiredLabelsType2.add("Color");
-            requiredLabelsType2.add("Size");
-            requiredLabelsType2.add("Price (EUR)");
-
-            // Type three is of store type
-            ArrayList<String> requiredLabelsType3 = new ArrayList<>();
-            requiredLabelsType3.add("Store ID (UT)");
-            requiredLabelsType3.add("Latitude (UT)");
-            requiredLabelsType3.add("Longitude (UT)");
-
+            fillRequiredLabels();
 
             if (checkLabels(columnLabels, requiredLabelsType1)) {
                 parsePushToDB(sheet, requiredLabelsType1, 1);
