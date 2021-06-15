@@ -27,7 +27,19 @@ public class excelUtils {
         //System.out.println(getRowCount(read("20210503_UTwente_Nedap_Stores.xlsx")));
         //System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 0, 5));
         //System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 1, 1));
-        exportSheet(2);
+
+        /*System.out.println(getRowCount(exportSheet(2)));*/
+        XSSFSheet sheet = exportSheet(2);
+        for (int i = 0; i < 53; i++) {
+            String row = "";
+            for (int k = 0; k < getColumnLabels(sheet).size(); k++) {
+                /*System.out.println("size "+ getColumnLabels(exportSheet(2)).size());*/
+                row += getCellData(sheet, i, k) + " | ";
+            }
+            System.out.println(row);
+
+        }
+
     }
 
     /**
@@ -56,7 +68,7 @@ public class excelUtils {
     }
 
     /**
-     * Function for retrieving the excel file from the data folder
+     * Function for retrieving the excel file from an inputstream
      *
      * @param sheetInputStream InputStream object of the excel-sheet
      * @return null if something went wrong otherwise an XSSFSheet of the excel file
@@ -77,7 +89,7 @@ public class excelUtils {
     }
 
     public static XSSFSheet exportSheet(int sheetType) {
-//Create a new Workbook
+        //Create a new Workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
 
         //Create a blank sheet and add name
@@ -103,18 +115,57 @@ public class excelUtils {
         //Get and assign the data for the excel sheet
         JSONArray jsonarray = getTableJsonList(sheetType);
 
+        //Iterate over data and write it to the sheet
+
+        int rowNumber = 0;
+        // for each row object in the array
         for (Object object : jsonarray) {
+            //make JSON object from object
             JSONObject jsonObject = new JSONObject(object.toString());
 
+            //Create empty row at
+            Row row = sheet.createRow(rowNumber);
+            int columnNumber = 0;
+            // create cells
 
+            for (String label : getRequiredLabels(sheetType)) {
 
-            ArrayList<JSONObject> rowArray = new ArrayList<>();
+                Cell cell = row.createCell(columnNumber);
 
+                String key = getRequiredLabels(sheetType).get(columnNumber).toLowerCase();
 
+                switch (key) {
+                    case "store id (ut)":
+                    case "article id (ut)":
+                        key = "id";
+                        break;
+                    case "latitude (ut)":
+                        key = "latitude";
+                        break;
+                    case "longitude (ut)":
+                        key = "longitude";
+                        break;
+                    case "category (ut)":
+                        key = "category";
+                        break;
+                    case "article (ut)":
+                        key = "product";
+                        break;
+                    case "price (eur)":
+                        key = "price";
+                        break;
+                    case "epc (ut)":
+                        key = "epc";
+                        break;
+                }
+
+                cell.setCellValue(jsonObject.get(key).toString());
+                columnNumber++;
+            }
+
+            rowNumber++;
         }
 
-
-        //Iterate over data and write it to the sheet
 
         return sheet;
     }

@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
 
 public class sqlUtils {
+    private int type;
+
     /**
      * For testing purposes
      */
@@ -22,32 +24,50 @@ public class sqlUtils {
     }
 
     //============================================== Database Utils  ===============================================\\
-    public static ArrayList<String> requiredLabelsType1 = new ArrayList<>();
-    public static ArrayList<String> requiredLabelsType2 = new ArrayList<>();
-    public static ArrayList<String> requiredLabelsType3 = new ArrayList<>();
+    private static ArrayList<String> requiredLabelsType1 = new ArrayList<>();
+    private static ArrayList<String> requiredLabelsType2 = new ArrayList<>();
+    private static ArrayList<String> requiredLabelsType3 = new ArrayList<>();
+
+
 
     private static void fillRequiredLabels() {
         // Type one is of alarm type
 
-        requiredLabelsType1.add("EPC (UT)");
-        requiredLabelsType1.add("Timestamp");
-        requiredLabelsType1.add("Store ID (UT)");
-        requiredLabelsType1.add("Article ID (UT)");
+        requiredLabelsType1.add(0,"EPC (UT)");
+        requiredLabelsType1.add(1,"Timestamp");
+        requiredLabelsType1.add(2,"Store ID (UT)");
+        requiredLabelsType1.add(3,"Article ID (UT)");
 
         // Type two is of article type
 
-        requiredLabelsType2.add("Article ID (UT)");
-        requiredLabelsType2.add("Category (UT)");
-        requiredLabelsType2.add("Article (UT)");
-        requiredLabelsType2.add("Color");
-        requiredLabelsType2.add("Size");
-        requiredLabelsType2.add("Price (EUR)");
+        requiredLabelsType2.add(0,"Article ID (UT)");
+        requiredLabelsType2.add(1,"Category (UT)");
+        requiredLabelsType2.add(2,"Article (UT)");
+        requiredLabelsType2.add(3,"Color");
+        requiredLabelsType2.add(4,"Size");
+        requiredLabelsType2.add(5,"Price (EUR)");
 
         // Type three is of store type
 
-        requiredLabelsType3.add("Store ID (UT)");
-        requiredLabelsType3.add("Latitude (UT)");
-        requiredLabelsType3.add("Longitude (UT)");
+        requiredLabelsType3.add(0,"Store ID (UT)");
+        requiredLabelsType3.add(1,"Latitude (UT)");
+        requiredLabelsType3.add(2,"Longitude (UT)");
+    }
+
+    public static ArrayList<String> getRequiredLabels(int i) {
+        switch (i) {
+            case 0:
+                return requiredLabelsType1;
+
+            case 1:
+                return requiredLabelsType2;
+
+            case 2:
+                return requiredLabelsType3;
+
+            default:
+                return null;
+        }
     }
 
     public static void driverLoader() {
@@ -129,14 +149,14 @@ public class sqlUtils {
 
     /**
      * Generates a JSON array of objects of the entire table, with each row being converted to a single object.
-     *
+     * <p>
      * For example table:
-     *
+     * <p>
      * create table t (a int, b text)
      * insert into t values (1, 'value1');
      * insert into t values (2, 'value2');
      * insert into t values (3, 'value3');
-     *
+     * <p>
      * Result function
      * [{"a":1,"b":"value1"},{"a":2,"b":"value2"},{"a":3,"b":"value3"}]
      *
@@ -167,6 +187,7 @@ public class sqlUtils {
 
         StringBuffer sb = new StringBuffer(executeQuery(connection, query));
         sb.deleteCharAt(sb.length() - 1);
+
         JSONArray jsonarray = (JSONArray) new JSONTokener(sb.toString()).nextValue();
 
         return jsonarray;
@@ -195,12 +216,12 @@ public class sqlUtils {
 
             fillRequiredLabels();
 
-            if (checkLabels(columnLabels, requiredLabelsType1)) {
-                parsePushToDB(sheet, requiredLabelsType1, 1);
-            } else if (checkLabels(columnLabels, requiredLabelsType2)) {
-                parsePushToDB(sheet, requiredLabelsType2, 2);
-            } else if (checkLabels(columnLabels, requiredLabelsType3)) {
-                parsePushToDB(sheet, requiredLabelsType3, 3);
+            if (checkLabels(columnLabels, getRequiredLabels(0))) {
+                parsePushToDB(sheet, getRequiredLabels(0), 0);
+            } else if (checkLabels(columnLabels, getRequiredLabels(1))) {
+                parsePushToDB(sheet, getRequiredLabels(1), 1);
+            } else if (checkLabels(columnLabels, getRequiredLabels(2))) {
+                parsePushToDB(sheet, getRequiredLabels(2), 2);
             } else {
                 return "Status-2";
             }
@@ -254,9 +275,9 @@ public class sqlUtils {
         ArrayList<Integer> indexArray = new ArrayList<>();
 
 
-        // Get's the indexes of the required labels. //TODO decide if separate function
+        // Get's the indexes of the required labels.
         while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
-
+            fillRequiredLabels();
             ArrayList<String> columnLabel = new ArrayList<String>();
             columnLabel.add(getCellData(sheet, row, column));
 
@@ -317,13 +338,13 @@ public class sqlUtils {
 
             String insertQuery = "INSERT INTO ";
             switch (type) {
-                case 1:
+                case 0:
                     insertQuery += "nedap.alarm ";
                     break;
-                case 2:
+                case 1:
                     insertQuery += "nedap.article ";
                     break;
-                case 3:
+                case 2:
                     insertQuery += "nedap.store ";
                     break;
             }
