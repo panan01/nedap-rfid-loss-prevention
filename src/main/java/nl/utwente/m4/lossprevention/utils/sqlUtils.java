@@ -29,7 +29,10 @@ public class sqlUtils {
     private static ArrayList<String> requiredLabelsType3 = new ArrayList<>();
 
 
-
+    /**
+     * Function for filling the required labels
+     *
+     */
     private static void fillRequiredLabels() {
         // Type one is of alarm type
 
@@ -54,6 +57,11 @@ public class sqlUtils {
         requiredLabelsType3.add(2,"Longitude (UT)");
     }
 
+    /**
+     * Function for getting the required labels
+     * @param i labeltype
+     * @return Labels
+     */
     public static ArrayList<String> getRequiredLabels(int i) {
         switch (i) {
             case 0:
@@ -149,14 +157,14 @@ public class sqlUtils {
 
     /**
      * Generates a JSON array of objects of the entire table, with each row being converted to a single object.
-     * <p>
+     *
      * For example table:
-     * <p>
+     *
      * create table t (a int, b text)
      * insert into t values (1, 'value1');
      * insert into t values (2, 'value2');
      * insert into t values (3, 'value3');
-     * <p>
+     *
      * Result function
      * [{"a":1,"b":"value1"},{"a":2,"b":"value2"},{"a":3,"b":"value3"}]
      *
@@ -166,6 +174,7 @@ public class sqlUtils {
     public static JSONArray getTableJsonList(int sheetType) {
         fillRequiredLabels();
         String tableName = "";
+        // Check the sheetType and assign corresponding name
         switch (sheetType) {
             case 0:
                 tableName = "nedap.alarm ";
@@ -178,13 +187,14 @@ public class sqlUtils {
                 break;
             default:
         }
+        // Start of query which outputs a JSON array with JSON objects
         String query = "SELECT array_to_json(array_agg(t)) FROM " + tableName + " t;";
 
-
+        // Connect to database
         Connection connection = getConnection();
         assert connection != null;
 
-
+        // Remove colon from end
         StringBuffer sb = new StringBuffer(executeQuery(connection, query));
         sb.deleteCharAt(sb.length() - 1);
 

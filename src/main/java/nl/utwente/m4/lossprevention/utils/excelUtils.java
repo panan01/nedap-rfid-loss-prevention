@@ -88,6 +88,12 @@ public class excelUtils {
         }
     }
 
+    /**
+     * Function for getting an XSSFSheet containing all the data from one table.
+     *
+     * @param sheetType the type of data expected to be in the sheet, can be 0,1,2 with each representing a different table
+     * @return XSSFSheet containing data from one table
+     */
     public static XSSFSheet exportSheet(int sheetType) {
         //Create a new Workbook
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -110,6 +116,7 @@ public class excelUtils {
             default:
         }
 
+        //Create new XSSFSheet
         XSSFSheet sheet = workbook.createSheet(sheetName);
 
         //Get and assign the data for the excel sheet
@@ -129,7 +136,6 @@ public class excelUtils {
         }
 
         rowNumber++;
-        columnNumber = 0;
 
         // Now add the rest of the rows containing the data
         for (Object object : jsonarray) {
@@ -141,12 +147,15 @@ public class excelUtils {
             columnNumber = 0;
             // create cells
 
+            // for each label we get the value from the JSONObject which has the (parsed) label as a key
             for (String label : getRequiredLabels(sheetType)) {
 
+                // Create cell
                 Cell cell = row.createCell(columnNumber);
-
+                // Create base key
                 String key = getRequiredLabels(sheetType).get(columnNumber).toLowerCase();
 
+                // Parse key for cases where label differs from database label
                 switch (key) {
                     case "store id (ut)":
                         if (sheetType == 0) {
