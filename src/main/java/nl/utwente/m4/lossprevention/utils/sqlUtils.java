@@ -1,9 +1,12 @@
 package nl.utwente.m4.lossprevention.utils;
 
 import java.sql.*;
+
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.util.ArrayList;
 
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
@@ -99,20 +102,21 @@ public class sqlUtils {
 
     /**
      * Generates a JSON array of objects of the entire table, with each row being converted to a single object.
-     *
+     * <p>
      * For example table:
-     *
+     * <p>
      * create table t (a int, b text)
      * insert into t values (1, 'value1');
      * insert into t values (2, 'value2');
      * insert into t values (3, 'value3');
-     *
+     * <p>
      * Result function
      * [{"a":1,"b":"value1"},{"a":2,"b":"value2"},{"a":3,"b":"value3"}]
+     *
      * @param sheetType type of table to get data from
      * @return
      */
-    public static JSONArray getTableJsonList(int sheetType){
+    public static JSONArray getTableJsonList(int sheetType) {
         String tableName = "";
         switch (sheetType) {
             case 0:
@@ -132,7 +136,11 @@ public class sqlUtils {
         Connection connection = getConnection();
         assert connection != null;
 
-        JSONArray jsonarray = new JSONArray(executeQuery(connection, query));
+
+        StringBuffer sb = new StringBuffer(executeQuery(connection, query));
+        sb.deleteCharAt(sb.length() - 1);
+        JSONArray jsonarray = (JSONArray) new JSONTokener(sb.toString()).nextValue();
+
         return jsonarray;
 
     }

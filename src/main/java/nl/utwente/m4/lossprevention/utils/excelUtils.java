@@ -5,7 +5,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.json.JSONArray;
+
+import org.json.*;
 
 import java.io.*;
 import java.sql.Connection;
@@ -102,6 +103,7 @@ public class excelUtils {
         //Get and assign the data for the excel sheet
         JSONArray jsonarray = getTableJsonList(sheetType);
 
+        System.out.println(jsonarray.get(0));
 
         //Iterate over data and write it to the sheet
 
