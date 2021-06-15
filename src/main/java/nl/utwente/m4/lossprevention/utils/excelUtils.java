@@ -29,7 +29,7 @@ public class excelUtils {
         //System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 1, 1));
 
         /*System.out.println(getRowCount(exportSheet(2)));*/
-        XSSFSheet sheet = exportSheet(2);
+        XSSFSheet sheet = exportSheet(0);
         for (int i = 0; i < 53; i++) {
             String row = "";
             for (int k = 0; k < getColumnLabels(sheet).size(); k++) {
@@ -118,14 +118,27 @@ public class excelUtils {
         //Iterate over data and write it to the sheet
 
         int rowNumber = 0;
-        // for each row object in the array
+        int columnNumber = 0;
+        // Because the labels aren't exported from the database we add them back in here:
+        Row labels = sheet.createRow(rowNumber);
+
+        for (String label : getRequiredLabels(sheetType)) {
+            Cell cellLabel = labels.createCell(columnNumber);
+            cellLabel.setCellValue(getRequiredLabels(sheetType).get(columnNumber));
+            columnNumber++;
+        }
+
+        rowNumber++;
+        columnNumber = 0;
+
+        // Now add the rest of the rows containing the data
         for (Object object : jsonarray) {
             //make JSON object from object
             JSONObject jsonObject = new JSONObject(object.toString());
 
             //Create empty row at
             Row row = sheet.createRow(rowNumber);
-            int columnNumber = 0;
+             columnNumber = 0;
             // create cells
 
             for (String label : getRequiredLabels(sheetType)) {
