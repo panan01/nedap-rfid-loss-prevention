@@ -1,5 +1,6 @@
 package nl.utwente.m4.lossprevention.login;
 
+import nl.utwente.m4.lossprevention.JWT.TokenGarage;
 import nl.utwente.m4.lossprevention.sql.Queries;
 
 import javax.crypto.KeyGenerator;
@@ -23,11 +24,13 @@ public class Login {
     private static Key key;
     private static KeyGenerator gen;
 
+
     public Login() {
         try {
             gen = KeyGenerator.getInstance("HmacSHA512");
             gen.init(512, new SecureRandom());
             key = gen.generateKey();
+
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -44,34 +47,40 @@ Expected JSON
     public Response authenticateUser(JSONObject body) {
         String email = (String) body.get("email");
         String password = (String) body.get("password");
+        // Authenticate the user using the credentials provided
         try {
-            // Authenticate the user using the credentials provided
-            login(email, password);
-
-            // Issue a token for the user
-            String token = issueToken(email);
-
-            // Return the token on the response
-            return Response.status(200).entity(token).build();
-
-        } catch (SQLException e) {
+            if (login(email, password)) {
+                // Issue a token for the user
+                String token = issueToken(email);
+                //stores the token for further use
+                TokenGarage.storeToken(token, email);
+                // Return the token on the response
+                return Response.status(200).entity(token).build();
+            } else {
+                return Response.status(200).entity("fail").build();
+            }
+        } catch (SQLException e){
+            System.err.println("Unknown error occurred: " + e);
             return Response.status(200).entity("fail").build();
         }
     }
 
     // Login user, should throw SQLException if user doesn't exist/wrong credentials
-    public void login(String email, String passw) throws SQLException {
+    public boolean login(String email, String passw) {
         if (passw != null) {
-            Queries.instance.checkUserAndPass(email,passw);
+            return Queries.instance.checkUserAndPass(email,passw);
+        } else {
+            return false;
         }
     }
 
     //Issue token using JWT
-    public String issueToken(String email) {
+    public String issueToken(String email) throws SQLException{
         Date issuedTime = new Date(System.currentTimeMillis());
         Date expDate = new Date(System.currentTimeMillis() + 1800000);
+        String role = Queries.instance.getUserRole(email);
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(role)
                 .setIssuedAt(issuedTime)
                 .setExpiration(expDate)
                 .signWith(key, SignatureAlgorithm.HS512).compact();
@@ -80,6 +89,7 @@ Expected JSON
     public static Key getKey() {
         return key;
     }
+
 }
 
 
