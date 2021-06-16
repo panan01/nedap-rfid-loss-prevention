@@ -30,15 +30,15 @@ public enum Queries {
             connection = DriverManager.getConnection(url, username, password);
             checkEmailSt = connection.prepareStatement("SELECT EXISTS (select 1 FROM users u WHERE u.email = ? LIMIT 1)");
             addNewUser = connection.prepareStatement("INSERT INTO users (email,hashed_pass,first_name,last_name,type, salt) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)");
+                                                          "VALUES (?, ?, ?, ?, ?, ?)");
             checkUserAndPass = connection.prepareStatement("SELECT EXISTS (SELECT 1 FROM users u " +
-                    "WHERE u.email = ? AND u.hashed_pass = ? LIMIT 1)");
+                                                                    "WHERE u.email = ? AND u.hashed_pass = ? LIMIT 1)");
             getSalt = connection.prepareStatement("SELECT salt FROM users WHERE email = ?");
         } catch(SQLException sqle) {
             System.err.println("Error connecting: " + sqle);
         }
     }
-    // Checking if the email already exists on the database (true = not exists, false = exists)
+// Checking if the email already exists on the database (true = not exists, false = exists)
     public boolean checkEmailValidity(String email) {
         try {
             if (email.contains("@")) {
@@ -55,7 +55,7 @@ public enum Queries {
         return false;
     }
 
-    //    adding new user to the database
+//    adding new user to the database
     public boolean addNewUser(String email, byte[] hashedPass, String firstName, String lastName, String type, String salt){
         try{
             addNewUser.setString(1, email);
@@ -72,7 +72,7 @@ public enum Queries {
         }
     }
 
-    //    check the user name and it's password
+//    check the user name and it's password
     public boolean checkUserAndPass(String email, String password){
         try{
             String salt = this.getSalt(email);

@@ -1,0 +1,24 @@
+@import "theme";
+
+.input {
+    box-sizing: border-box;
+    padding: sz(4pt) sz(0pt);
+    margin: sz(3pt);
+    cursor: text;
+    border: none;
+    border-bottom: 2pt solid $col-heritage-blue;
+    background: none;
+
+    @include text-body;
+
+    &:focus, &:hover {
+        outline: none;
+        border-bottom: 2pt solid $col-spark-orange;
+    }
+
+    &.block {
+        display: block;
+        width: 100%;
+        margin: sz(3pt) sz(0pt);
+    }
+}

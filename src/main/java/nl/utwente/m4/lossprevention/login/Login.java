@@ -13,12 +13,12 @@ import javax.ws.rs.core.Response;
 
 @Path("/login")
 public class Login {
-    /*
-    Expected JSON
-    {
-    "email":
-    "password":
-     */
+/*
+Expected JSON
+{
+"email":
+"password":
+ */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
