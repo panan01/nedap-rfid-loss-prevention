@@ -1,10 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="css/main.css"> <!-- Compiled from SCSS -->
   <meta charset="UTF-8">
-  <title>Import Export</title>
+  <title>Import/export</title>
 </head>
 <body>
-
+<form onsubmit="handleUpload()" method="POST" enctype="multipart/form-data" id="submitForm">
+  <p>What file do you want to upload?</p>
+  <input type="file" id="fileToUpload" name="fileToUpload" required>
+  <br/><br/>
+  <input type="submit" value="Submit">
+  <p id="submitResponse"></p>
+</form>
 </body>
+
+
+
+<script>
+  function handleUpload() {
+    let items = document.getElementById("submitResponse");
+    let xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        items.innerText = this.responseText;
+      }
+    }
+    let URI = "http://localhost:8080/loss_prevention_war/upload";
+    let formData = new FormData();
+    formData.append("fileToUpload", document.getElementById("fileToUpload").files[0]);
+    xmlHttp.open("POST", URI, true);
+    xmlHttp.send(formData);
+    items.innerText = "Uploaded file, processing...";
+  }
+
+  let form = document.getElementById("submitForm");
+  function handleForm(event) { event.preventDefault(); }
+  form.addEventListener('submit', handleForm);
+</script>
+
 </html>
+
