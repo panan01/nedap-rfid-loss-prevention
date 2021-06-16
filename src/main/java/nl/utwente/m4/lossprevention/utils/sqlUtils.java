@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
 
@@ -111,6 +112,10 @@ public class sqlUtils {
         }
     }
 
+public static HashMap<Integer, String> generateSetStringInputs(String query){
+return null;
+}
+
     /**
      * Basic function to execute queries to respective connection, if the query has a return then it's returned as a colon separated String
      *
@@ -124,7 +129,8 @@ public class sqlUtils {
 
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
-                //st.setString(); //TODO make conventions for our queries
+
+                //st.setString();
             }
 
             ResultSet resultSet = st.executeQuery();
