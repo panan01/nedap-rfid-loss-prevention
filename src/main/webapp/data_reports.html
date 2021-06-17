@@ -6,13 +6,30 @@
   <title>Import/export</title>
 </head>
 <body>
-<form onsubmit="handleUpload()" method="POST" enctype="multipart/form-data" id="submitForm">
-  <p>What file do you want to upload?</p>
-  <input type="file" id="fileToUpload" name="fileToUpload" required>
-  <br/><br/>
-  <input type="submit" value="Submit">
-  <p id="submitResponse"></p>
-</form>
+<div class="row-fluid">
+  <div class="span1">
+    <form onsubmit="handleUpload()" method="POST" enctype="multipart/form-data" id="submitForm">
+      <p>What file do you want to upload?</p>
+      <input type="file" id="fileToUpload" name="fileToUpload" required>
+      <br>
+      <input type="submit" value="Submit">
+      <p id="submitResponse"></p>
+    </form>
+  </div>
+  <div class="span2">
+    <a href="/loss_prevention_war/download/alarm" download="alarms">
+      Download alarm data (as excel)
+    </a>
+    <br>
+    <a href="/loss_prevention_war/download/article" download="articles">
+      Download article data (as excel)
+    </a>
+    <br>
+    <a href="/loss_prevention_war/download/store" download="stores">
+      Download store data (as excel)
+    </a>
+  </div>
+</div>
 </body>
 
 
@@ -38,6 +55,18 @@
   function handleForm(event) { event.preventDefault(); }
   form.addEventListener('submit', handleForm);
 </script>
+
+<style>
+.span1 {
+  float: left;
+}
+.span2 {
+  float: right;
+}
+.row-fluid {
+  max-width: 550px;
+}
+</style>
 
 </html>
 
