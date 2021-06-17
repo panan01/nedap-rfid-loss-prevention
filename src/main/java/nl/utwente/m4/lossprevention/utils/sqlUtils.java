@@ -9,6 +9,7 @@ import org.json.JSONTokener;
 
 import java.util.ArrayList;
 
+
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
 
 public class sqlUtils {
@@ -111,6 +112,19 @@ public class sqlUtils {
         }
     }
 
+    public static String generateSetStringInputs(String query){
+        String[] generationCode = query.split("-");
+        switch (generationCode[0]){
+            case  "0" :
+                break;
+            case  "1" :
+                break;
+            default:
+        }
+
+        return null;
+    }
+
     /**
      * Basic function to execute queries to respective connection, if the query has a return then it's returned as a colon separated String
      *
@@ -120,31 +134,38 @@ public class sqlUtils {
      */
     public static String executeQuery(Connection connection, String query) {
         try {
-            PreparedStatement st = connection.prepareStatement(query);
-
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
-                //st.setString(); //TODO make conventions for our queries
+                String[] generationCodeArray = query.split(";");
+                try {
+                    generateSetStringInputs(generationCodeArray[1]);
+                } catch (NullPointerException e){
+                    return "Prepared statement generation code missing";
+                }
+
+
+
+                //st.setString();
             }
+
+            PreparedStatement st = connection.prepareStatement(query);
+
+
 
             ResultSet resultSet = st.executeQuery();
             ResultSetMetaData rsmd = resultSet.getMetaData();
 
             int columnsNumber = rsmd.getColumnCount();
 
-
             String result = "";
             // prints query results
-
 
             while (resultSet.next()) {
                 for (int i = 1; i < columnsNumber + 1; i++) {
 
                     result += resultSet.getString(i) + ":";
                 }
-
             }
-
 
             // A wise man once said that if you open a door you should also close it
             connection.close();
