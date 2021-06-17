@@ -47,24 +47,31 @@ public class account {
     /*
     Expecting from the front end:
         {
-            "email": NOT NULL
             "password": if this filed is not modified pls return ""
             "last_name": if this filed is not modified pls return ""
             "type": if this filed is not modified pls return ""
             "first_name": if this filed is not modified pls return ""
         }
      */
+    // returns: status 400 + "no such user type" if the user type does not exist
+    // returns: status 401 + "unauthorized password changing" if it's not admin changing the pass
+    // returns: status 400 for any other invalid token
+    // returns: status 200 + "success" if password/user info changed successfully
+    // returns: status 200 + "fail" if SQL error occur
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     // Requires a filed in the header called "Authorization" that returns the token
     @JWTNeeded
     public Response modifyAccount(JSONObject body, @PathParam("email") String email, @Context HttpServletRequest request) {
-        String input_email = (String) body.get("email");
         String password = (String) body.get("password");
         String first_name = (String) body.get("first_name");
         String last_name = (String) body.get("last_name");
         String type = (String) body.get("type");
+        // If the user type filed is not empty, then check the type if it's actually exists.
+        if (!type.equals("") && !(type.equals("admin") || type.equals("store manager") || type.equals("division manager") || type.equals("loss prevention manager"))){
+            return Response.status(400).entity("no such user type").build();
+        }
         // get the JWT token of the modifier
         String token = request.getHeader("Authorization");
         // get the email of the modifier
@@ -74,22 +81,24 @@ public class account {
             String modifierRole = Queries.instance.getUserRole(requestedFrom);
             // check if the modifier is the user itself or an "admin" and the password is empty
             if ((requestedFrom.equals(email) || modifierRole.equals("admin")) && password.equals("")) {
-                // Only admin is able to change the password, so check if the admin is changing
-                System.out.println("I am here");
-                this.modifyUser(input_email,password,first_name,last_name,type);
+                //modify the user according to the input from the front end
+                this.modifyUser(email,password,first_name,last_name,type);
+                System.out.println("Modified user " + email + " successfully");
                 return Response.status(200).entity("success").build();
             // check if the user is admin and password is not empty (because only the admin can change password)
             } else if (modifierRole.equals("admin") && !password.equals("")){
-                System.out.println("I am now here");
                 this.modifyUser(email,password,first_name,last_name,type);
+                System.out.println("User " + email + " password changed");
                 return Response.status(200).entity("success").build();
+            // if the password id not empty and is not admin modifying
+            } else if (!password.equals("")){
+                return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized password changing").build();
             } else {
-                System.out.println("I am now now here");
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
 
         } catch (SQLException e) {
-            System.err.println("Something wrong happened while modifying user: " + e);
+            System.err.println("Something wrong happened while modifying user:  " + e);
             return Response.status(200).entity("fail").build();
         }
     }
@@ -100,9 +109,8 @@ public class account {
     @AdminJWTNeeded
     public Response deleteAccount(@PathParam("email") String email){
         try {
-            System.out.println("Deleting account " + email);
             Queries.instance.DeleteAccount(email);
-            System.out.println("Deleted account " + email);
+            System.out.println("Deleted account \"" + email + " \"");
             return Response.status(200).entity("success").build();
         } catch (SQLException e){
             System.err.println("Something wrong happened while deleting user " + email);
@@ -112,22 +120,18 @@ public class account {
 
     public void modifyUser(String email, String password, String fname, String lname, String type) throws SQLException {
         if (!password.equals("")) {
-            System.out.println("User: " + email + " Changing Password");
             Queries.instance.modifyUser(email, "password", password);
             System.out.println("User: " + email + " Password changed");
         }
         if (!fname.equals("")) {
-            System.out.println("User: " + email + " Changing first name");
             Queries.instance.modifyUser(email, "first_name", fname);
             System.out.println("User: " + email + " first name changed");
         }
         if (!lname.equals("")) {
-            System.out.println("User: " + email + " Changing last name");
             Queries.instance.modifyUser(email, "last_name", lname);
             System.out.println("User: " + email + " last name changed");
         }
         if (!type.equals("")) {
-            System.out.println("User: " + email + " Changing role");
             Queries.instance.modifyUser(email, "type", type);
             System.out.println("User: " + email + " role changed");
         }

@@ -40,7 +40,11 @@ Expected JSON
 {
 "email":
 "password":
+}
  */
+    // If successfully logged in a token is returned
+    // If the user is not registered, returns "unkown user"
+    // If the password is not correct, returns "fail"
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -49,6 +53,10 @@ Expected JSON
         String password = (String) body.get("password");
         // Authenticate the user using the credentials provided
         try {
+            // if the user email does not exist in the databse
+            if (Queries.instance.checkEmailValidity(email)){
+                return Response.status(200).entity("unknown user").build();
+            }
             if (login(email, password)) {
                 // Issue a token for the user
                 String token = issueToken(email);
@@ -86,6 +94,7 @@ Expected JSON
                 .signWith(key, SignatureAlgorithm.HS512).compact();
     }
 
+    //Get the private key for the JWT encryption
     public static Key getKey() {
         return key;
     }
