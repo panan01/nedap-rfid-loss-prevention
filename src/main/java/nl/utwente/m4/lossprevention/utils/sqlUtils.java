@@ -158,24 +158,24 @@ public class sqlUtils {
             default:
 
         }
-
+        ArrayList<String> variables = getVariables(generationCode[1].substring(1));
         switch (generationCode[1].charAt(0)) {
             case '0':
                 generatedQuery += "* ";
                 break;
             case '1':
-                ArrayList<String> variables = getVariables(generationCode[1].substring(1));
+
                 generatedQuery += "nedap.article." + variables.get(0) + ", COUNT(nedap.article." + variables.get(0) + ") ";
                 break;
             case '2':
-                variables = getVariables(generationCode[1].substring(1));
+
                 generatedQuery += "nedap.alarm." + variables.get(0) + ", COUNT(nedap.alarm." + variables.get(0) + ") ";
                 break;
             case '3':
                 generatedQuery += "nedap.store.id AS store_id, nedap.store.longitude, nedap.store.latitude ";
                 break;
             case '4':
-                variables = getVariables(generationCode[1].substring(1));
+
                 if (variables.get(2).equals("0")) {
                     generatedQuery += "SUM(";
                 } else if (variables.get(2).equals("1")) {
@@ -184,7 +184,7 @@ public class sqlUtils {
                 generatedQuery += variables.get(0) + ") AS " + variables.get(1) + " ";
                 break;
             case '5':
-                variables = getVariables(generationCode[1].substring(1));
+
                 generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
                 break;
             case '6':
@@ -194,25 +194,25 @@ public class sqlUtils {
         }
 
         generatedQuery += "FROM ";
-
+        variables = getVariables(generationCode[2].substring(1));
         switch (generationCode[2].charAt(0)) {
             case '0':
 
                 break;
             case '1':
-                ArrayList<String> variables = getVariables(generationCode[2].substring(1));
+
                 generatedQuery += "nedap." + variables.get(0) + " ";
                 break;
             case '2':
-                variables = getVariables(generationCode[2].substring(1));
+
                 generatedQuery += "nedap." + variables.get(0) + " nedap." + variables.get(1) + " ";
                 break;
             case '3':
-                variables = getVariables(generationCode[2].substring(1));
+
                 generatedQuery += "nedap." + variables.get(0) + " nedap." + variables.get(1) + " nedap." + variables.get(2) + " ";
                 break;
             case '4':
-                variables = getVariables(generationCode[2].substring(1));
+
                 if (variables.get(0).equals("1")) {
                     generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + variables.get(1) + " AND date(timestamp) <= " + variables.get(1) + " GROUP BY alarm.store_id) AS SumInterval";
 
@@ -221,7 +221,7 @@ public class sqlUtils {
                 }
                 break;
             case '5':
-                variables = getVariables(generationCode[2].substring(1));
+
                 generatedQuery += "(SELECT DATE_PART(" + variables.get(0) + ", timestamp) as timeinterval, store_id FROM alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table";
                 break;
             case '6':
@@ -229,19 +229,42 @@ public class sqlUtils {
                 break;
         }
 
-
+        variables = getVariables(generationCode[3].substring(1));
         switch (generationCode[3].charAt(0)) {
             case '0':
+
                 break;
             case '1':
+                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
                 break;
             case '2':
+                generatedQuery += "WHERE " + variables.get(0) + " ";
                 break;
             case '3':
+                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
+                if (variables.get(3) != "0") {
+                    generatedQuery += "AND date(timestamp) >=" + variables.get(3) + " ";
+                }
+                if (variables.get(4) != "0") {
+                    generatedQuery += "AND date(timestamp) <=" + variables.get(3) + " ";
+                }
                 break;
             case '4':
+                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
+                if (variables.get(3) != "0") {
+                    generatedQuery += "AND date(timestamp) >= to_timestamp(" + variables.get(3) + ", 'dd-mm-yyyy hh24:mi:ss') ";
+                }
+                if (variables.get(4) != "0") {
+                    generatedQuery += "AND date(timestamp) <= to_timestamp(" + variables.get(4) + ", 'dd-mm-yyyy hh24:mi:ss') ";
+                }
                 break;
             case '5':
+                generatedQuery += "WHERE article.id = alarm.article_id ";
+                if (!variables.get(0).equals("0")) {
+                } else {
+                    generatedQuery += "AND date(timestamp) = " + variables.get(0) + " ";
+                }
+
                 break;
         }
 
