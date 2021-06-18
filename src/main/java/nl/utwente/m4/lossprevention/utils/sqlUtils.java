@@ -24,7 +24,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
         String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|size|-1-1-1-1-1";
-        String realQuery = "1-1|size|-1-1-1-1-1-1";
+        String realQuery = "1-2|store_id|-2|article:alarm|-1|article.article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
         System.out.println(generateSetStringInputs(realQuery));
 
@@ -121,25 +121,34 @@ public class sqlUtils {
 
     public static ArrayList<String> getVariables(String variableString) {
         ArrayList<String> variableArrayList = new ArrayList<>();
+        try {
 
-        if ((variableString.charAt(0) == '|') && (variableString.charAt(variableString.length() - 1) == '|')) {
+            if ((variableString.charAt(0) == '|') && (variableString.charAt(variableString.length() - 1) == '|')) {
 
-            int i = 1;
-            int arrayIndex = 0;
-            String variable = "";
+                int i = 1;
+                int arrayIndex = 0;
+                String variable = "";
 
-            while (variableString.charAt(i) != '|') {
-                if (variableString.charAt(i) == ':') {
-                    variableArrayList.add(arrayIndex, variable);
-                    variable = "";
-                    arrayIndex++;
-                } else {
-                    variable += variableString.charAt(i);
-                    i++;
+                while (variableString.charAt(i) != '|') {
+                    if (variableString.charAt(i) == ':') {
+
+                        variableArrayList.add(arrayIndex, variable);
+                        variable = "";
+                        arrayIndex++;
+                        i++;
+                    } else {
+                        variable += variableString.charAt(i);
+                        i++;
+                    }
                 }
+                variableArrayList.add(arrayIndex, variable);
             }
-            variableArrayList.add(arrayIndex, variable);
+        } catch (StringIndexOutOfBoundsException e) {
+            //no variables
         }
+
+
+
         return variableArrayList;
     }
 
@@ -273,7 +282,7 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "GROUP BY nedap."+variables.get(0)+" ";
+                generatedQuery += "GROUP BY nedap." + variables.get(0) + " ";
                 break;
 
         }
@@ -283,7 +292,7 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "HAVING COUNT("+variables.get(0)+") "+variables.get(1)+" "+variables.get(2)+" ";
+                generatedQuery += "HAVING COUNT(" + variables.get(0) + ") " + variables.get(1) + " " + variables.get(2) + " ";
                 break;
 
         }
@@ -293,7 +302,7 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "ORDER BY COUNT("+variables.get(0)+") DESC ";
+                generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
                 break;
         }
 
@@ -302,7 +311,7 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery+= "LIMIT "+variables.get(0)+" ";
+                generatedQuery += "LIMIT " + variables.get(0) + " ";
                 break;
         }
 
@@ -318,20 +327,18 @@ public class sqlUtils {
      */
     public static String executeQuery(Connection connection, String query) {
         try {
+            PreparedStatement st = connection.prepareStatement(query);
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
                 String[] generationCodeArray = query.split(";");
                 try {
-                    generateSetStringInputs(generationCodeArray[1]);
+                    st.setString(1, generateSetStringInputs(generationCodeArray[1]));
                 } catch (NullPointerException e) {
                     return "Prepared statement generation code missing";
                 }
 
 
-                //st.setString();
             }
-
-            PreparedStatement st = connection.prepareStatement(query);
 
 
             ResultSet resultSet = st.executeQuery();
