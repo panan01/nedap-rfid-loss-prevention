@@ -19,9 +19,16 @@ public class sqlUtils {
      * For testing purposes
      */
     public static void main(String[] args) {
-        //System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
+
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|size|-1-1-1-1-1";
+        String realQuery = "1-1|size|-1-1-1-1-1-1";
+
+        System.out.println(generateSetStringInputs(realQuery));
+
+
     }
 
     //============================================== Database Utils  ===============================================\\
@@ -32,34 +39,34 @@ public class sqlUtils {
 
     /**
      * Function for filling the required labels
-     *
      */
     private static void fillRequiredLabels() {
         // Type one is of alarm type
 
-        requiredLabelsType1.add(0,"EPC (UT)");
-        requiredLabelsType1.add(1,"Timestamp");
-        requiredLabelsType1.add(2,"Store ID (UT)");
-        requiredLabelsType1.add(3,"Article ID (UT)");
+        requiredLabelsType1.add(0, "EPC (UT)");
+        requiredLabelsType1.add(1, "Timestamp");
+        requiredLabelsType1.add(2, "Store ID (UT)");
+        requiredLabelsType1.add(3, "Article ID (UT)");
 
         // Type two is of article type
 
-        requiredLabelsType2.add(0,"Article ID (UT)");
-        requiredLabelsType2.add(1,"Category (UT)");
-        requiredLabelsType2.add(2,"Article (UT)");
-        requiredLabelsType2.add(3,"Color");
-        requiredLabelsType2.add(4,"Size");
-        requiredLabelsType2.add(5,"Price (EUR)");
+        requiredLabelsType2.add(0, "Article ID (UT)");
+        requiredLabelsType2.add(1, "Category (UT)");
+        requiredLabelsType2.add(2, "Article (UT)");
+        requiredLabelsType2.add(3, "Color");
+        requiredLabelsType2.add(4, "Size");
+        requiredLabelsType2.add(5, "Price (EUR)");
 
         // Type three is of store type
 
-        requiredLabelsType3.add(0,"Store ID (UT)");
-        requiredLabelsType3.add(1,"Latitude (UT)");
-        requiredLabelsType3.add(2,"Longitude (UT)");
+        requiredLabelsType3.add(0, "Store ID (UT)");
+        requiredLabelsType3.add(1, "Latitude (UT)");
+        requiredLabelsType3.add(2, "Longitude (UT)");
     }
 
     /**
      * Function for getting the required labels
+     *
      * @param i labeltype
      * @return Labels
      */
@@ -112,17 +119,167 @@ public class sqlUtils {
         }
     }
 
-    public static String generateSetStringInputs(String query){
+    public static ArrayList<String> getVariables(String variableString) {
+        ArrayList<String> variableArrayList = new ArrayList<>();
+
+        if ((variableString.charAt(0) == '|') && (variableString.charAt(variableString.length() - 1) == '|')) {
+
+            int i = 1;
+            int arrayIndex = 0;
+            String variable = "";
+
+            while (variableString.charAt(i) != '|') {
+                if (variableString.charAt(i) == ':') {
+                    variableArrayList.add(arrayIndex, variable);
+                    variable = "";
+                    arrayIndex++;
+                } else {
+                    variable += variableString.charAt(i);
+                    i++;
+                }
+            }
+            variableArrayList.add(arrayIndex, variable);
+        }
+        return variableArrayList;
+    }
+
+    public static String generateSetStringInputs(String query) {
+
         String[] generationCode = query.split("-");
-        switch (generationCode[0]){
-            case  "0" :
+
+        String generatedQuery = "";
+        switch (generationCode[0].charAt(0)) {
+            case '0':
+                generatedQuery += "SELECT ";
                 break;
-            case  "1" :
+            case '1':
+                generatedQuery += "SELECT DISTINCT ";
                 break;
             default:
+
         }
 
-        return null;
+        switch (generationCode[1].charAt(0)) {
+            case '0':
+                generatedQuery += "* ";
+                break;
+            case '1':
+                ArrayList<String> variables = getVariables(generationCode[1].substring(1));
+                generatedQuery += "nedap.article." + variables.get(0) + ", COUNT(nedap.article." + variables.get(0) + ") ";
+                break;
+            case '2':
+                variables = getVariables(generationCode[1].substring(1));
+                generatedQuery += "nedap.alarm." + variables.get(0) + ", COUNT(nedap.alarm." + variables.get(0) + ") ";
+                break;
+            case '3':
+                generatedQuery += "nedap.store.id AS store_id, nedap.store.longitude, nedap.store.latitude ";
+                break;
+            case '4':
+                variables = getVariables(generationCode[1].substring(1));
+                if (variables.get(2).equals("0")) {
+                    generatedQuery += "SUM(";
+                } else if (variables.get(2).equals("1")) {
+                    generatedQuery += "COUNT(";
+                }
+                generatedQuery += variables.get(0) + ") AS " + variables.get(1) + " ";
+                break;
+            case '5':
+                variables = getVariables(generationCode[1].substring(1));
+                generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
+                break;
+            case '6':
+                generatedQuery += "day AS weekday, COUNT(day) ";
+            default:
+
+        }
+
+        generatedQuery += "FROM ";
+
+        switch (generationCode[2].charAt(0)) {
+            case '0':
+
+                break;
+            case '1':
+                ArrayList<String> variables = getVariables(generationCode[2].substring(1));
+                generatedQuery += "nedap." + variables.get(0) + " ";
+                break;
+            case '2':
+                variables = getVariables(generationCode[2].substring(1));
+                generatedQuery += "nedap." + variables.get(0) + " nedap." + variables.get(1) + " ";
+                break;
+            case '3':
+                variables = getVariables(generationCode[2].substring(1));
+                generatedQuery += "nedap." + variables.get(0) + " nedap." + variables.get(1) + " nedap." + variables.get(2) + " ";
+                break;
+            case '4':
+                variables = getVariables(generationCode[2].substring(1));
+                if (variables.get(0).equals("1")) {
+                    generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + variables.get(1) + " AND date(timestamp) <= " + variables.get(1) + " GROUP BY alarm.store_id) AS SumInterval";
+
+                } else {
+                    generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id GROUP BY alarm.store_id) AS SumInterval";
+                }
+                break;
+            case '5':
+                variables = getVariables(generationCode[2].substring(1));
+                generatedQuery += "(SELECT DATE_PART(" + variables.get(0) + ", timestamp) as timeinterval, store_id FROM alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table";
+                break;
+            case '6':
+                generatedQuery += "SELECT day AS weekday, COUNT(day) FROM (SELECT trim(to_char(timestamp, 'day')) AS day FROM alarm) AS day_table ";
+                break;
+        }
+
+
+        switch (generationCode[3].charAt(0)) {
+            case '0':
+                break;
+            case '1':
+                break;
+            case '2':
+                break;
+            case '3':
+                break;
+            case '4':
+                break;
+            case '5':
+                break;
+        }
+
+
+        switch (generationCode[4].charAt(0)) {
+            case '0':
+                break;
+            case '1':
+                break;
+
+        }
+
+
+        switch (generationCode[5].charAt(0)) {
+            case '0':
+                break;
+            case '1':
+                break;
+
+        }
+
+
+        switch (generationCode[6].charAt(0)) {
+            case '0':
+                break;
+            case '1':
+                break;
+        }
+
+
+        switch (generationCode[7].charAt(0)) {
+            case '0':
+                break;
+            case '1':
+                break;
+        }
+
+        return generatedQuery;
     }
 
     /**
@@ -139,17 +296,15 @@ public class sqlUtils {
                 String[] generationCodeArray = query.split(";");
                 try {
                     generateSetStringInputs(generationCodeArray[1]);
-                } catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     return "Prepared statement generation code missing";
                 }
-
 
 
                 //st.setString();
             }
 
             PreparedStatement st = connection.prepareStatement(query);
-
 
 
             ResultSet resultSet = st.executeQuery();
@@ -178,14 +333,14 @@ public class sqlUtils {
 
     /**
      * Generates a JSON array of objects of the entire table, with each row being converted to a single object.
-     *
+     * <p>
      * For example table:
-     *
+     * <p>
      * create table t (a int, b text)
      * insert into t values (1, 'value1');
      * insert into t values (2, 'value2');
      * insert into t values (3, 'value3');
-     *
+     * <p>
      * Result function
      * [{"a":1,"b":"value1"},{"a":2,"b":"value2"},{"a":3,"b":"value3"}]
      *
