@@ -268,37 +268,41 @@ public class sqlUtils {
                 break;
         }
 
-
+        variables = getVariables(generationCode[4].substring(1));
         switch (generationCode[4].charAt(0)) {
             case '0':
                 break;
             case '1':
+                generatedQuery += "GROUP BY nedap."+variables.get(0)+" ";
                 break;
 
         }
 
-
+        variables = getVariables(generationCode[5].substring(1));
         switch (generationCode[5].charAt(0)) {
             case '0':
                 break;
             case '1':
+                generatedQuery += "HAVING COUNT("+variables.get(0)+") "+variables.get(1)+" "+variables.get(2)+" ";
                 break;
 
         }
 
-
+        variables = getVariables(generationCode[6].substring(1));
         switch (generationCode[6].charAt(0)) {
             case '0':
                 break;
             case '1':
+                generatedQuery += "ORDER BY COUNT("+variables.get(0)+") DESC ";
                 break;
         }
 
-
+        variables = getVariables(generationCode[7].substring(1));
         switch (generationCode[7].charAt(0)) {
             case '0':
                 break;
             case '1':
+                generatedQuery+= "LIMIT "+variables.get(0)+" ";
                 break;
         }
 
