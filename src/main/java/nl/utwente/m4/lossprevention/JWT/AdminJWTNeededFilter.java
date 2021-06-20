@@ -23,7 +23,7 @@ public class AdminJWTNeededFilter implements ContainerRequestFilter {
         String token = containerRequestContext.getHeaderString("Authorization");
 
         try {
-            Jwts.parserBuilder().setSigningKey(Login.getKey()).requireSubject("admin").build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(TokenGarage.getKey()).requireSubject("admin").build().parseClaimsJws(token);
         } catch (Exception e) {
             containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
         }

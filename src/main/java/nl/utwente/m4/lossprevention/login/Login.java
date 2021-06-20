@@ -1,9 +1,10 @@
 package nl.utwente.m4.lossprevention.login;
 
+import nl.utwente.m4.lossprevention.InputSanitization.InputNotAllowedException;
+import nl.utwente.m4.lossprevention.InputSanitization.InputSanitizer;
 import nl.utwente.m4.lossprevention.JWT.TokenGarage;
 import nl.utwente.m4.lossprevention.sql.Queries;
 
-import javax.crypto.KeyGenerator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -11,9 +12,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.json.simple.JSONObject;
 
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.Date;
 
@@ -21,20 +19,8 @@ import java.util.Date;
 public class Login {
 
     private static final String SECRET = "69KA420HAH666R5I3C0K88A0S4H6LEY2XVOALEC321";
-    private static Key key;
-    private static KeyGenerator gen;
 
 
-    public Login() {
-        try {
-            gen = KeyGenerator.getInstance("HmacSHA512");
-            gen.init(512, new SecureRandom());
-            key = gen.generateKey();
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-    }
 /*
 Expected JSON
 {
@@ -43,7 +29,7 @@ Expected JSON
 }
  */
     // If successfully logged in a token is returned
-    // If the user is not registered, returns "unkown user"
+    // If the user is not registered, returns "unknown user"
     // If the password is not correct, returns "fail"
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -53,10 +39,9 @@ Expected JSON
         String password = (String) body.get("password");
         // Authenticate the user using the credentials provided
         try {
-            // if the user email does not exist in the databse
-            if (Queries.instance.checkEmailValidity(email)){
-                return Response.status(200).entity("unknown user").build();
-            }
+            // if the user email does not exist in the database or the email is not in the right format
+            Queries.instance.checkIfEmailExists(email);
+
             if (login(email, password)) {
                 // Issue a token for the user
                 String token = issueToken(email);
@@ -70,6 +55,9 @@ Expected JSON
         } catch (SQLException e){
             System.err.println("Unknown error occurred: " + e);
             return Response.status(200).entity("fail").build();
+            // catch the exception that was thrown by the checkEmailExists()
+        } catch (InputNotAllowedException f){
+            return Response.status(200).entity("unknown user").build();
         }
     }
 
@@ -77,9 +65,8 @@ Expected JSON
     public boolean login(String email, String passw) {
         if (passw != null) {
             return Queries.instance.checkUserAndPass(email,passw);
-        } else {
-            return false;
         }
+        return false;
     }
 
     //Issue token using JWT
@@ -91,14 +78,8 @@ Expected JSON
                 .setSubject(role)
                 .setIssuedAt(issuedTime)
                 .setExpiration(expDate)
-                .signWith(key, SignatureAlgorithm.HS512).compact();
+                .signWith(TokenGarage.getKey(), SignatureAlgorithm.HS512).compact();
     }
-
-    //Get the private key for the JWT encryption
-    public static Key getKey() {
-        return key;
-    }
-
 }
 
 

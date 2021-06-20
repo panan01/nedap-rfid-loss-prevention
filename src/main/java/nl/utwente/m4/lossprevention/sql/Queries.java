@@ -1,10 +1,12 @@
 package nl.utwente.m4.lossprevention.sql;
 
+import nl.utwente.m4.lossprevention.InputSanitization.InputNotAllowedException;
+import nl.utwente.m4.lossprevention.InputSanitization.InputSanitizer;
 import nl.utwente.m4.lossprevention.register.PasswordHasher;
 import org.json.simple.JSONObject;
 
-import java.awt.event.PaintEvent;
 import java.sql.*;
+import java.util.regex.Pattern;
 
 public enum Queries {
     instance;
@@ -14,6 +16,7 @@ public enum Queries {
     private final String url = "jdbc:postgresql://" + host + "/" + dbName + "?currentSchema=nedap";
     private final String username = "dab_di20212b_225";
     private final String password = "4gPNr326lyRQcR1J";
+    private Pattern emailPattern = Pattern.compile("^\\S+@\\S+.\\S+$");
     private Connection connection;
     private Statement st;
     private PreparedStatement checkEmailSt;
@@ -65,16 +68,18 @@ public enum Queries {
             System.err.println("Error connecting: " + sqle);
         }
     }
-// Checking if the email already exists on the database (true = not exists, false = exists)
-    public boolean checkEmailValidity(String email) {
+// Checking if the email already exists on the database (true = exists, false = not exist)
+    public boolean checkIfEmailExists(String email) throws InputNotAllowedException{
         try {
-            if (email.contains("@")) {
+            if (email.matches(emailPattern.pattern())) {
                 checkEmailSt.setString(1, email);
                 ResultSet rs = checkEmailSt.executeQuery();
                 rs.next();
                 boolean result = rs.getBoolean(1);
                 rs.close();
-                return !result;
+                return result;
+            } else {
+                throw new InputNotAllowedException("email");
             }
         } catch (SQLException e) {
             System.err.println("Email check failed: " + e);
@@ -83,12 +88,16 @@ public enum Queries {
     }
 
 //    adding new user to the database
-    public boolean addNewUser(String email, byte[] hashedPass, String firstName, String lastName, String type, String salt){
+    public boolean addNewUser(String email, byte[] hashedPass, String firstName, String lastName, String type, String salt) throws InputNotAllowedException{
         try{
+            InputSanitizer.checkEmail(email);
             addNewUser.setString(1, email);
             addNewUser.setBytes(2, hashedPass);
+            InputSanitizer.checkUserInput("first name", firstName);
             addNewUser.setString(3, firstName);
+            InputSanitizer.checkUserInput("last name", lastName);
             addNewUser.setString(4, lastName);
+            InputSanitizer.checkUserType(type);
             addNewUser.setString(5, type);
             addNewUser.setString(6, salt);
             addNewUser.execute();
