@@ -1,8 +1,7 @@
 package nl.utwente.m4.lossprevention.login;
 
 import nl.utwente.m4.lossprevention.InputSanitization.InputNotAllowedException;
-import nl.utwente.m4.lossprevention.InputSanitization.InputSanitizer;
-import nl.utwente.m4.lossprevention.JWT.TokenGarage;
+import nl.utwente.m4.lossprevention.JWT.JWTOffice;
 import nl.utwente.m4.lossprevention.sql.Queries;
 
 import javax.ws.rs.*;
@@ -45,8 +44,6 @@ Expected JSON
             if (login(email, password)) {
                 // Issue a token for the user
                 String token = issueToken(email);
-                //stores the token for further use
-                TokenGarage.storeToken(token, email);
                 // Return the token on the response
                 return Response.status(200).entity(token).build();
             } else {
@@ -75,10 +72,11 @@ Expected JSON
         Date expDate = new Date(System.currentTimeMillis() + 1800000);
         String role = Queries.instance.getUserRole(email);
         return Jwts.builder()
-                .setSubject(role)
+                .setSubject(email)
+                .setAudience(role)
                 .setIssuedAt(issuedTime)
                 .setExpiration(expDate)
-                .signWith(TokenGarage.getKey(), SignatureAlgorithm.HS512).compact();
+                .signWith(JWTOffice.getKey(), SignatureAlgorithm.HS512).compact();
     }
 }
 

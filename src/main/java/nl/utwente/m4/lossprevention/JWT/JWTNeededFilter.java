@@ -1,7 +1,6 @@
 package nl.utwente.m4.lossprevention.JWT;
 
 import io.jsonwebtoken.Jwts;
-import nl.utwente.m4.lossprevention.login.Login;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -23,7 +22,7 @@ public class JWTNeededFilter implements ContainerRequestFilter {
         String token = containerRequestContext.getHeaderString("Authorization");
 
         try {
-            Jwts.parserBuilder().setSigningKey(TokenGarage.getKey()).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(JWTOffice.getKey()).build().parseClaimsJws(token);
         } catch (Exception e) {
             containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
         }

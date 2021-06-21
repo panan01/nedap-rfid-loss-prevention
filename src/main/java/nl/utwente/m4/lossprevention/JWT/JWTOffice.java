@@ -1,15 +1,20 @@
 package nl.utwente.m4.lossprevention.JWT;
 
+
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.postgresql.util.Base64;
+
 import javax.crypto.KeyGenerator;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.HashMap;
 
-public enum TokenGarage {
+public enum JWTOffice {
     instance;
-    // stores all the token with it's corresponding email
-    private static HashMap<String , String> tokenUser = new HashMap<>();
+
     private static Key key;
     private static KeyGenerator gen;
     static {
@@ -22,13 +27,26 @@ public enum TokenGarage {
         }
     }
 
-    public static void storeToken(String token, String email) {
-        tokenUser.put(token,email);
-    }
     public static String getTokenUser(String token) {
-        return tokenUser.get(token);
+        return getJWTBody(token).getString("sub");
     }
+
+    public static String getUserType(String token) {
+        return getJWTBody(token).getString("aud");
+    }
+
     public static Key getKey() {
         return key;
     }
+
+    private static JSONObject getJWTBody(String token){
+        String[] split_string = token.split("\\.");
+        String base64EncodedBody = split_string[1];
+        byte[] body = Base64.decode(base64EncodedBody);
+        String strBody = new String(body);
+        strBody += "}";
+        JSONObject jobj = new JSONObject(strBody);
+        return jobj;
+    }
+
 }

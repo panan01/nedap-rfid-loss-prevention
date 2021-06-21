@@ -61,10 +61,9 @@ public class account {
 
     What does it return
         1.Status "200" and "success" (For successfully modified user)
-        2:Status "401" and "unauthorized password changing" (For not admin changing the password)
-        3:Status "404" (For any other unauthorized modification)
-        4:Status "200" and "fail" (For unsuccessful modification of user)
-        5:Status "400" and "invalid email/type/first name/last name" (For the input that did not pass the sanitization)
+        2:Status "401" (For any other unauthorized modification)
+        3:Status "200" and "fail" (For unsuccessful modification of user)
+        4:Status "400" and "invalid email/type/first name/last name" (For the input that did not pass the sanitization)
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -80,24 +79,21 @@ public class account {
         // get the JWT token of the modifier
         String token = request.getHeader("Authorization");
         // get the email of the modifier
-        String requestedFrom = TokenGarage.getTokenUser(token);
+        String requestedFrom = JWTOffice.getTokenUser(token);
+        // get the user type/role of the modifier
+        String modifierRole = JWTOffice.getUserType(token);
         try {
-            // get the user type/role of the modifier
-            String modifierRole = Queries.instance.getUserRole(requestedFrom);
             // check if the modifier is the user itself or an "admin" and the password is empty
-            if ((requestedFrom.equals(email) || modifierRole.equals("admin")) && password.equals("")) {
+            if ((requestedFrom.equals(email) || modifierRole.equals("admin")) && password.equals("") && type.equals("")) {
                 //modify the user according to the input from the user
                 this.modifyUser(email,password,first_name,last_name,type);
                 System.out.println("Modified user " + email + " successfully");
                 return Response.status(200).entity("success").build();
             // check if the user is admin and password is not empty (because only the admin can change password)
-            } else if (modifierRole.equals("admin") && !password.equals("")){
+            } else if (modifierRole.equals("admin") && (!password.equals("") || !type.equals(""))){
                 this.modifyUser(email,password,first_name,last_name,type);
-                System.out.println("User " + email + " password changed");
+                System.out.println("User " + email + " role/password changed");
                 return Response.status(200).entity("success").build();
-            // if the password id not empty and is not admin modifying
-            } else if (!password.equals("")){
-                return Response.status(Response.Status.UNAUTHORIZED).entity("unauthorized password changing").build();
             } else {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
