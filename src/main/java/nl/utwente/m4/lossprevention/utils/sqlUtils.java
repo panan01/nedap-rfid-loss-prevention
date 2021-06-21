@@ -23,10 +23,20 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|size|-1-1-1-1-1";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-2|store_id|-2|article:alarm|-1|article.article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
-        System.out.println(generateSetStringInputs(realQuery));
+
+
+
+        //System.out.println(generateSetStringInputs(realQuery));
+        String[] generationCodeArray = query.split(";");
+        System.out.println(generateSetStringInputs(generationCodeArray[1]));
+        query = query.replace("?", generateSetStringInputs(generationCodeArray[1]));
+        System.out.println(query);
+        // Connection connection = getConnection();
+        //assert connection != null;
+        //   System.out.println(executeQuery(connection, query));
 
 
     }
@@ -148,7 +158,6 @@ public class sqlUtils {
         }
 
 
-
         return variableArrayList;
     }
 
@@ -214,11 +223,11 @@ public class sqlUtils {
                 break;
             case '2':
 
-                generatedQuery += "nedap." + variables.get(0) + " nedap." + variables.get(1) + " ";
+                generatedQuery += "nedap." + variables.get(0) + ", nedap." + variables.get(1) + " ";
                 break;
             case '3':
 
-                generatedQuery += "nedap." + variables.get(0) + " nedap." + variables.get(1) + " nedap." + variables.get(2) + " ";
+                generatedQuery += "nedap." + variables.get(0) + ", nedap." + variables.get(1) + " nedap." + variables.get(2) + " ";
                 break;
             case '4':
 
@@ -244,10 +253,10 @@ public class sqlUtils {
 
                 break;
             case '1':
-                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
+                generatedQuery += "WHERE nedap." + variables.get(0) + " " + variables.get(1) + " nedap." + variables.get(2) + " ";
                 break;
             case '2':
-                generatedQuery += "WHERE " + variables.get(0) + " ";
+                generatedQuery += "WHERE nedap." + variables.get(0) + " ";
                 break;
             case '3':
                 generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
@@ -327,19 +336,22 @@ public class sqlUtils {
      */
     public static String executeQuery(Connection connection, String query) {
         try {
-            PreparedStatement st = connection.prepareStatement(query);
+
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
                 String[] generationCodeArray = query.split(";");
                 try {
-                    st.setString(1, generateSetStringInputs(generationCodeArray[1]));
+
+                    query = query.replace("?", generateSetStringInputs(generationCodeArray[1])); //TODO doesn't really work as it prevents SQL from being inserted
+
+                    //   st.setString(1, generateSetStringInputs(generationCodeArray[1]));
                 } catch (NullPointerException e) {
                     return "Prepared statement generation code missing";
                 }
 
 
             }
-
+            PreparedStatement st = connection.prepareStatement(query);
 
             ResultSet resultSet = st.executeQuery();
             ResultSetMetaData rsmd = resultSet.getMetaData();
