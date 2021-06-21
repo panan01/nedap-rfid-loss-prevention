@@ -388,7 +388,10 @@ public class sqlUtils {
                 try {
                     ArrayList<String> generatedOutput = generateSetStringInputs(generationCodeArray[1]);
                     System.out.println("size " + (generatedOutput.size() - 1));
+
+                    query = generationCodeArray[0];
                     query = query.replace("?", generatedOutput.get(0));
+
                     st = connection.prepareStatement(query);
                     for (int i = 1; i < generatedOutput.size(); i++) {
 
@@ -396,7 +399,7 @@ public class sqlUtils {
                         System.out.println("inputvalue: " + generatedOutput.get(i));
                         st.setString(i, generatedOutput.get(i));
                     }
-
+                    System.out.println(st.toString());
 
                 } catch (NullPointerException e) {
                     return "Prepared statement generation code missing";
