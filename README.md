@@ -44,3 +44,9 @@ src
 
 For Eclipse, not sure how this works, but in any case make sure the `libsass:compile` task runs right before compiling
 the WAR file.
+
+
+## Trello Board
+The trello board can be accessed via the following link:
+
+`https://trello.com/b/o0QQeesf/2021-m4-nedap-team-1`
