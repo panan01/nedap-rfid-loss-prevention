@@ -122,8 +122,8 @@ public class account {
             Queries.instance.DeleteAccount(email);
             System.out.println("Deleted account \"" + email + " \"");
             return Response.status(200).entity("success").build();
-        } catch (SQLException e){
-            System.err.println("Something wrong happened while deleting user " + email);
+        } catch (Exception e){
+            System.err.println("Something wrong happened while deleting user " + email + " (not exists or uanble to delete)");
             return Response.status(200).entity("fail").build();
         }
     }

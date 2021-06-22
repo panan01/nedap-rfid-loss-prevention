@@ -13,7 +13,7 @@ public enum InputSanitizer {
         if(!email.equals("") && email.matches(emailPattern.pattern())){
             return true;
         } else {
-            throw new InputNotAllowedException(email);
+            throw new InputNotAllowedException("email");
         }
     }
     public static boolean checkUserInput(String inputType, String input) throws InputNotAllowedException{
@@ -21,6 +21,14 @@ public enum InputSanitizer {
             return true;
         } else {
             throw new InputNotAllowedException(inputType);
+        }
+    }
+
+    public static boolean checkUserInput(String input) throws InputNotAllowedException{
+        if (!input.equals("") && input.matches(inputPattern.pattern())){
+            return true;
+        } else {
+            throw new InputNotAllowedException();
         }
     }
 

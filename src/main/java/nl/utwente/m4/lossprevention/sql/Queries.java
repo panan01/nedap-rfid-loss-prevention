@@ -177,9 +177,13 @@ public enum Queries {
             }
         }
 
-        public void DeleteAccount(String email) throws SQLException{
-            deleteAccount.setString(1, email);
-            deleteAccount.execute();
+        public void DeleteAccount(String email) throws Exception{
+            if (this.checkIfEmailExists(email)){
+                deleteAccount.setString(1, email);
+                deleteAccount.execute();
+            } else {
+                throw new Exception();
+            }
         }
 
         public String getUserRole(String email) throws SQLException {
