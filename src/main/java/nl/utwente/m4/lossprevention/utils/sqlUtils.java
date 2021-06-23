@@ -162,8 +162,26 @@ public class sqlUtils {
     public static boolean variablesValid(ArrayList<String> variables, int generationCode, int checkType) {
         switch (generationCode) {
             case 1:
+                switch (checkType) {
+                    case 1:
+                        switch (variables.get(0)){
+                            case "article.article":
+                            case "article.product":
+                            case "article.category":
+                            case "article.color":
+                            case "article.size":
+                            case "article.price":
+                            case "alarm.store_id":
+                                return true;
+                        }
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                }
+                return false;
 
-                break;
             case 2:
                 break;
             case 3:
