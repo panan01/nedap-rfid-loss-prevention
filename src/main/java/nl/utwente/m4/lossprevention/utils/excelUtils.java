@@ -92,6 +92,9 @@ public class excelUtils {
      * Function for getting an XSSFSheet containing all the data from one table.
      *
      * @param sheetType the type of data expected to be in the sheet, can be 0,1,2 with each representing a different table
+     *                  0 - alarms
+     *                  1 - articles
+     *                  2 - stores
      * @return XSSFSheet containing data from one table
      */
     public static XSSFSheet exportSheet(int sheetType) {
@@ -170,7 +173,6 @@ public class excelUtils {
                         } else {
                             key = "id";
                         }
-
                         break;
                     case "latitude (ut)":
                         key = "latitude";
@@ -198,7 +200,6 @@ public class excelUtils {
 
             rowNumber++;
         }
-
 
         return sheet;
     }

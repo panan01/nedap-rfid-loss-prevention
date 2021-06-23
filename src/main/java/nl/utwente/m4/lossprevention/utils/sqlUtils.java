@@ -4,58 +4,35 @@ import java.sql.*;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
 
 public class sqlUtils {
-    private int type;
 
     /**
      * For testing purposes
      */
     public static void main(String[] args) {
-        //System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
-        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
+        System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
     }
 
     //============================================== Database Utils  ===============================================\\
-    private static ArrayList<String> requiredLabelsType1 = new ArrayList<>();
-    private static ArrayList<String> requiredLabelsType2 = new ArrayList<>();
-    private static ArrayList<String> requiredLabelsType3 = new ArrayList<>();
-
-
-    /**
-     * Function for filling the required labels
-     *
-     */
-    private static void fillRequiredLabels() {
-        // Type one is of alarm type
-
-        requiredLabelsType1.add(0,"EPC (UT)");
-        requiredLabelsType1.add(1,"Timestamp");
-        requiredLabelsType1.add(2,"Store ID (UT)");
-        requiredLabelsType1.add(3,"Article ID (UT)");
-
-        // Type two is of article type
-
-        requiredLabelsType2.add(0,"Article ID (UT)");
-        requiredLabelsType2.add(1,"Category (UT)");
-        requiredLabelsType2.add(2,"Article (UT)");
-        requiredLabelsType2.add(3,"Color");
-        requiredLabelsType2.add(4,"Size");
-        requiredLabelsType2.add(5,"Price (EUR)");
-
-        // Type three is of store type
-
-        requiredLabelsType3.add(0,"Store ID (UT)");
-        requiredLabelsType3.add(1,"Latitude (UT)");
-        requiredLabelsType3.add(2,"Longitude (UT)");
-    }
+    private static final ArrayList<String> requiredLabelsType1 = new ArrayList<>(Arrays.asList(
+            "EPC (UT)", "Timestamp", "Store ID (UT)", "Article ID (UT)"
+    ));  // alarm type
+    private static final ArrayList<String> requiredLabelsType2 = new ArrayList<>(Arrays.asList(
+            "Article ID (UT)", "Category (UT)", "Article (UT)", "Color", "Size", "Price (EUR)"
+    ));  // article type
+    private static final ArrayList<String> requiredLabelsType3 = new ArrayList<>(Arrays.asList(
+            "Store ID (UT)", "Latitude (UT)", "Longitude (UT)"
+    ));  // store type
 
     /**
      * Function for getting the required labels
@@ -111,6 +88,10 @@ public class sqlUtils {
         }
     }
 
+    public static HashMap<Integer, String> generateSetStringInputs(String query){
+        return null;
+    }
+
     /**
      * Basic function to execute queries to respective connection, if the query has a return then it's returned as a colon separated String
      *
@@ -124,7 +105,8 @@ public class sqlUtils {
 
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
-                //st.setString(); //TODO make conventions for our queries
+
+                //st.setString();
             }
 
             ResultSet resultSet = st.executeQuery();
@@ -172,7 +154,6 @@ public class sqlUtils {
      * @return
      */
     public static JSONArray getTableJsonList(int sheetType) {
-        fillRequiredLabels();
         String tableName = "";
         // Check the sheetType and assign corresponding name
         switch (sheetType) {
@@ -216,14 +197,15 @@ public class sqlUtils {
      * "Status-2" if columns don't all match any of the required labels
      */
     public static String XSSFSheet_to_DB(XSSFSheet sheet) {
-
         //Check file contents and the correct method for parsing
         ArrayList<String> columnLabels = getColumnLabels(sheet);
 
         if (!columnLabels.get(0).equals("Empty file")) {
             int fileType = -1;
 
-            fillRequiredLabels();
+            System.out.println("  requiredLabelsType1 = " + requiredLabelsType1);
+            System.out.println("  requiredLabelsType2 = " + requiredLabelsType2);
+            System.out.println("  requiredLabelsType3 = " + requiredLabelsType3);
 
             if (checkLabels(columnLabels, getRequiredLabels(0))) {
                 parsePushToDB(sheet, getRequiredLabels(0), 0);
@@ -234,14 +216,10 @@ public class sqlUtils {
             } else {
                 return "Status-2";
             }
-
             return "Status-0";
         } else {
-
             return "Status-1";
         }
-
-
     }
 
     /**
@@ -263,11 +241,7 @@ public class sqlUtils {
 
         }
 
-        if ((requiredFoundCount == requiredLabels.size()) & (requiredLabels.size() != 0)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (requiredFoundCount == requiredLabels.size()) & (requiredLabels.size() != 0);
     }
 
     /**
@@ -286,11 +260,10 @@ public class sqlUtils {
 
         // Get's the indexes of the required labels.
         while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
-            fillRequiredLabels();
-            ArrayList<String> columnLabel = new ArrayList<String>();
+            ArrayList<String> columnLabel = new ArrayList<>();
             columnLabel.add(getCellData(sheet, row, column));
 
-            ArrayList<String> requiredLabel = new ArrayList<String>();
+            ArrayList<String> requiredLabel = new ArrayList<>();
 
             try {
                 requiredLabel.add(requiredLabels.get(requiredLabelIterator));
@@ -357,7 +330,7 @@ public class sqlUtils {
                     insertQuery += "nedap.store ";
                     break;
             }
-            insertQuery += "VALUES (" + parsedRow + ");";
+            insertQuery += "VALUES (" + parsedRow + ") ON CONFLICT DO NOTHING;";
 
             finalQuery += insertQuery;
 

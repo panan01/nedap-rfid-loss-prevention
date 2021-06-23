@@ -22,4 +22,14 @@
         <servlet-name>FileUploadServlet</servlet-name>
         <url-pattern>/upload</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FileDownloadServlet</servlet-name>
+        <servlet-class>nl.utwente.m4.lossprevention.utils.FileDownloadServlet</servlet-class>
+        <multipart-config />
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FileDownloadServlet</servlet-name>
+        <url-pattern>/download/*</url-pattern>
+    </servlet-mapping>
 </web-app>

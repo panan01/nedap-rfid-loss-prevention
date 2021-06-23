@@ -18,16 +18,16 @@ public class FileUploadServlet extends HttpServlet {
         Part filePart = request.getPart("fileToUpload");
 
         // get the InputStream
-        InputStream fileInputStream = filePart.getInputStream();
+        InputStream inputStream = filePart.getInputStream();
 
-        XSSFSheet sheet = excelUtils.read(fileInputStream);
+        XSSFSheet sheet = excelUtils.read(inputStream);
         try {
             if (sheet == null) {
                 response.getWriter().println("Error: Could not read excel file");
             } else {
                 String result = sqlUtils.XSSFSheet_to_DB(sheet);
                 response.getWriter().println("File upload was a "
-                        + (result.equals("Status-0") ? "success" : "failure"));
+                        + (result.equals("Status-0") ? "success" : ("failure; status=" + result)));
             }
         } catch (NullPointerException e) {
             response.getWriter().println("Error: Could not connect to database\n");
