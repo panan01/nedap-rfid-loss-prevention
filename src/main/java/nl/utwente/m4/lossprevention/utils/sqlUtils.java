@@ -27,8 +27,6 @@ public class sqlUtils {
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
-
-
         //System.out.println(generateSetStringInputs(realQuery));
         String[] generationCodeArray = query.split(";");
         System.out.println(generateSetStringInputs(generationCodeArray[1]));
@@ -161,6 +159,29 @@ public class sqlUtils {
         return variableArrayList;
     }
 
+    public static boolean variablesValid(ArrayList<String> variables, int generationCode, int checkType) {
+        switch (generationCode) {
+            case 1:
+
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+
+        }
+        return false;
+
+    }
+
     public static String generateSetStringInputs(String query) {
 
         String[] generationCode = query.split("-");
@@ -182,18 +203,13 @@ public class sqlUtils {
                 generatedQuery += "* ";
                 break;
             case '1':
-
-
-                generatedQuery += "nedap.article." + variables.get(0) + ", COUNT(nedap.article." + variables.get(0) + ") ";
+                generatedQuery += "nedap." + variables.get(0) + ", COUNT(nedap." + variables.get(0) + ") ";
                 break;
+
             case '2':
-
-                generatedQuery += "nedap.alarm." + variables.get(0) + ", COUNT(nedap.alarm." + variables.get(0) + ") ";
-                break;
-            case '3':
                 generatedQuery += "nedap.store.id AS store_id, nedap.store.longitude, nedap.store.latitude ";
                 break;
-            case '4':
+            case '3':
 
                 if (variables.get(2).equals("0")) {
                     generatedQuery += "SUM(";
@@ -202,11 +218,11 @@ public class sqlUtils {
                 }
                 generatedQuery += variables.get(0) + ") AS " + variables.get(1) + " ";
                 break;
-            case '5':
+            case '4':
 
                 generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
                 break;
-            case '6':
+            case '5':
                 generatedQuery += "day AS weekday, COUNT(day) ";
             default:
 
@@ -315,7 +331,7 @@ public class sqlUtils {
                 generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
                 break;
             case '2':
-                generatedQuery+= "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 ";
+                generatedQuery += "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 ";
                 break;
         }
 
