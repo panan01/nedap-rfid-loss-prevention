@@ -1,4 +1,4 @@
-@import "theme";
+@import "_theme.scss";
 
 @mixin button($color: $col-paper-grey, $hover-darken: 10%, $active-darken: 20%, $inner: $color) {
     $hover-color: $color;
@@ -36,55 +36,163 @@
     border: 3px solid $color;
     background-color: $inner;
 
-    &:hover {
+    &:hover { 
         border-color: $hover-color;
         background-color: $hover-inner;
     }
 
-    &:active {
+    &:active { 
         background-color: $active-inner;
     }
 }
 
-button, .btn, input[type=button] {
+@mixin background($default, $hover: darken($default, 10%), $active: darken($default, 20%)) {
+    background-color: $default;
+
+    &:hover { 
+        background-color: $hover;
+    }
+
+    &:active { 
+        background-color: $active;
+    }
+}
+
+@mixin border($default, $hover: darken($default, 10%), $active: darken($default, 10%)) {
+    border: 3px solid $default;
+
+    &:hover { 
+        border: 3px solid $hover;
+    }
+
+    &:active { 
+        border: 3px solid $active;
+    }
+}
+
+button, .btn, input[type=button], .selectbox select {
     box-sizing: border-box;
     border-radius: 4px;
     padding: sz(4pt) sz(12pt);
     margin: sz(3pt);
     cursor: pointer;
-
+    
     text-align: center;
 
+    appearance: none;
+
     @include text-body;
-    @include button;
+    @include background($default: $col-paper-grey);
+    @include border($default: $col-paper-grey);
+
+    &.btn-compact {
+        padding: sz(2pt) sz(6pt);
+        font-size: 0.8em;
+        border-radius: 2px;
+    }
 
     &:focus {
         outline: none;
     }
 
     &.btn-primary {
-        @include button($color: $col-heritage-blue, $hover-darken: 10%, $active-darken: 30%);
+        @include background($default: $col-heritage-blue);
+        @include border($default: $col-heritage-blue);
         color: white;
     }
 
     &.btn-secondary {
-        @include button($color: $col-spark-orange);
+        @include background($default: $col-spark-orange);
+        @include border($default: $col-spark-orange);
         color: white;
     }
 
-    &.btn-primary-outline {
-        @include button($color: $col-heritage-blue, $inner: $col-paper-grey, $hover-darken: 10%, $active-darken: 30%);
-        color: $col-heritage-blue;
+    &.btn-error {
+        @include background($default: $col-artful);
+        @include border($default: $col-artful);
+        color: white;
     }
 
-    &.btn-secondary-outline {
-        @include button($color: $col-spark-orange, $inner: $col-paper-grey);
-        color: $col-spark-orange;
+    &.btn-warning {
+        @include background($default: $col-people);
+        @include border($default: $col-people);
+        color: white;
+    }
+
+    &.btn-alt {
+        @include background($default: $col-attitude);
+        @include border($default: $col-attitude);
+        color: white;
+    }
+
+    &.btn-note {
+        @include background($default: $col-elegance);
+        @include border($default: $col-elegance);
+        color: white;
+    }
+
+    // &.btn-primary-outline {
+    //     @include background($default: transparent, $hover: rgba(black, 0.1), $active: rgba(black, 0.2));
+    //     @include border($default: $col-heritage-blue);
+    //     color: inherit;
+    // }
+
+    // &.btn-secondary-outline {
+    //     @include background($default: transparent, $hover: rgba(black, 0.1), $active: rgba(black, 0.2));
+    //     @include border($default: $col-spark-orange);
+    //     color: inherit;
+    // }
+
+    &.btn-outline {
+        @include background($default: transparent, $hover: rgba(black, 0.1), $active: rgba(black, 0.2));
+        color: inherit;
     }
 
     &.block {
         display: block;
         width: 100%;
         margin: sz(3pt) sz(0pt);
+    }
+}
+
+.selectbox {
+    position: relative;
+    margin: sz(3pt);
+
+    &::after {
+        font-family: MaterialIconsOutlined;
+        display: block;
+        width: 24px;
+        height: 24px;
+        content: "expand_more";
+        font-size: 24px;
+        position: absolute;
+
+        right: sz(8pt);
+        top: calc(50% - 12px);
+
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+      
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: 'liga';
+
+        pointer-events: none;
+        color: $col-heritage-blue;
+    }
+
+    &.dark::after {
+        color: white;
+    }
+
+    select {
+        margin: 0px;
+        padding-right: sz(12px) + 28px;
     }
 }
