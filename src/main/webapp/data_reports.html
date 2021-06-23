@@ -25,37 +25,27 @@
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <div class="span1">
-          <!--
-          <form onsubmit="handleUpload()" method="POST" enctype="multipart/form-data" id="submitForm">
-            <p>What file do you want to upload?</p>
-            <input type="file" id="fileToUpload" name="fileToUpload" required>
-            <br>
-            <input type="submit" value="Submit">
-            <p id="submitResponse"></p>
-          </form>
-          -->
-          <div class="card-content">
-            <form onsubmit="handleUpload()" method="POST" enctype="multipart/form-data" id="submitForm">
-              <div class="fileinput">
-                <span id="file-upload-description">Click or drop excel file to upload</span><br>
-                <input accept="application/vnd.ms-excel,.xlsx" type="file" id="fileToUpload" name="fileToUpload" required>
-              </div>
-              <input type="submit" value="Submit">
-              <p id="submitResponse"></p>
-            </form>
-          </div>
-        </div>
         <div class="card-content">
-          <a href="/loss_prevention_war/download/alarm" download="alarms">
+          <form onsubmit="handleUpload()" method="POST" enctype="multipart/form-data" id="submitForm">
+            <div class="fileinput">
+              <span id="file-upload-description">Click or drop excel file to upload.</span><br>
+              <input autocomplete="off" accept="application/vnd.ms-excel,.xlsx" type="file" id="fileToUpload" name="fileToUpload" required>
+            </div>
+            <div class="container-fluid text-center" id="textBelowUpload">
+              <button class="btn-primary" type="submit">Submit</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-content align-content-center">
+          <a class="btn btn-secondary" href="/loss_prevention_war/download/alarm" download="alarms">
             Download alarm data (as excel)
           </a>
           <br>
-          <a href="/loss_prevention_war/download/article" download="articles">
+          <a class="btn btn-secondary" href="/loss_prevention_war/download/article" download="articles">
             Download article data (as excel)
           </a>
           <br>
-          <a href="/loss_prevention_war/download/store" download="stores">
+          <a class="btn btn-secondary" href="/loss_prevention_war/download/store" download="stores">
             Download store data (as excel)
           </a>
         </div>
@@ -69,11 +59,21 @@
 
 <script>
   function handleUpload() {
-    let items = document.getElementById("submitResponse");
+    let items = document.getElementById("textBelowUpload");
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
       if (this.readyState === 4 && this.status === 200) {
-        items.textContent = this.responseText;
+        let cardClass;
+        if (this.responseText.toLowerCase().includes("error") || this.responseText.toLowerCase().includes("fail")) {
+          cardClass = "<div class='card card-error'>";
+        } else {
+          cardClass = "<div class='card card-success'>";
+        }
+        items.innerHTML = items.innerHTML.split("</button>")[0] + "</button>"
+                + cardClass + this.responseText + "</div>"
+      } else if (this.readyState === 4) {
+        items.innerHTML = items.innerHTML.split("</button>")[0] + "</button>"
+                + "<div class='card card-error'>Could not reach server!</div>"
       }
     }
     let URI = "http://localhost:8080/loss_prevention_war/upload";
@@ -81,35 +81,26 @@
     formData.append("fileToUpload", document.getElementById("fileToUpload").files[0]);
     xmlHttp.open("POST", URI, true);
     xmlHttp.send(formData);
-    items.textContent = "Uploaded file, processing...";
+    items.innerHTML = items.innerHTML.split("</button>")[0] + "</button>"
+            + "<div class='card'>Uploaded file, processing...</div>"
   }
 
-  function showFileName(event) {
-    let input = event.srcElement;
+  let form = document.getElementById("submitForm");
+
+  function showFileName() {
+    let input = document.getElementById("fileToUpload");
+    if (input.files.length === 0) {
+      // user has not selected a file
+      return;
+    }
     let fileName = input.files[0].name;
     let fileUploadDescription = document.getElementById('file-upload-description');
     fileUploadDescription.textContent = "Selected  " + fileName;
   }
+  form.addEventListener('change', showFileName);
+  // showFileName();  // not necessary if autocomplete="off"
 
-  let form = document.getElementById("submitForm");
   function handleForm(event) { event.preventDefault(); }
   form.addEventListener('submit', handleForm);
-
-  form.addEventListener('change', showFileName);
 </script>
-
-
-<style>
-  .span1 {
-    float: left;
-  }
-  .span2 {
-    float: right;
-  }
-  .row-fluid {
-    max-width: 550px;
-  }
-</style>
-
 </html>
-

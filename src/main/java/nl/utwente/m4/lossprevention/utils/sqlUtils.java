@@ -203,9 +203,9 @@ public class sqlUtils {
         if (!columnLabels.get(0).equals("Empty file")) {
             int fileType = -1;
 
-            System.out.println("  requiredLabelsType1 = " + requiredLabelsType1);
-            System.out.println("  requiredLabelsType2 = " + requiredLabelsType2);
-            System.out.println("  requiredLabelsType3 = " + requiredLabelsType3);
+            // System.out.println("  requiredLabelsType1 = " + requiredLabelsType1);
+            // System.out.println("  requiredLabelsType2 = " + requiredLabelsType2);
+            // System.out.println("  requiredLabelsType3 = " + requiredLabelsType3);
 
             if (checkLabels(columnLabels, getRequiredLabels(0))) {
                 parsePushToDB(sheet, getRequiredLabels(0), 0);
