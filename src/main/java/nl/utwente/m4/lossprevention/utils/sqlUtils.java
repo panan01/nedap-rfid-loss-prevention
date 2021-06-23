@@ -27,14 +27,16 @@ public class sqlUtils {
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
+
+
         //System.out.println(generateSetStringInputs(realQuery));
-        // String[] generationCodeArray = query.split(";");
-        //  System.out.println(generateSetStringInputs(generationCodeArray[1]));
-        //  query = query.replace("?", generateSetStringInputs(generationCodeArray[1]));
-        //  System.out.println(query);
-        Connection connection = getConnection();
-        assert connection != null;
-        System.out.println(executeQuery(connection, query));
+        String[] generationCodeArray = query.split(";");
+        System.out.println(generateSetStringInputs(generationCodeArray[1]));
+        query = query.replace("?", generateSetStringInputs(generationCodeArray[1]));
+        System.out.println(query);
+        // Connection connection = getConnection();
+        //assert connection != null;
+        //   System.out.println(executeQuery(connection, query));
 
 
     }
@@ -159,10 +161,7 @@ public class sqlUtils {
         return variableArrayList;
     }
 
-    public static ArrayList<String> generateSetStringInputs(String query) {
-
-        ArrayList<String> output = new ArrayList<>();
-        output.add("");
+    public static String generateSetStringInputs(String query) {
 
         String[] generationCode = query.split("-");
 
@@ -184,15 +183,12 @@ public class sqlUtils {
                 break;
             case '1':
 
-                generatedQuery += "nedap.article." + "?" + ", COUNT(nedap.article." + "?" + ") ";
-                output.add(variables.get(0));
-                output.add(variables.get(0));
+
+                generatedQuery += "nedap.article." + variables.get(0) + ", COUNT(nedap.article." + variables.get(0) + ") ";
                 break;
             case '2':
 
-                generatedQuery += "nedap.alarm." + "?" + ", COUNT(nedap.alarm." + "?" + ") ";
-                output.add(variables.get(0));
-                output.add(variables.get(0));
+                generatedQuery += "nedap.alarm." + variables.get(0) + ", COUNT(nedap.alarm." + variables.get(0) + ") ";
                 break;
             case '3':
                 generatedQuery += "nedap.store.id AS store_id, nedap.store.longitude, nedap.store.latitude ";
@@ -204,18 +200,11 @@ public class sqlUtils {
                 } else if (variables.get(2).equals("1")) {
                     generatedQuery += "COUNT(";
                 }
-                generatedQuery += "?" + ") AS " + "?" + " ";
-                output.add(variables.get(0));
-                output.add(variables.get(1));
-
+                generatedQuery += variables.get(0) + ") AS " + variables.get(1) + " ";
                 break;
             case '5':
 
-                generatedQuery += "nedap." + "?" + "." + "?" + ", COUNT(" + "?" + ") AS " + "?" + " ";
-                output.add(variables.get(1));
-                output.add(variables.get(0));
-                output.add(variables.get(0));
-                output.add(variables.get(2));
+                generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
                 break;
             case '6':
                 generatedQuery += "day AS weekday, COUNT(day) ";
@@ -231,37 +220,28 @@ public class sqlUtils {
                 break;
             case '1':
 
-                generatedQuery += "nedap." + "?" + " ";
-                output.add(variables.get(0));
+                generatedQuery += "nedap." + variables.get(0) + " ";
                 break;
             case '2':
 
-                generatedQuery += "nedap." + "?" + ", nedap." + "?" + " ";
-                output.add(variables.get(0));
-                output.add(variables.get(1));
+                generatedQuery += "nedap." + variables.get(0) + ", nedap." + variables.get(1) + " ";
                 break;
             case '3':
 
-                generatedQuery += "nedap." + "?" + ", nedap." + "?" + " nedap." + "?" + " ";
-                output.add(variables.get(0));
-                output.add(variables.get(1));
-                output.add(variables.get(2));
-
+                generatedQuery += "nedap." + variables.get(0) + ", nedap." + variables.get(1) + " nedap." + variables.get(2) + " ";
                 break;
             case '4':
 
                 if (variables.get(0).equals("1")) {
-                    generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + "?" + " AND date(timestamp) <= " + "?" + " GROUP BY alarm.store_id) AS SumInterval";
-                    output.add(variables.get(1));
-                    output.add(variables.get(2));
+                    generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + variables.get(1) + " AND date(timestamp) <= " + variables.get(1) + " GROUP BY alarm.store_id) AS SumInterval";
+
                 } else {
                     generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id GROUP BY alarm.store_id) AS SumInterval";
                 }
                 break;
             case '5':
 
-                generatedQuery += "(SELECT DATE_PART(" + "?" + ", timestamp) as timeinterval, store_id FROM alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table";
-                output.add(variables.get(0));
+                generatedQuery += "(SELECT DATE_PART(" + variables.get(0) + ", timestamp) as timeinterval, store_id FROM alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table";
                 break;
             case '6':
                 generatedQuery += "SELECT day AS weekday, COUNT(day) FROM (SELECT trim(to_char(timestamp, 'day')) AS day FROM alarm) AS day_table ";
@@ -274,50 +254,34 @@ public class sqlUtils {
 
                 break;
             case '1':
-                generatedQuery += "WHERE nedap." + "?" + " " + "?" + " nedap." + "?" + " ";
-                output.add(variables.get(0));
-                output.add(variables.get(1));
-                output.add(variables.get(2));
+                generatedQuery += "WHERE nedap." + variables.get(0) + " " + variables.get(1) + " nedap." + variables.get(2) + " ";
                 break;
             case '2':
-                generatedQuery += "WHERE nedap." + "?" + " ";
-                output.add(variables.get(0));
+                generatedQuery += "WHERE nedap." + variables.get(0) + " ";
                 break;
             case '3':
-                generatedQuery += "WHERE " + "?" + " " + "?" + " " + "?" + " ";
-                output.add(variables.get(0));
-                output.add(variables.get(1));
-                output.add(variables.get(2));
+                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
                 if (variables.get(3) != "0") {
-                    generatedQuery += "AND date(timestamp) >=" + "?" + " ";
-                    output.add(variables.get(3));
+                    generatedQuery += "AND date(timestamp) >=" + variables.get(3) + " ";
                 }
                 if (variables.get(4) != "0") {
-                    generatedQuery += "AND date(timestamp) <=" + "?" + " ";
-                    output.add(variables.get(4));
+                    generatedQuery += "AND date(timestamp) <=" + variables.get(3) + " ";
                 }
                 break;
             case '4':
-                generatedQuery += "WHERE " + "?" + " " + "?" + " " + "?" + " ";
-                output.add(variables.get(0));
-                output.add(variables.get(1));
-                output.add(variables.get(2));
-
+                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
                 if (variables.get(3) != "0") {
-                    generatedQuery += "AND date(timestamp) >= to_timestamp(" + "?" + ", 'dd-mm-yyyy hh24:mi:ss') ";
-                    output.add(variables.get(3));
+                    generatedQuery += "AND date(timestamp) >= to_timestamp(" + variables.get(3) + ", 'dd-mm-yyyy hh24:mi:ss') ";
                 }
                 if (variables.get(4) != "0") {
-                    generatedQuery += "AND date(timestamp) <= to_timestamp(" + "?" + ", 'dd-mm-yyyy hh24:mi:ss') ";
-                    output.add(variables.get(4));
+                    generatedQuery += "AND date(timestamp) <= to_timestamp(" + variables.get(4) + ", 'dd-mm-yyyy hh24:mi:ss') ";
                 }
                 break;
             case '5':
                 generatedQuery += "WHERE article.id = alarm.article_id ";
                 if (!variables.get(0).equals("0")) {
                 } else {
-                    generatedQuery += "AND date(timestamp) = " + "?" + " ";
-                    output.add(variables.get(0));
+                    generatedQuery += "AND date(timestamp) = " + variables.get(0) + " ";
                 }
 
                 break;
@@ -328,8 +292,7 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "GROUP BY nedap." + "?" + " ";
-                output.add(variables.get(0));
+                generatedQuery += "GROUP BY nedap." + variables.get(0) + " ";
                 break;
 
         }
@@ -339,11 +302,7 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "HAVING COUNT(" + "?" + ") " + "?" + " " + "?" + " ";
-                output.add(variables.get(0));
-                output.add(variables.get(1));
-                output.add(variables.get(2));
-
+                generatedQuery += "HAVING COUNT(" + variables.get(0) + ") " + variables.get(1) + " " + variables.get(2) + " ";
                 break;
 
         }
@@ -353,8 +312,10 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "ORDER BY COUNT(" + "?" + ") DESC ";
-                output.add(variables.get(0));
+                generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
+                break;
+            case '2':
+                generatedQuery+= "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 ";
                 break;
         }
 
@@ -363,12 +324,11 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "LIMIT " + "?" + " ";
-                output.add(variables.get(0));
+                generatedQuery += "LIMIT " + variables.get(0) + " ";
                 break;
         }
-        output.set(0, generatedQuery);
-        return output;
+
+        return generatedQuery;
     }
 
     /**
@@ -380,37 +340,22 @@ public class sqlUtils {
      */
     public static String executeQuery(Connection connection, String query) {
         try {
-            PreparedStatement st;
 
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
                 String[] generationCodeArray = query.split(";");
                 try {
-                    ArrayList<String> generatedOutput = generateSetStringInputs(generationCodeArray[1]);
-                    System.out.println("size " + (generatedOutput.size() - 1));
 
-                    query = generationCodeArray[0];
-                    query = query.replace("?", generatedOutput.get(0));
+                    query = query.replace("?", generateSetStringInputs(generationCodeArray[1])); //TODO doesn't really work as it prevents SQL from being inserted
 
-                    st = connection.prepareStatement(query);
-                    for (int i = 1; i < generatedOutput.size(); i++) {
-
-                        System.out.println("iterator" + i);
-                        System.out.println("inputvalue: " + generatedOutput.get(i));
-                        st.setString(i, generatedOutput.get(i));
-                    }
-                    System.out.println(st.toString());
-
+                    //   st.setString(1, generateSetStringInputs(generationCodeArray[1]));
                 } catch (NullPointerException e) {
                     return "Prepared statement generation code missing";
-
                 }
 
 
-            } else {
-                st = connection.prepareStatement(query);
             }
-
+            PreparedStatement st = connection.prepareStatement(query);
 
             ResultSet resultSet = st.executeQuery();
             ResultSetMetaData rsmd = resultSet.getMetaData();
@@ -418,7 +363,7 @@ public class sqlUtils {
             int columnsNumber = rsmd.getColumnCount();
 
             String result = "";
-            // get query results and return them as a string
+            // prints query results
 
             while (resultSet.next()) {
                 for (int i = 1; i < columnsNumber + 1; i++) {
