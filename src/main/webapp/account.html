@@ -1,10 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="app-html">
 <head>
-  <meta charset="UTF-8">
-  <title>Account</title>
-</head>
-<body>
+  <link rel="stylesheet" href="font/fonts.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
 
+  <script src="js/jquery.js"></script>
+  <script src="js/commandbar.js"></script>
+  <script src="js/app.js"></script>
+
+  <title>Account</title>
+
+  <style>
+    .logo::before {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-image: url("svg/nedap_inline_logo_on_blue.svg");
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      content: "";
+      box-sizing: border-box;
+      border: 10px solid transparent;
+    }
+  </style>
+</head>
+
+<body class="app">
+  <div class="app-bar">
+    <div class="app-bar-inner">
+      <div class="logo"><!-- automatically styled with logo by CSS --></div>
+      <input class="searchbar" id="searchbar" type="text" placeholder="Type here to search">
+      <div class="profile-icon" id="#profile"></div>
+    </div>
+  </div>
+
+  <div class="app-nav" id="nav">
+    <a href="/loss_prevention_war/dashboard.html"><div class="nav-entry" -icon="dashboard" -name="Dashboard"></div></a>
+    <a href="/loss_prevention_war/account.html"><div class="nav-entry" -icon="account_circle" -name="Account"></div></a>
+    <a href="/loss_prevention_war/data_reports.html"><div class="nav-entry nav-current" -icon="file_upload" -name="Data"></div></a>
+    <div class="nav-entry" -icon="table_view" -name="Reports"></div>
+    <a href="/loss_prevention_war/settings.html"><div class="nav-entry" -icon="tune" -name="Settings"></div></a>
+    <a href="/loss_prevention_war/admin_overview.html"><div class="nav-entry" -icon="admin_panel_settings" -name="Admin"></div></a>
+    <div class="nav-section" -name="Saved reports"></div>
+    <div class="nav-entry" -icon="insert_drive_file" -name="Current month"></div>
+    <div class="nav-entry" -icon="insert_drive_file" -name="Last quartile"></div>
+  </div>
+
+  <div class="app-content" id="app">
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Your account</h1>
+      </div>
+
+    </main>
+  </div>
 </body>
+
+<script>
+  let dispatcher = new CommandDispatcher([
+    {
+      aliases: ["add"],
+      args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
+      trigger: function(result) {
+        alert(result.value("$main", 0) + result.value("$main", 1));
+      }
+    }, {
+      aliases: ["sub"],
+      args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
+      trigger: function(result) {
+        alert(result.value("$main", 0) - result.value("$main", 1));
+      }
+    }, {
+      aliases: ["hello"],
+      trigger: function(result) {
+        alert("Hello world!");
+      }
+    }, {
+      aliases: ["say"],
+      args: [{ name: "$main", params: [ArgTypes.string] }],
+      trigger: function(result) {
+        alert(result.value("$main"));
+      }
+    }, {
+      aliases: ["arg"],
+      args: [
+        { name: "a", params: [ArgTypes.string], required: true },
+        { name: "b", params: [ArgTypes.int] }
+      ],
+      trigger: function(result) {
+        if (result.has("b")) {
+          alert(result.value("a") + result.value("b"));
+        } else {
+          alert(result.value("a"));
+        }
+      }
+    }
+  ]);
+
+
+  function makeCommandBar(opts) {
+    var element = opts.element;
+    var $element = $(element);
+
+    $element.on("input", (event) => {
+      if ($element.val()[0] === '/') {
+        $element.addClass("command-mode");
+
+        let parseResult = dispatcher.parse($element.val().substring(1));
+        if (parseResult.errors.length > 0) {
+          $element.addClass("command-error");
+        } else {
+          $element.removeClass("command-error");
+        }
+      } else {
+        $element.removeClass("command-mode");
+        $element.removeClass("command-error");
+      }
+    });
+
+    $element.keypress((event) => {
+      var key = event.which || event.keyCode;
+
+      if (key === 13) { // enter
+        event.stopPropagation();
+        event.preventDefault();
+
+        if ($element.val()[0] === '/') {
+          $element.addClass("command-mode");
+
+          let parseResult = dispatcher.parse($element.val().substring(1));
+          if (parseResult.errors.length > 0) {
+            $element.addClass("command-error");
+            console.log(parseResult.errors);
+          } else {
+            $element.val("");
+            $element.removeClass("command-mode");
+            $element.removeClass("command-error");
+            parseResult.execute();
+          }
+        } else {
+          $element.removeClass("command-mode");
+          $element.removeClass("command-error");
+        }
+      }
+    });
+  }
+
+  $(function() {
+    makeCommandBar({
+      element: document.getElementById("searchbar")
+    });
+  });
+</script>
 </html>

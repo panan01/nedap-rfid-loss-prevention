@@ -1,204 +1,451 @@
 <!DOCTYPE html>
-<!doctype html>
-<html lang="en">
+<html lang="en" class="app-html">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="font/fonts.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <script src="js/jquery.js"></script>
+  <script src="js/commandbar.js"></script>
+  <script src="js/app.js"></script>
+
   <title>Dashboard</title>
 
-  <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
-
-  <link rel="stylesheet" href="css/icons.css">
-
-  <!-- Bootstrap core CSS -->
-  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
   <style>
-    .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        user-select: none;
+    .logo::before {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-image: url("svg/nedap_inline_logo_on_blue.svg");
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      content: "";
+      box-sizing: border-box;
+      border: 10px solid transparent;
     }
-
-    @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-            font-size: 3.5rem;
-        }
+    #navbarLinks {
+      display: none;
+      min-width: 0;
+      text-align: center;
+    }
+    #navbarLinks a {
+      text-decoration: none;
+      display: inline;
+      position: relative;
+      vertical-align: middle;
+    }
+    #icon {
+      position: relative;
+      float: right;
+    }
+    #icon div {
+      text-align: center;
+    }
+    #icon div span {
+      font-size: 48px;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
   </style>
-
-
-  <!-- Custom styles for this template -->
-  <link href="dashboard.css" rel="stylesheet">
 </head>
-<body>
 
-<!-- Top navigation -->
-<iframe src="navbar.html" onload="this.before((this.contentDocument.body||this.contentDocument).children[0]);this.remove()"></iframe>
+<body class="app">
+  <div class="app-bar">
+    <div class="app-bar-inner" style="display: inline-flex">
+      <div class="logo"><!-- automatically styled with logo by CSS --></div>
+      <input class="searchbar" id="searchbar" type="text" placeholder="Type here to search">
+      <!-- <div class="profile-icon" -icon="account_circle" id="#profile"></div> -->
+      <a onclick="navbarMenu()" id="icon">
+        <div class="profile-icon">
+          <span class="icon">account_circle</span>
+        </div>
+      </a>
+      <div id="navbarLinks">
+        <a>[Log out]</a>
+      </div>
+    </div>
+  </div>
 
-<div class="container-fluid">
-  <div class="row">
+  <div class="app-nav" id="nav">
+    <a href="/loss_prevention_war/dashboard.html"><div class="nav-entry nav-current" -icon="dashboard" -name="Dashboard"></div></a>
+    <a href="/loss_prevention_war/account.html"><div class="nav-entry" -icon="account_circle" -name="Account"></div></a>
+    <a href="/loss_prevention_war/data_reports.html"><div class="nav-entry" -icon="file_upload" -name="Data"></div></a>
+    <div class="nav-entry" -icon="table_view" -name="Reports"></div>
+    <a href="/loss_prevention_war/settings.html"><div class="nav-entry" -icon="tune" -name="Settings"></div></a>
+    <a href="/loss_prevention_war/admin_overview.html"><div class="nav-entry" -icon="admin_panel_settings" -name="Admin"></div></a>
+    <div class="nav-section" -name="Saved reports"></div>
+    <div class="nav-entry" -icon="insert_drive_file" -name="Current month"></div>
+    <div class="nav-entry" -icon="insert_drive_file" -name="Last quartile"></div>
+  </div>
 
-    <!-- sidebar navigation -->
-    <iframe src="sidebar.html" onload="this.before((this.contentDocument.body||this.contentDocument).children[0]);this.remove()"></iframe>
-
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-          <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+  <div class="app-content" id="app">
+    <div class="card">
+      <div class="card-header">
+        Here's some previews of different UI components
+      </div>
+      <div class="card-content">
+        Buttons
+      </div>
+      <div class="card-content">
+        <button>Button</button>
+        <button class="btn-primary">Primary</button>
+        <button class="btn-secondary">Secondary</button>
+      </div>
+      <div class="card-content">
+        Text fields
+      </div>
+      <div class="card-content">
+        <input type="text" class="input" placeholder="Type here">
+      </div>
+      <div class="card-content">
+        Checkboxes
+      </div>
+      <div class="card-content">
+        <label class="checkbox block"><input type="checkbox">Label</label>
+        <label class="checkbox block"><input type="checkbox">Label</label>
+        <label class="checkbox block"><input type="checkbox">Label</label>
+      </div>
+      <div class="card-content">
+        Radio buttons
+      </div>
+      <div class="card-content">
+        <label class="checkbox block"><input type="radio" name="a">Label</label>
+        <label class="checkbox block"><input type="radio" name="a">Label</label>
+        <label class="checkbox block"><input type="radio" name="a">Label</label>
+      </div>
+      <div class="card-content">
+        Selectboxes
+      </div>
+      <div class="card-content">
+                      <span class="selectbox dark">
+                          <select class="btn-primary">
+                              <option>Option A</option>
+                              <option>Option B</option>
+                              <option>Option C</option>
+                          </select>
+                      </span>
+      </div>
+      <div class="card-content">
+        File drop areas
+      </div>
+      <div class="card-content">
+        <label class="fileinput">
+          <span>Click or drop file to upload</span><br>
+          <span class="filename"></span>
+          <input type="file">
+        </label>
+      </div>
+      <div class="card-content">
+        Progress bars
+      </div>
+      <div class="card-content">
+        <div class="progressbar">
+          <div class="progress" style="width: 40%"></div>
+        </div>
+        <div class="progressbar indeterminate"></div>
+      </div>
+    </div>
+    <div class="flex vertical-700">
+      <div class="flex vertical">
+        <div class="card">
+          <div class="card-header">Informative card</div>
+          <div class="card-content">
+            The most common appearance of an informative card is a card with some paragraph of text. It serves
+            the user some useful information, or it can be a note the user has written himself. They may or may
+            not contain images.
           </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-            <span data-feather="calendar"></span>
-            This week
-          </button>
+          <div class="card-content">
+            Cards with other purposes can often be made up of the same components as informative cards.
+            For example: a graph can be rendered in a <code>&lt;canvas&gt;</code> inside a <code>.card-image</code> block.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">Performing card</div>
+          <div class="card-content">
+            Performing cards often contain buttons, a form, and some information about the form or the buttons.
+          </div>
+          <div class="card-content">
+            Modals and snackbars are often performing cards. Press these buttons for some examples.
+          </div>
+          <div class="card-content">
+            <button class="btn btn-error btn-outline" onclick="app.showModal('#test-modal')">Show modal</button>
+            <button class="btn btn-alt btn-outline" onclick="app.showSnackbar({text: 'This is a snackbar', style: 'dark', buttons: [{text: 'Hide', handler: sb => sb.close()}]})">Show snackbar</button>
+          </div>
         </div>
       </div>
+      <div class="flex vertical">
+        <div class="card">
+          <div class="card-image" id="chart_div" style="height: 400px">
+            <script>
+              app.drawChart(function() {
+                var data = google.visualization.arrayToDataTable([
+                  ['Year', 'Items Found', 'Items Lost'],
+                  ['2016',    1020,        590],
+                  ['2017',     910,        720],
+                  ['2018',    1000,        400],
+                  ['2019',    1170,        460],
+                  ['2020',     660,       1120],
+                  ['2021',    1030,        540]
+                ]);
 
-      <!-- Graph -->
-      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+                var options = {
+                  title: 'Company Performance',
+                  hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+                  vAxis: {minValue: 0},
+                  colors: app.graphColors
+                };
 
-      <h2>Data</h2>
-      <div class="table-responsive">
-        <table class="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Header</th>
-              <th>Header</th>
-              <th>Header</th>
-              <th>Header</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1,001</td>
-              <td>random</td>
-              <td>data</td>
-              <td>placeholder</td>
-              <td>text</td>
-            </tr>
-            <tr>
-              <td>1,002</td>
-              <td>placeholder</td>
-              <td>irrelevant</td>
-              <td>visual</td>
-              <td>layout</td>
-            </tr>
-            <tr>
-              <td>1,003</td>
-              <td>data</td>
-              <td>rich</td>
-              <td>dashboard</td>
-              <td>tabular</td>
-            </tr>
-            <tr>
-              <td>1,003</td>
-              <td>information</td>
-              <td>placeholder</td>
-              <td>illustrative</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,004</td>
-              <td>text</td>
-              <td>random</td>
-              <td>layout</td>
-              <td>dashboard</td>
-            </tr>
-            <tr>
-              <td>1,005</td>
-              <td>dashboard</td>
-              <td>irrelevant</td>
-              <td>text</td>
-              <td>placeholder</td>
-            </tr>
-            <tr>
-              <td>1,006</td>
-              <td>dashboard</td>
-              <td>illustrative</td>
-              <td>rich</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,007</td>
-              <td>placeholder</td>
-              <td>tabular</td>
-              <td>information</td>
-              <td>irrelevant</td>
-            </tr>
-            <tr>
-              <td>1,008</td>
-              <td>random</td>
-              <td>data</td>
-              <td>placeholder</td>
-              <td>text</td>
-            </tr>
-            <tr>
-              <td>1,009</td>
-              <td>placeholder</td>
-              <td>irrelevant</td>
-              <td>visual</td>
-              <td>layout</td>
-            </tr>
-            <tr>
-              <td>1,010</td>
-              <td>data</td>
-              <td>rich</td>
-              <td>dashboard</td>
-              <td>tabular</td>
-            </tr>
-            <tr>
-              <td>1,011</td>
-              <td>information</td>
-              <td>placeholder</td>
-              <td>illustrative</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,012</td>
-              <td>text</td>
-              <td>placeholder</td>
-              <td>layout</td>
-              <td>dashboard</td>
-            </tr>
-            <tr>
-              <td>1,013</td>
-              <td>dashboard</td>
-              <td>irrelevant</td>
-              <td>text</td>
-              <td>visual</td>
-            </tr>
-            <tr>
-              <td>1,014</td>
-              <td>dashboard</td>
-              <td>illustrative</td>
-              <td>rich</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,015</td>
-              <td>random</td>
-              <td>tabular</td>
-              <td>information</td>
-              <td>text</td>
-            </tr>
-          </tbody>
-        </table>
+                var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+                chart.draw(data, options);
+              });
+            </script>
+          </div>
+          <div class="card-header">Analytical cards</div>
+          <div class="card-content">
+            Analytical cards are purely for displaying graphs. The user may use controls to alter the graph or the
+            data.
+          </div>
+        </div>
       </div>
-    </main>
+    </div>
+    <div class="flex vertical-700">
+      <div class="card">
+        <div class="card-content">I am normal!</div>
+      </div>
+      <div class="card card-error">
+        <div class="card-content">I am an error!</div>
+      </div>
+      <div class="card card-warning">
+        <div class="card-content">I am a warning!</div>
+      </div>
+      <div class="card card-success">
+        <div class="card-content">I am a success!</div>
+      </div>
+      <div class="card card-note">
+        <div class="card-content">I am a note!</div>
+      </div>
+      <div class="card card-dark wrap">
+        <div class="card-content">I am dark!</div>
+      </div>
+    </div>
+    <div class="flex vertical-700">
+      <div class="card card-error">
+        <div class="card-header">I am an error!</div>
+        <div class="card-content">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+      </div>
+      <div class="card card-warning">
+        <div class="card-header">I am a warning!</div>
+        <div class="card-content">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+      </div>
+      <div class="card card-success">
+        <div class="card-header">I am a success!</div>
+        <div class="card-content">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+      </div>
+    </div>
+    <div class="flex vertical-700">
+      <div class="card card-note">
+        <div class="card-header">I am a note!</div>
+        <div class="card-content">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+      </div>
+      <div class="card card-dark">
+        <div class="card-header">I am dark!</div>
+        <div class="card-content">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-corner-tr">*close button*</div>
+        <div class="card-header">Corner buttons</div>
+        <div class="card-content">
+          I have a corner panel where you can put icon buttons, for example to close the card
+        </div>
+      </div>
+    </div>
+    <div class="flex vertical-700">
+      <div class="flex vertical grow-2">
+        <div class="flex vertical-900">
+          <div class="card">
+            <div class="card-header">Alignment!</div>
+            <div class="card-content">
+              Align cards using flex containers.
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">I am aligned!</div>
+            <div class="card-content">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </div>
+          </div>
+        </div>
+        <div class="flex">
+          <div class="card">
+            <div class="card-header">I am stretched!</div>
+            <div class="card-content">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex vertical">
+        <div class="card">
+          <div class="card-header">I am also aligned!</div>
+          <div class="card-content">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+
+  <div class="modal" id="test-modal">
+    <div class="card card-error">
+      <div class="card-header">I'm a big and important modal</div>
+      <div class="card-content">
+        This is a big warning modal that wants you to be sure you have seen my information.
+      </div>
+      <div class="card-content align-right">
+        <button class="btn-primary" onclick="app.hideModal(this)">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="snackbar-container">
+  </div>
+</body>
+
+<script>
+  let dispatcher = new CommandDispatcher([
+    {
+      aliases: ["add"],
+      args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
+      trigger: function(result) {
+        alert(result.value("$main", 0) + result.value("$main", 1));
+      }
+    }, {
+      aliases: ["sub"],
+      args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
+      trigger: function(result) {
+        alert(result.value("$main", 0) - result.value("$main", 1));
+      }
+    }, {
+      aliases: ["hello"],
+      trigger: function(result) {
+        alert("Hello world!");
+      }
+    }, {
+      aliases: ["say"],
+      args: [{ name: "$main", params: [ArgTypes.string] }],
+      trigger: function(result) {
+        alert(result.value("$main"));
+      }
+    }, {
+      aliases: ["arg"],
+      args: [
+        { name: "a", params: [ArgTypes.string], required: true },
+        { name: "b", params: [ArgTypes.int] }
+      ],
+      trigger: function(result) {
+        if (result.has("b")) {
+          alert(result.value("a") + result.value("b"));
+        } else {
+          alert(result.value("a"));
+        }
+      }
+    }
+  ]);
 
 
-    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+  function makeCommandBar(opts) {
+    var element = opts.element;
+    var $element = $(element);
 
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous">
-    </script><script src="dashboard.js"></script>
-  </body>
+    $element.on("input", (event) => {
+      if ($element.val()[0] === '/') {
+        $element.addClass("command-mode");
+
+        let parseResult = dispatcher.parse($element.val().substring(1));
+        if (parseResult.errors.length > 0) {
+          $element.addClass("command-error");
+        } else {
+          $element.removeClass("command-error");
+        }
+      } else {
+        $element.removeClass("command-mode");
+        $element.removeClass("command-error");
+      }
+    });
+
+    $element.keypress((event) => {
+      var key = event.which || event.keyCode;
+
+      if (key === 13) { // enter
+        event.stopPropagation();
+        event.preventDefault();
+
+        if ($element.val()[0] === '/') {
+          $element.addClass("command-mode");
+
+          let parseResult = dispatcher.parse($element.val().substring(1));
+          if (parseResult.errors.length > 0) {
+            $element.addClass("command-error");
+            console.log(parseResult.errors);
+          } else {
+            $element.val("");
+            $element.removeClass("command-mode");
+            $element.removeClass("command-error");
+            parseResult.execute();
+          }
+        } else {
+          $element.removeClass("command-mode");
+          $element.removeClass("command-error");
+        }
+      }
+    });
+  }
+
+  $(function() {
+    makeCommandBar({
+      element: document.getElementById("searchbar")
+    });
+  });
+
+  function navbarMenu() {
+    let links = document.getElementById("navbarLinks");
+    if (links.style.display === "inline") {
+      links.style.display = "none";
+      links.style.minWidth = "0px";
+    } else {
+      links.style.display = "inline";
+      links.style.minWidth = "80px";
+    }
+    console.log(links.style.minWidth);
+  }
+</script>
 </html>
