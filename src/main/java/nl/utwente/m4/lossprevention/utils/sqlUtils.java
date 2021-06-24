@@ -28,8 +28,13 @@ public class sqlUtils {
 
 
         //System.out.println(generateSetStringInputs(realQuery));
+
         String[] generationCodeArray = query.split(";");
+
+        System.out.println(generationCodeArray[1]);
         System.out.println(generateSetStringInputs(generationCodeArray[1]));
+
+        query = generationCodeArray[0];
         query = query.replace("?", generateSetStringInputs(generationCodeArray[1]));
         System.out.println(query);
         // Connection connection = getConnection();
@@ -174,6 +179,17 @@ public class sqlUtils {
         return false;
     }
 
+    public static boolean checkVariableIsTable(String variable) {
+        switch (variable) {
+            case "article":
+            case "alarm":
+            case "store":
+                return true;
+
+        }
+        return false;
+    }
+
     public static boolean variablesValid(ArrayList<String> variables, int generationCodeInputType, int checkType) {
         switch (generationCodeInputType) {
             case 1:
@@ -187,21 +203,56 @@ public class sqlUtils {
                         }
                         break;
                     case 4:
-                        switch (variables.get(1)) {
-                            case "article":
-                            case "alarm":
-                            case "store":
-                                if (checkVariableIsColumn(variables.get(0)) & variables.get(2).matches("^[a-zA-Z_ ]*$")) {
-                                    return true;
-                                }
-                                break;
+                        if (checkVariableIsTable(variables.get(1))) {
+
+                            if (checkVariableIsColumn(variables.get(0)) & variables.get(2).matches("^[a-zA-Z_ ]*$")) {
+                                return true;
+                            }
 
                         }
+
                         break;
                 }
                 return false;
 
             case 2:
+                switch (checkType) {
+                    case 1:
+                        if (checkVariableIsTable(variables.get(0))) {
+                            return true;
+                        }
+                        break;
+                    case 2:
+                        if (checkVariableIsTable(variables.get(0)) & checkVariableIsTable(variables.get(1))) {
+                            return true;
+                        }
+                        break;
+                    case 3:
+                        if (checkVariableIsTable(variables.get(0)) & checkVariableIsTable(variables.get(1)) & checkVariableIsTable(variables.get(2))) {
+                            return true;
+                        }
+                        break;
+                    case 4:
+                        if (variables.get(1).charAt(0) == '\'' & variables.get(1).charAt(variables.get(1).length() - 1) == '\'') {
+                            if (variables.get(1).matches("^[0-9 ' -]*$")) {
+
+                            }
+                        }
+                        if (variables.get(2).charAt(0) == '\'' & variables.get(2).charAt(variables.get(2).length() - 1) == '\'') {
+                        }
+                        break;
+                    case 5:
+                        switch (variables.get(0)) {
+                            case "minute":
+                            case "hour":
+                            case "day":
+                            case "month ":
+                                return true;
+                        }
+                        break;
+
+                }
+
                 break;
             case 3:
                 break;
@@ -266,7 +317,7 @@ public class sqlUtils {
             case '4':
                 if (variablesValid(variables, 1, 4)) {
                     generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
-                }else {
+                } else {
                     return "Invalid variables! variables: " + variables;
                 }
 
@@ -299,7 +350,7 @@ public class sqlUtils {
             case '4':
 
                 if (variables.get(0).equals("1")) {
-                    generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + variables.get(1) + " AND date(timestamp) <= " + variables.get(1) + " GROUP BY alarm.store_id) AS SumInterval";
+                    generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + variables.get(1) + " AND date(timestamp) <= " + variables.get(2) + " GROUP BY alarm.store_id) AS SumInterval";
 
                 } else {
                     generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id GROUP BY alarm.store_id) AS SumInterval";
@@ -411,8 +462,8 @@ public class sqlUtils {
             if (query.contains("?")) {
                 String[] generationCodeArray = query.split(";");
                 try {
-
-                    query = query.replace("?", generateSetStringInputs(generationCodeArray[1])); //TODO doesn't really work as it prevents SQL from being inserted
+                    query = generationCodeArray[0];
+                    query = query.replace("?", generateSetStringInputs(generationCodeArray[1]));
 
                     //   st.setString(1, generateSetStringInputs(generationCodeArray[1]));
                 } catch (NullPointerException e) {
