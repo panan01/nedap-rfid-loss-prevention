@@ -159,25 +159,44 @@ public class sqlUtils {
         return variableArrayList;
     }
 
-    public static boolean variablesValid(ArrayList<String> variables, int generationCode, int checkType) {
-        switch (generationCode) {
+    public static boolean checkVariableIsColumn(String variable) {
+        switch (variable) {
+            case "article.product":
+            case "article.category":
+            case "article.color":
+            case "article.size":
+            case "article.price":
+            case "alarm.store_id":
+            case "alarm.article_id":
+            case "alarm.timestamp":
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean variablesValid(ArrayList<String> variables, int generationCodeInputType, int checkType) {
+        switch (generationCodeInputType) {
             case 1:
                 switch (checkType) {
                     case 1:
-                        switch (variables.get(0)){
-                            case "article.article":
-                            case "article.product":
-                            case "article.category":
-                            case "article.color":
-                            case "article.size":
-                            case "article.price":
-                            case "alarm.store_id":
-                                return true;
+                        return checkVariableIsColumn(variables.get(0));
+
+                    case 3:
+                        if (variables.get(0).matches("^[a-zA-Z_ ]*$") & variables.get(1).matches("^[a-zA-Z_ ]*$")) {
+                            return true;
                         }
                         break;
-                    case 3:
-                        break;
                     case 4:
+                        switch (variables.get(1)) {
+                            case "article":
+                            case "alarm":
+                            case "store":
+                                if (checkVariableIsColumn(variables.get(0)) & variables.get(2).matches("^[a-zA-Z_ ]*$")) {
+                                    return true;
+                                }
+                                break;
+
+                        }
                         break;
                 }
                 return false;
@@ -221,24 +240,37 @@ public class sqlUtils {
                 generatedQuery += "* ";
                 break;
             case '1':
-                generatedQuery += "nedap." + variables.get(0) + ", COUNT(nedap." + variables.get(0) + ") ";
+                if (variablesValid(variables, 1, 1)) {
+                    generatedQuery += "nedap." + variables.get(0) + ", COUNT(nedap." + variables.get(0) + ") ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
                 break;
 
             case '2':
                 generatedQuery += "nedap.store.id AS store_id, nedap.store.longitude, nedap.store.latitude ";
                 break;
             case '3':
-
-                if (variables.get(2).equals("0")) {
-                    generatedQuery += "SUM(";
-                } else if (variables.get(2).equals("1")) {
-                    generatedQuery += "COUNT(";
+                if (variablesValid(variables, 1, 3)) {
+                    if (variables.get(2).equals("0")) {
+                        generatedQuery += "SUM(";
+                    } else if (variables.get(2).equals("1")) {
+                        generatedQuery += "COUNT(";
+                    }
+                    generatedQuery += variables.get(0) + ") AS " + variables.get(1) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
                 }
-                generatedQuery += variables.get(0) + ") AS " + variables.get(1) + " ";
                 break;
             case '4':
+                if (variablesValid(variables, 1, 4)) {
+                    generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
+                }else {
+                    return "Invalid variables! variables: " + variables;
+                }
 
-                generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
+
                 break;
             case '5':
                 generatedQuery += "day AS weekday, COUNT(day) ";
