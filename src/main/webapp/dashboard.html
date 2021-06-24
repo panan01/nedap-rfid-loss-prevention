@@ -29,16 +29,33 @@
       display: none;
       min-width: 0;
       text-align: center;
+      vertical-align: middle;
+      background-color: #023A4F;
+
     }
     #navbarLinks a {
       text-decoration: none;
-      display: inline;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      display: table-cell;
       position: relative;
       vertical-align: middle;
+      font-size: 20px;
+      background-color: #023A4F;
+      color: white;
+    }
+    #navbarLinks a:hover {
+      background-color: #01151d;
     }
     #icon {
       position: relative;
       float: right;
+      color: white;
+      background-color: #FF6C37;
+    }
+    #icon:hover {
+      background-color: #FF4710;
     }
     #icon div {
       text-align: center;
@@ -438,14 +455,13 @@
 
   function navbarMenu() {
     let links = document.getElementById("navbarLinks");
-    if (links.style.display === "inline") {
+    if (links.style.display === "table") {
       links.style.display = "none";
       links.style.minWidth = "0px";
     } else {
-      links.style.display = "inline";
-      links.style.minWidth = "80px";
+      links.style.display = "table";
+      links.style.minWidth = "100px";
     }
-    console.log(links.style.minWidth);
   }
 </script>
 </html>

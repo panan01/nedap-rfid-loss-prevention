@@ -162,7 +162,7 @@
                                 password_field.focus();
                             }
                         } else if (res.done) {
-                            document.cookie = "token=" + res.data + "; SameSite=None; Secure";
+                            document.cookie = "token=" + res.token + "; SameSite=None; Secure; max-age=3600";
                             console.log("Login done");
                             window.location.href = "dashboard.html";
                         }

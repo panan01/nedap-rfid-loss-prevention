@@ -26,7 +26,7 @@ function onLogin(email, password, result) {
                 result({
                     done: true,
                     token: data
-                }); // TODO For later
+                });
             }
             console.log("data = " + data);
         },
