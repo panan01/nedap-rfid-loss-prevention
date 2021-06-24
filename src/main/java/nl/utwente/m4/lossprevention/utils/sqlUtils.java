@@ -38,9 +38,9 @@ public class sqlUtils {
         query = generationCodeArray[0];
         query = query.replace("?", generateSetStringInputs(generationCodeArray[1]));
         System.out.println(query);
-        // Connection connection = getConnection();
-        //assert connection != null;
-        //   System.out.println(executeQuery(connection, query));
+        Connection connection = getConnection();
+        assert connection != null;
+        System.out.println(executeQuery(connection, query));
 
 
     }
@@ -318,10 +318,25 @@ public class sqlUtils {
                 }
                 break;
             case 5:
+                if (checkType == 1) {
+                    if (checkVariableIsColumn(variables.get(0)) & (variables.get(1).matches("^[=<> ]*$")) & (variables.get(2).matches("^[0-9 ]*$"))) {
+                        return true;
+                    }
+                }
                 break;
             case 6:
+                if (checkType == 1) {
+                    if (checkVariableIsColumn(variables.get(0))) {
+                        return true;
+                    }
+                }
                 break;
             case 7:
+                if (checkType == 1) {
+                    if (variables.get(0).matches("^[0-9 ]*$")) {
+                        return true;
+                    }
+                }
                 break;
 
         }
@@ -521,7 +536,13 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "HAVING COUNT(" + variables.get(0) + ") " + variables.get(1) + " " + variables.get(2) + " ";
+                if (variablesValid(variables, 5, 1)) {
+                    generatedQuery += "HAVING COUNT(" + variables.get(0) + ") " + variables.get(1) + " " + variables.get(2) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+
                 break;
 
         }
@@ -531,10 +552,19 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
+                if (variablesValid(variables, 6, 1)) {
+                    generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
+
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
                 break;
             case '2':
+
                 generatedQuery += "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 ";
+
+
                 break;
         }
 
@@ -543,7 +573,14 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "LIMIT " + variables.get(0) + " ";
+                if (variablesValid(variables, 7, 1)) {
+
+                    generatedQuery += "LIMIT " + variables.get(0) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+
                 break;
         }
 
