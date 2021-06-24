@@ -30,6 +30,7 @@ public enum Queries {
     private PreparedStatement modifyRole;
     private PreparedStatement deleteAccount;
     private PreparedStatement getUserRole;
+    private PreparedStatement checkStoreAccess;
 
     private Queries() {
         try { // load the driver
@@ -64,6 +65,9 @@ public enum Queries {
             deleteAccount = connection.prepareStatement("DELETE FROM users WHERE email = ?");
             //get user's role from the database
             getUserRole = connection.prepareStatement("SELECT type FROM users WHERE email = ?");
+            //check if the user has the access to the store data
+            checkStoreAccess = connection.prepareStatement("SELECT EXISTS (SELECT 1 FROM store_access s \" +\n" +
+                    "                                                                    \"WHERE s.store_id = ? AND s.allowed_user = ? LIMIT 1)");
         } catch(SQLException sqle) {
             System.err.println("Error connecting: " + sqle);
         }
@@ -191,5 +195,17 @@ public enum Queries {
             ResultSet rs = getUserRole.executeQuery();
             rs.next();
             return rs.getString(1);
+        }
+
+        public boolean checkIfUserAllowedToAccessStore(String storeID, String userEmail){
+            try {
+                checkStoreAccess.setString(1, storeID);
+                checkStoreAccess.setString(2, userEmail);
+                ResultSet rs = checkStoreAccess.executeQuery();
+                rs.next();
+                return rs.getBoolean(1);
+            } catch (SQLException e){
+                return false;
+            }
         }
 }
