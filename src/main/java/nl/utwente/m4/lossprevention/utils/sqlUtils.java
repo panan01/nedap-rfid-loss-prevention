@@ -24,7 +24,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-2-1|store|-5|store.longitude:>:0:AND:store.latitude:>:10|-0-0-0-0";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -306,6 +306,10 @@ public class sqlUtils {
                         }
 
                         break;
+                    case 5:
+                        if ((checkVariableIsColumn(variables.get(0)) | variables.get(0).matches("^[-0-9]*$")) & (variables.get(1).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(2)) | variables.get(2).matches("^[-0-9]*$")) & (variables.get(3).equals("AND") | variables.get(3).equals("OR")) & (checkVariableIsColumn(variables.get(4)) | variables.get(4).matches("^[-0-9]*$")) & (variables.get(5).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(6)) | variables.get(6).matches("^[-0-9]*$"))) {
+                            return true;
+                        }
 
 
                 }
@@ -466,7 +470,7 @@ public class sqlUtils {
                 break;
             case '1':
                 if (variablesValid(variables, 3, 1)) {
-                    generatedQuery += "WHERE nedap." + variables.get(0) + " " + variables.get(1) + " nedap." + variables.get(2) + " ";
+                    generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
                 } else {
                     return "Invalid variables! variables: " + variables;
                 }
@@ -516,6 +520,13 @@ public class sqlUtils {
                 }
 
                 break;
+            case '5':
+                if (variablesValid(variables, 3, 5)) {
+                    generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " " + variables.get(3) + " " + variables.get(4) + " " + variables.get(5) + " " + variables.get(6) + " ";
+
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
         }
 
         variables = getVariables(generationCode[4].substring(1));
