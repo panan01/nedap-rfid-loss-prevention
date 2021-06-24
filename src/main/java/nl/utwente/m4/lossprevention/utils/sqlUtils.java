@@ -497,10 +497,10 @@ public class sqlUtils {
         // Get's the indexes of the required labels.
         while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
             fillRequiredLabels();
-            ArrayList<String> columnLabel = new ArrayList<String>();
+            ArrayList<String> columnLabel = new ArrayList<>();
             columnLabel.add(getCellData(sheet, row, column));
 
-            ArrayList<String> requiredLabel = new ArrayList<String>();
+            ArrayList<String> requiredLabel = new ArrayList<>();
 
             try {
                 requiredLabel.add(requiredLabels.get(requiredLabelIterator));

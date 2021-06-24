@@ -24,11 +24,11 @@ function onLogin(email, password, result) {
                 });
             } else {
                 result({
-
-                    done: true
+                    done: true,
+                    token: data
                 }); // TODO For later
             }
-            console.log(data);
+            console.log("data = " + data);
         },
         error: function() {
             result({
