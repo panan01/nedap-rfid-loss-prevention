@@ -11,9 +11,9 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
 @Provider
-@JWTNeeded
+@AdminJWTNeeded
 @Priority(Priorities.AUTHENTICATION)
-public class JWTNeededFilter implements ContainerRequestFilter {
+public class AdminJWTNeededFilter implements ContainerRequestFilter {
 
     //check if the header has the filed "Authorization" and if the token in the Authorization exists
     //return UNAUTHORIZED if the token does not exist/expired
@@ -22,10 +22,9 @@ public class JWTNeededFilter implements ContainerRequestFilter {
         String token = containerRequestContext.getHeaderString("Authorization");
 
         try {
-            Jwts.parserBuilder().setSigningKey(JWTOffice.getKey()).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(JWTOffice.getKey()).requireAudience("admin").build().parseClaimsJws(token);
         } catch (Exception e) {
             containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
         }
     }
-
 }
