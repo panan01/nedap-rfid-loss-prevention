@@ -28,10 +28,6 @@ public class sqlUtils {
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
-
-
-
-
         //System.out.println(generateSetStringInputs(realQuery));
 
         String[] generationCodeArray = query.split(";");
@@ -315,6 +311,11 @@ public class sqlUtils {
                 }
                 break;
             case 4:
+                if (checkType == 1) {
+                    if (checkVariableIsColumn(variables.get(0)) | variables.get(0).equals("timeinterval")) {
+                        return true;
+                    }
+                }
                 break;
             case 5:
                 break;
@@ -507,9 +508,12 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "GROUP BY nedap." + variables.get(0) + " ";
+                if (variablesValid(variables, 4, 1)) {
+                    generatedQuery += "GROUP BY nedap." + variables.get(0) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
                 break;
-
         }
 
         variables = getVariables(generationCode[5].substring(1));
