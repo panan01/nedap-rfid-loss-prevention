@@ -301,6 +301,16 @@
 
                 app.inject("user.username", "Four-Zero-Four");
             });
+            function navbarMenu() {
+                let links = document.getElementById("navbarLinks");
+                if (links.style.display === "table") {
+                    links.style.display = "none";
+                    links.style.minWidth = "0px";
+                } else {
+                    links.style.display = "table";
+                    links.style.minWidth = "100px";
+                }
+            }
         </script>
     </body>
 </html>
