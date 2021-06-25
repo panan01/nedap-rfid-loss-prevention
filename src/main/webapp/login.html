@@ -7,6 +7,8 @@
         <script src="js/jquery.js"></script>
         <script src="js/login.js"></script>
 
+        <title>Login</title>
+
         <style>
             #logo-container {
                 width: 250px;
@@ -162,7 +164,7 @@
                                 password_field.focus();
                             }
                         } else if (res.done) {
-                            document.cookie = "token=" + res.token + "; SameSite=None; Secure; max-age=3600";
+                            document.cookie = "token=" + res.token + "; SameSite=None; Secure; max-age=600";
                             console.log("Login done");
                             window.location.href = "dashboard.html";
                         }
