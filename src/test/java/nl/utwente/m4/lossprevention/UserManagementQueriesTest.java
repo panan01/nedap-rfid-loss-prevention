@@ -163,9 +163,9 @@ public class UserManagementQueriesTest {
         Queries.instance.addStoreAccess(1023571, "division@test.com");
         Queries.instance.addStoreAccess(1023425, "division@test.com");
         assertTrue(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
-        assertFalse(Queries.instance.deleteUserOneAcess(1023571, "divfsdnfsf.com"));
-        assertFalse(Queries.instance.deleteUserOneAcess(1023571, "divfsdnfsf@test.com"));
-        assertTrue(Queries.instance.deleteUserOneAcess(1023571, "division@test.com"));
+        assertFalse(Queries.instance.deleteUserOneAccess(1023571, "divfsdnfsf.com"));
+        assertFalse(Queries.instance.deleteUserOneAccess(1023571, "divfsdnfsf@test.com"));
+        assertTrue(Queries.instance.deleteUserOneAccess(1023571, "division@test.com"));
         assertTrue(Queries.instance.checkIfUserAllowedToAccessStore(1023425, "division@test.com"));
         assertFalse(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
     }

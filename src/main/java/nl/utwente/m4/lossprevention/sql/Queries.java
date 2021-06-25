@@ -228,10 +228,8 @@ public enum Queries {
                 checkIfUserAllowedToAccessStore.setString(2, userEmail);
                 ResultSet rs = checkIfUserAllowedToAccessStore.executeQuery();
                 rs.next();
-                System.out.println("worked");
                 return rs.getBoolean(1);
             } catch (SQLException e){
-                System.out.println(e.getMessage());
                 return false;
             }
         }
@@ -248,7 +246,6 @@ public enum Queries {
                 }
 
             } catch (SQLException | InputNotAllowedException e){
-                System.err.println(e.getMessage());
                 return false;
             }
         }
@@ -267,7 +264,7 @@ public enum Queries {
             }
         }
 //Delete a specific access of the user x
-        public boolean deleteUserOneAcess(int store_id, String user){
+        public boolean deleteUserOneAccess(int store_id, String user){
             try {
                 if (checkIfEmailExists(user) && checkIfStoreExists(store_id)) {
                     deleteUserOneAccess.setInt(1, store_id);
@@ -277,7 +274,6 @@ public enum Queries {
                 }
                     return false;
             } catch (Exception e){
-                System.out.println(e.getMessage());
                 return false;
             }
         }
