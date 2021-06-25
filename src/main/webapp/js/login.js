@@ -6,22 +6,38 @@
  * @returns A result object
  */
 function onLogin(email, password, result) {
-    console.log("Replace with own action. Loggin in with email " + email + " and password " + password + ".");
-
     // Request the server for login and call the 'result' function when the server has responded
     // You can use jQuery ('$.ajax') for the request, see https://api.jquery.com/jquery.ajax/ for documentation
 
     $.ajax({
-        url: "login", // what should the URL be?
+        url: "rest/login",   // what should the URL be?
         method: 'POST',
-        data: { username: email, password: password},
+        dataType: "text",
+        contentType: "application/json",
+        data: JSON.stringify({ email: email, password: password}),
+        processData: false,
         success: function(data) {
+            if (data === "fail") {
+                result({
+                    error: "Unknown e-mail address or password.",
+                    focus: "email"
+                });
+            } else {
+                result({
+
+                    done: true
+                }); // TODO For later
+            }
             console.log(data);
         },
         error: function() {
+            result({
+                error: "An unexpected error occurred, please try again.",
+                focus: "email"
+            });
             // error handling;
         }
-    })
+    });
 
     // Result values
     // {error: "message"} to show error message
@@ -30,25 +46,25 @@ function onLogin(email, password, result) {
     // {done: true} when login is complete (note: this will change, but this should do its thing for now)
 
     // Emulate server delay for placeholder
-    setTimeout(function() {
-        if (email !== "email@example.com") {
-            result({
-                error: "Unknown e-mail address.",
-                focus: "email"
-            });
-            return;
-        }
-
-        if (password !== "password") {
-            result({
-                error: "Incorrect password.",
-                focus: "password"
-            });
-            return;
-        }
-
-        result({redirect: "#"});
-    }, 1000);
+    // setTimeout(function() {
+    //     if (email !== "email@example.com") {
+    //         result({
+    //             error: "Unknown e-mail address.",
+    //             focus: "email"
+    //         });
+    //         return;
+    //     }
+    //
+    //     if (password !== "password") {
+    //         result({
+    //             error: "Incorrect password.",
+    //             focus: "password"
+    //         });
+    //         return;
+    //     }
+    //
+    //     result({redirect: "#"});
+    // }, 1000);
 }
 
 /**

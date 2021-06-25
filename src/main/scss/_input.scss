@@ -1,4 +1,4 @@
-@import "theme";
+@import "_theme.scss";
 
 .input {
     box-sizing: border-box;
@@ -20,5 +20,150 @@
         display: block;
         width: 100%;
         margin: sz(3pt) sz(0pt);
+    }
+}
+
+.checkbox {
+    display: inline-block;
+    cursor: pointer;
+
+    &.block {
+        display: block;
+        width: 100%;
+        margin: sz(3pt) sz(0pt);
+    }
+
+    input[type=checkbox], input[type=radio] {
+        cursor: pointer;
+        margin: 0px;
+        appearance: none;
+        margin: 2px 5px 1px 5px;
+        vertical-align: middle;
+    }
+
+    input[type=checkbox]::before, input[type=radio]::before {
+        font-family: MaterialIconsOutlined;
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        content: "check_box_outline_blank";
+        font-size: 24px;
+        position: relative;
+
+        color: $col-heritage-blue;
+
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+      
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: 'liga';
+    }
+
+    input[type=checkbox]::before {
+        content: "check_box_outline_blank";
+    }
+
+    input[type=radio]::before {
+        content: "radio_button_unchecked";
+    }
+
+    input[type=checkbox]:checked::before {
+        color: $col-spark-orange;
+        content: "check_box";
+    }
+
+    input[type=radio]:checked::before {
+        color: $col-spark-orange;
+        content: "radio_button_checked";
+    }
+}
+
+.fileinput {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: sz(30pt);
+
+    border: 3.4px dashed $col-heritage-blue;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+    color: $col-attitude;
+
+    * {
+        color: $col-attitude;
+    }
+
+    &.dragover {
+        border-color: $col-spark-orange;
+    }
+
+    &:hover {
+        border-color: $col-attitude;
+    }
+
+    input[type=file] {
+        opacity: 0;
+        position: absolute;
+
+        left: 0;
+        opacity: 0;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+}
+
+@keyframes anim {
+    0% {
+        background-position: 0px center;
+    }
+    100% {
+        background-position: sz(16pt) center;
+    }
+}
+
+.progressbar {
+    $height: 8pt;
+    $gradhgt: $height * 16 / 8;
+    
+    width: 100%;
+    display: block;
+
+    height: sz($height);
+
+    background-color: $col-peculiar;
+    border-radius: 2px;
+    overflow: hidden;
+
+    margin: 10px 2px;
+
+    .progress {
+        height: 100%;
+        background-color: $col-attitude;
+        border-radius: 2px;
+    }
+
+    &.indeterminate {
+        $light: $col-peculiar;
+        $dark: darken($col-peculiar, 10%);
+
+        background-image: linear-gradient(-45deg, $dark, $dark 36%, $light 36%, $light 64%, $dark 64%);
+        background-size: sz($gradhgt) sz($gradhgt);
+        background-repeat: repeat-x;
+        background-position: 0px center;
+
+        animation: anim 0.5s linear;
+        animation-iteration-count: infinite;
     }
 }

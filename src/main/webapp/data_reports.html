@@ -1,10 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Import Export</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+  <link rel="stylesheet" href="css/icons.css">  <!-- Compiled from SCSS -->
+  <link rel="stylesheet" href="font/fonts.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <title>Import/export</title>
 </head>
-<body>
 
+<body>
+<!-- Top navigation -->
+<iframe src="navbar.html" onload="this.before((this.contentDocument.body||this.contentDocument).children[0]);this.remove()"></iframe>
+
+<div class="container-fluid">
+  <div class="nav-entry" -icon="file_upload" -name="Data"></div>
+
+  <div class="row">
+    <!-- sidebar navigation -->
+    <iframe src="sidebar.html" onload="this.before((this.contentDocument.body||this.contentDocument).children[0]);this.remove()"></iframe>
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <div class="card-content">
+          <form onsubmit="handleUpload()" method="POST" enctype="multipart/form-data" id="submitForm">
+            <div class="fileinput">
+              <span id="file-upload-description">Click or drop excel file to upload.</span><br>
+              <input autocomplete="off" accept="application/vnd.ms-excel,.xlsx" type="file" id="fileToUpload" name="fileToUpload" required>
+            </div>
+            <div class="container-fluid text-center" id="textBelowUpload">
+              <button class="btn-primary" type="submit">Submit</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-content align-content-center">
+          <a class="btn btn-secondary" href="/loss_prevention_war/download/alarm" download="alarms">
+            Download alarm data (as excel)
+          </a>
+          <br>
+          <a class="btn btn-secondary" href="/loss_prevention_war/download/article" download="articles">
+            Download article data (as excel)
+          </a>
+          <br>
+          <a class="btn btn-secondary" href="/loss_prevention_war/download/store" download="stores">
+            Download store data (as excel)
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
 </body>
+
+
+
+<script>
+  function handleUpload() {
+    let items = document.getElementById("textBelowUpload");
+    let xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        let cardClass;
+        if (this.responseText.toLowerCase().includes("error") || this.responseText.toLowerCase().includes("fail")) {
+          cardClass = "<div class='card card-error'>";
+        } else {
+          cardClass = "<div class='card card-success'>";
+        }
+        items.innerHTML = items.innerHTML.split("</button>")[0] + "</button>"
+                + cardClass + this.responseText + "</div>"
+      } else if (this.readyState === 4) {
+        items.innerHTML = items.innerHTML.split("</button>")[0] + "</button>"
+                + "<div class='card card-error'>Could not reach server!</div>"
+      }
+    }
+    let URI = "http://localhost:8080/loss_prevention_war/upload";
+    let formData = new FormData();
+    formData.append("fileToUpload", document.getElementById("fileToUpload").files[0]);
+    xmlHttp.open("POST", URI, true);
+    xmlHttp.send(formData);
+    items.innerHTML = items.innerHTML.split("</button>")[0] + "</button>"
+            + "<div class='card'>Uploaded file, processing...</div>"
+  }
+
+  let form = document.getElementById("submitForm");
+
+  function showFileName() {
+    let input = document.getElementById("fileToUpload");
+    if (input.files.length === 0) {
+      // user has not selected a file
+      return;
+    }
+    let fileName = input.files[0].name;
+    let fileUploadDescription = document.getElementById('file-upload-description');
+    fileUploadDescription.textContent = "Selected  " + fileName;
+  }
+  form.addEventListener('change', showFileName);
+  // showFileName();  // not necessary if autocomplete="off"
+
+  function handleForm(event) { event.preventDefault(); }
+  form.addEventListener('submit', handleForm);
+</script>
 </html>

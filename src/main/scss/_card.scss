@@ -1,21 +1,36 @@
-@import "theme";
+@import "_theme.scss";
 
 .card {
-    border-radius: sz(4pt);
+    border-radius: sz(3pt);
     display: block;
     box-sizing: border-box;
     background-color: $col-paper-grey;
-    box-shadow: 0px 3px 14px rgba(#000, 0.5);
+    box-shadow: 0px 5px 12px -2px rgba(#000, 0.2);
     overflow: hidden;
     position: relative;
 
     .card-image {
-        background-color: $col-spark-orange;
+        background-color: $col-white;
         width: 100%;
         display: block;
         box-sizing: border-box;
         position: relative;
+        
+        margin-bottom: sz(10pt);
 
+        .card-image-inner {
+            width: 100%;
+        }
+    }
+
+    .card-graph {
+        background-color: $col-white;
+        width: 100%;
+        display: block;
+        box-sizing: border-box;
+        position: relative;
+        overflow-x: scroll;
+        
         margin-bottom: sz(10pt);
 
         .card-image-inner {
@@ -30,7 +45,7 @@
         box-sizing: border-box;
         padding: 20% 30%;
         position: relative;
-
+        
         margin-bottom: sz(10pt);
 
         .card-image-inner {
@@ -52,9 +67,80 @@
         padding: sz(0pt) sz(20pt) sz(10pt) sz(20pt);
         box-sizing: border-box;
         @include text-body;
+        color: inherit;
 
         &:nth-child(1) {
             padding-top: sz(10pt);
         }
+
+        &.align-right {
+            text-align: right;
+        }
+    }
+
+    .card-corner-tr {
+        padding: sz(10pt);
+        box-sizing: border-box;
+        
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
+
+    .card-corner-tl {
+        padding: sz(10pt);
+        box-sizing: border-box;
+        
+        position: absolute;
+        left: 0px;
+        top: 0px;
+    }
+
+    .card-corner-br {
+        padding: sz(10pt);
+        box-sizing: border-box;
+        
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+    }
+
+    .card-corner-bl {
+        padding: sz(10pt);
+        box-sizing: border-box;
+        
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+    }
+
+    &.card-error, .card-error {
+        background-color: $col-artful;
+        .card-header {color: $col-heritage-blue;}
+        color: $col-white;
+    }
+
+    &.card-warning, .card-warning {
+        background-color: $col-people;
+        .card-header {color: $col-heritage-blue;}
+        color: $col-white;
+    }
+
+    &.card-success, .card-success {
+        background-color: $col-intuitive;
+        .card-header {color: $col-attitude;}
+        color: $col-heritage-blue;
+    }
+
+    &.card-note, .card-note {
+        background-color: $col-elegance;
+        .card-header {color: $col-spark-orange;}
+        color: $col-white;
+    }
+
+    &.card-dark, .card-dark {
+        background-color: $col-heritage-blue;
+        .card-header {color: $col-spark-orange;}
+        color: $col-white;
     }
 }

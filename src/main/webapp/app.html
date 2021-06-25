@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html class="app-html">
+    <head>
+        <link rel="stylesheet" href="font/fonts.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <script src="js/jquery.js"></script>
+        <script src="js/commandbar.js"></script>
+        <script src="js/app.js"></script>
+
+        <style>
+            .logo::before {
+                display: block;
+                width: 100%;
+                height: 100%;
+                background-image: url("svg/nedap_inline_logo_on_blue.svg");
+                background-position: center;
+                background-size: contain;
+                background-repeat: no-repeat;
+                content: "";
+                box-sizing: border-box;
+                border: 10px solid transparent;
+            }
+        </style>
+    </head>
+
+    <body class="app">
+        <div class="app-bar">
+            <div class="app-bar-inner">
+                <div class="logo"><!-- automatically styled with logo by CSS --></div>
+                <input class="searchbar" id="searchbar" type="text" placeholder="Type here to search">
+                <div class="profile-icon" id="#profile"></div>
+            </div>
+        </div>
+
+        <div class="app-nav" id="nav">
+            <div class="nav-entry nav-current" -icon="dashboard" -name="Dashboard"></div>
+            <div class="nav-entry" -icon="account_circle" -name="Account"></div>
+            <div class="nav-entry" -icon="file_upload" -name="Data"></div>
+            <div class="nav-entry" -icon="table_view" -name="Reports"></div>
+            <div class="nav-entry" -icon="tune" -name="Settings"></div>
+            <div class="nav-entry" -icon="admin_panel_settings" -name="Admin"></div>
+            <div class="nav-section" -name="Saved reports"></div>
+            <div class="nav-entry" -icon="insert_drive_file" -name="Current month"></div>
+            <div class="nav-entry" -icon="insert_drive_file" -name="Last quartile"></div>
+        </div>
+
+        <div class="app-content" id="app">
+            <div class="card">
+                <div class="card-header">
+                    Here's some previews of different UI components
+                </div>
+                <div class="card-content">
+                    Buttons
+                </div>
+                <div class="card-content">
+                    <button>Button</button>
+                    <button class="btn-primary">Primary</button>
+                    <button class="btn-secondary">Secondary</button>
+                </div>
+                <div class="card-content">
+                    Text fields
+                </div>
+                <div class="card-content">
+                    <input type="text" class="input" placeholder="Type here">
+                </div>
+                <div class="card-content">
+                    Checkboxes
+                </div>
+                <div class="card-content">
+                    <label class="checkbox block"><input type="checkbox">Label</label>
+                    <label class="checkbox block"><input type="checkbox">Label</label>
+                    <label class="checkbox block"><input type="checkbox">Label</label>
+                </div>
+                <div class="card-content">
+                    Radio buttons
+                </div>
+                <div class="card-content">
+                    <label class="checkbox block"><input type="radio" name="a">Label</label>
+                    <label class="checkbox block"><input type="radio" name="a">Label</label>
+                    <label class="checkbox block"><input type="radio" name="a">Label</label>
+                </div>
+                <div class="card-content">
+                    Selectboxes
+                </div>
+                <div class="card-content">
+                    <span class="selectbox dark">
+                        <select class="btn-primary">
+                            <option>Option A</option>
+                            <option>Option B</option>
+                            <option>Option C</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="card-content">
+                    File drop areas
+                </div>
+                <div class="card-content">
+                    <label class="fileinput">
+                        <span>Click or drop file to upload</span><br>
+                        <span class="filename"></span>
+                        <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    </label>
+                </div>
+                <div class="card-content">
+                    Progress bars
+                </div>
+                <div class="card-content">
+                    <div class="progressbar">
+                        <div class="progress" style="width: 40%"></div>
+                    </div>
+                    <div class="progressbar indeterminate"></div>
+                </div>
+            </div>
+            <div class="flex vertical-700">
+                <div class="flex vertical">
+                    <div class="card">
+                        <div class="card-header">Informative card</div>
+                        <div class="card-content">
+                            The most common appearance of an informative card is a card with some paragraph of text. It serves
+                            the user some useful information, or it can be a note the user has written himself. They may or may
+                            not contain images.
+                        </div>
+                        <div class="card-content">
+                            Cards with other purposes can often be made up of the same components as informative cards.
+                            For example: a graph can be rendered in a <code>&lt;canvas&gt;</code> inside a <code>.card-image</code> block.
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Performing card</div>
+                        <div class="card-content">
+                            Performing cards often contain buttons, a form, and some information about the form or the buttons.
+                        </div>
+                        <div class="card-content">
+                            Modals and snackbars are often performing cards. Press these buttons for some examples.
+                        </div>
+                        <div class="card-content">
+                            <button class="btn btn-error btn-outline" onclick="app.showModal('#test-modal')">Show modal</button>
+                            <button class="btn btn-alt btn-outline" onclick="app.showSnackbar({text: 'This is a snackbar', style: 'dark', buttons: [{text: 'Hide', handler: sb => sb.close()}]})">Show snackbar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex vertical">
+                    <div class="card">
+                        <div class="card-image" id="chart_div" style="height: 400px">
+                            <script>
+                                app.drawChart(function() {
+                                    var data = google.visualization.arrayToDataTable([
+                                        ['Year', 'Items Found', 'Items Lost'],
+                                        ['2016',    1020,        590],
+                                        ['2017',     910,        720],
+                                        ['2018',    1000,        400],
+                                        ['2019',    1170,        460],
+                                        ['2020',     660,       1120],
+                                        ['2021',    1030,        540]
+                                    ]);
+
+                                    var options = {
+                                        title: 'Company Performance',
+                                        hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+                                        vAxis: {minValue: 0},
+                                        colors: app.graphColors
+                                    };
+
+                                    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+                                    chart.draw(data, options);
+                                });
+                            </script>
+                        </div>
+                        <div class="card-header">Analytical cards</div>
+                        <div class="card-content">
+                            Analytical cards are purely for displaying graphs. The user may use controls to alter the graph or the
+                            data.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex vertical-700">
+                <div class="card">
+                    <div class="card-content">I am normal!</div>
+                </div>
+                <div class="card card-error">
+                    <div class="card-content">I am an error!</div>
+                </div>
+                <div class="card card-warning">
+                    <div class="card-content">I am a warning!</div>
+                </div>
+                <div class="card card-success">
+                    <div class="card-content">I am a success!</div>
+                </div>
+                <div class="card card-note">
+                    <div class="card-content">I am a note!</div>
+                </div>
+                <div class="card card-dark wrap">
+                    <div class="card-content">I am dark!</div>
+                </div>
+            </div>
+            <div class="flex vertical-700">
+                <div class="card card-error">
+                    <div class="card-header">I am an error!</div>
+                    <div class="card-content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                </div>
+                <div class="card card-warning">
+                    <div class="card-header">I am a warning!</div>
+                    <div class="card-content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                </div>
+                <div class="card card-success">
+                    <div class="card-header">I am a success!</div>
+                    <div class="card-content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                </div>
+            </div>
+            <div class="flex vertical-700">
+                <div class="card card-note">
+                    <div class="card-header">I am a note!</div>
+                    <div class="card-content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                </div>
+                <div class="card card-dark">
+                    <div class="card-header">I am dark!</div>
+                    <div class="card-content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-corner-tr">*close button*</div>
+                    <div class="card-header">Corner buttons</div>
+                    <div class="card-content">
+                        I have a corner panel where you can put icon buttons, for example to close the card
+                    </div>
+                </div>
+            </div>
+            <div class="flex vertical-700">
+                <div class="flex vertical grow-2">
+                    <div class="flex vertical-900">
+                        <div class="card">
+                            <div class="card-header">Alignment!</div>
+                            <div class="card-content">
+                                Align cards using flex containers.
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">I am aligned!</div>
+                            <div class="card-content">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="card">
+                            <div class="card-header">I am stretched!</div>
+                            <div class="card-content">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex vertical">
+                    <div class="card">
+                        <div class="card-header">I am also aligned!</div>
+                        <div class="card-content">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="test-modal">
+            <div class="card card-error">
+                <div class="card-header">I'm a big and important modal</div>
+                <div class="card-content">
+                    This is a big warning modal that wants you to be sure you have seen my information.
+                </div>
+                <div class="card-content align-right">
+                    <button class="btn-primary" onclick="app.hideModal(this)">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="snackbar-container">
+        </div>
+
+        <script>
+            let dispatcher = new CommandDispatcher([
+                {
+                    aliases: ["add"],
+                    args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
+                    trigger: function(result) {
+                        alert(result.value("$main", 0) + result.value("$main", 1));
+                    }
+                }, {
+                    aliases: ["sub"],
+                    args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
+                    trigger: function(result) {
+                        alert(result.value("$main", 0) - result.value("$main", 1));
+                    }
+                }, {
+                    aliases: ["hello"],
+                    trigger: function(result) {
+                        alert("Hello world!");
+                    }
+                }, {
+                    aliases: ["say"],
+                    args: [{ name: "$main", params: [ArgTypes.string] }],
+                    trigger: function(result) {
+                        alert(result.value("$main"));
+                    }
+                }, {
+                    aliases: ["arg"],
+                    args: [
+                        { name: "a", params: [ArgTypes.string], required: true },
+                        { name: "b", params: [ArgTypes.int] }
+                    ],
+                    trigger: function(result) {
+                        if (result.has("b")) {
+                            alert(result.value("a") + result.value("b"));
+                        } else {
+                            alert(result.value("a"));
+                        }
+                    }
+                }
+            ]);
+
+
+            function makeCommandBar(opts) {
+                var element = opts.element;
+                var $element = $(element);
+
+                $element.on("input", (event) => {
+                    if ($element.val()[0] === '/') {
+                        $element.addClass("command-mode");
+
+                        let parseResult = dispatcher.parse($element.val().substring(1));
+                        if (parseResult.errors.length > 0) {
+                            $element.addClass("command-error");
+                        } else {
+                            $element.removeClass("command-error");
+                        }
+                    } else {
+                        $element.removeClass("command-mode");
+                        $element.removeClass("command-error");
+                    }
+                });
+
+                $element.keypress((event) => {
+                    var key = event.which || event.keyCode;
+
+                    if (key === 13) { // enter
+                        event.stopPropagation();
+                        event.preventDefault();
+
+                        if ($element.val()[0] === '/') {
+                            $element.addClass("command-mode");
+
+                            let parseResult = dispatcher.parse($element.val().substring(1));
+                            if (parseResult.errors.length > 0) {
+                                $element.addClass("command-error");
+                                console.log(parseResult.errors);
+                            } else {
+                                $element.val("");
+                                $element.removeClass("command-mode");
+                                $element.removeClass("command-error");
+                                parseResult.execute();
+                            }
+                        } else {
+                            $element.removeClass("command-mode");
+                            $element.removeClass("command-error");
+                        }
+                    }
+                });
+            }
+
+            $(function() {
+                makeCommandBar({
+                    element: document.getElementById("searchbar")
+                });
+            });
+        </script>
+    </body>
+</html>
