@@ -9,6 +9,7 @@ import org.json.JSONTokener;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -48,37 +49,15 @@ public class sqlUtils {
     }
 
     //============================================== Database Utils  ===============================================\\
-    private static ArrayList<String> requiredLabelsType1 = new ArrayList<>();
-    private static ArrayList<String> requiredLabelsType2 = new ArrayList<>();
-    private static ArrayList<String> requiredLabelsType3 = new ArrayList<>();
-
-
-    /**
-     * Function for filling the required labels
-     */
-    private static void fillRequiredLabels() {
-        // Type one is of alarm type
-
-        requiredLabelsType1.add(0, "EPC (UT)");
-        requiredLabelsType1.add(1, "Timestamp");
-        requiredLabelsType1.add(2, "Store ID (UT)");
-        requiredLabelsType1.add(3, "Article ID (UT)");
-
-        // Type two is of article type
-
-        requiredLabelsType2.add(0, "Article ID (UT)");
-        requiredLabelsType2.add(1, "Category (UT)");
-        requiredLabelsType2.add(2, "Article (UT)");
-        requiredLabelsType2.add(3, "Color");
-        requiredLabelsType2.add(4, "Size");
-        requiredLabelsType2.add(5, "Price (EUR)");
-
-        // Type three is of store type
-
-        requiredLabelsType3.add(0, "Store ID (UT)");
-        requiredLabelsType3.add(1, "Latitude (UT)");
-        requiredLabelsType3.add(2, "Longitude (UT)");
-    }
+    private static final ArrayList<String> requiredLabelsType1 = new ArrayList<>(Arrays.asList(
+            "EPC (UT)", "Timestamp", "Store ID (UT)", "Article ID (UT)"
+    ));  // alarm type
+    private static final ArrayList<String> requiredLabelsType2 = new ArrayList<>(Arrays.asList(
+            "Article ID (UT)", "Category (UT)", "Article (UT)", "Color", "Size", "Price (EUR)"
+    ));  // article type
+    private static final ArrayList<String> requiredLabelsType3 = new ArrayList<>(Arrays.asList(
+            "Store ID (UT)", "Latitude (UT)", "Longitude (UT)"
+    ));  // store type
 
     /**
      * Function for getting the required labels
@@ -687,7 +666,6 @@ public class sqlUtils {
      * @return
      */
     public static JSONArray getTableJsonList(int sheetType) {
-        fillRequiredLabels();
         String tableName = "";
         // Check the sheetType and assign corresponding name
         switch (sheetType) {
@@ -736,10 +714,6 @@ public class sqlUtils {
         ArrayList<String> columnLabels = getColumnLabels(sheet);
 
         if (!columnLabels.get(0).equals("Empty file")) {
-            int fileType = -1;
-
-            fillRequiredLabels();
-
             if (checkLabels(columnLabels, getRequiredLabels(0))) {
                 parsePushToDB(sheet, getRequiredLabels(0), 0);
             } else if (checkLabels(columnLabels, getRequiredLabels(1))) {
@@ -749,10 +723,8 @@ public class sqlUtils {
             } else {
                 return "Status-2";
             }
-
             return "Status-0";
         } else {
-
             return "Status-1";
         }
 
@@ -798,10 +770,8 @@ public class sqlUtils {
         int requiredLabelIterator = 0;
         ArrayList<Integer> indexArray = new ArrayList<>();
 
-
         // Get's the indexes of the required labels.
         while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
-            fillRequiredLabels();
             ArrayList<String> columnLabel = new ArrayList<String>();
             columnLabel.add(getCellData(sheet, row, column));
 
