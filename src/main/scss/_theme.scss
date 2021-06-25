@@ -41,6 +41,8 @@ $font-objectivity-bold: ObjectivityBold, sans-serif;
 $font-objectivity-medium: ObjectivityMedium, sans-serif;
 $font-objectivity: Objectivity, sans-serif;
 $font-ibm-plex-sans: IBMPlexSans, sans-serif;
+$font-ibm-plex-mono: IBMPlexMono, monospace;
+$font-ibm-plex-mono-bold: IBMPlexMonoBold, monospace;
 
 @mixin text-level-1($scale: 1) {
     color: $col-heritage-blue;

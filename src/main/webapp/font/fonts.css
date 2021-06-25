@@ -117,3 +117,72 @@
     font-weight: bold;
     font-style: italic;
 }
+
+
+
+/* IBMPlexMono */
+@font-face {
+    font-family: IBMPlexMono;
+    src: url("IBMPlexMono-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: IBMPlexMono;
+    src: url("IBMPlexMono-SemiBold.ttf");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: IBMPlexMono;
+    src: url("IBMPlexMono-Italic.ttf");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: IBMPlexMono;
+    src: url("IBMPlexMono-SemiBoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+
+/* IBMPlexMonoBold */
+@font-face {
+    font-family: IBMPlexMonoBold;
+    src: url("IBMPlexMono-SemiBold.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: IBMPlexMonoBold;
+    src: url("IBMPlexMono-Bold.ttf");
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: IBMPlexMonoBold;
+    src: url("IBMPlexMono-SemiBoldItalic.ttf");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: IBMPlexMonoBold;
+    src: url("IBMPlexMono-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+/* MaterialIconsOutlined */
+@font-face {
+    font-family: MaterialIconsOutlined;
+    src: url("MaterialIconsOutlined-Regular.otf");
+}
