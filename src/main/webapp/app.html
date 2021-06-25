@@ -147,16 +147,16 @@
                         <div class="card-image" id="chart_div" style="height: 400px">
                             <script>
                                 app.drawChart(function() {
-                                    var data = google.visualization.arrayToDataTable([
-                                        ['Year', 'Items Found', 'Items Lost'],
-                                        ['2016',    1020,        590],
-                                        ['2017',     910,        720],
-                                        ['2018',    1000,        400],
-                                        ['2019',    1170,        460],
-                                        ['2020',     660,       1120],
-                                        ['2021',    1030,        540]
-                                    ]);
+                                    var result = $.ajax({
+                                            url: "rest/app",
+                                            method: 'POST',
+                                            query: "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-1|article.category|-0",
+                                        }
+                                    )
 
+                                    console.log(result)
+                                    var data = google.visualization.arrayToDataTable(result);
+                                    console.log(data)
                                     var options = {
                                         title: 'Company Performance',
                                         hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
