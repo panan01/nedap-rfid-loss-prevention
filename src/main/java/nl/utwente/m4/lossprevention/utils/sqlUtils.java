@@ -24,7 +24,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-2-1|store|-5|store.longitude:>:0:AND:store.latitude:>:10|-0-0-0-0";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-3|stolen_items:\"Stolen Items Within Interval\":0|4|1:'2021#01#07':'2021#01#08'|-0-0-0-0-0-0";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -206,7 +206,7 @@ public class sqlUtils {
                         return checkVariableIsColumn(variables.get(0));
 
                     case 3:
-                        if (variables.get(0).matches("^[a-zA-Z_ ]*$") & variables.get(1).matches("^[a-zA-Z_ ]*$")) {
+                        if (variables.get(0).matches("^[a-zA-Z_ \"]*$") & variables.get(1).matches("^[a-zA-Z_ \"]*$")) {
                             return true;
                         }
                         break;
@@ -287,21 +287,16 @@ public class sqlUtils {
                         }
                         break;
                     case 2:
-                        if ((checkVariableIsColumn(variables.get(0)) | variables.get(0).matches("^[-0-9]*$")) & (variables.get(1).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(2)) | variables.get(2).matches("^[-0-9]*$"))) {
-                            if (variables.get(3).matches("^[0-9 ' -]*$") & variables.get(4).matches("^[0-9 ' -]*$")) {
-                                return true;
-                            }
-                        }
-                        break;
+
                     case 3:
                         if ((checkVariableIsColumn(variables.get(0)) | variables.get(0).matches("^[-0-9]*$")) & (variables.get(1).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(2)) | variables.get(2).matches("^[-0-9]*$"))) {
-                            if (variables.get(3).matches("^[0-9 ' -:]*$") & variables.get(4).matches("^[0-9 ' -]*$")) {
+                            if (variables.get(3).matches("^[0-9 ' _ #]*$") & variables.get(4).matches("^[0-9 ' _ #]*$")) {
                                 return true;
                             }
                         }
                         break;
                     case 4:
-                        if (variables.get(0).matches("^[0-9 ' -:]*$")) {
+                        if (variables.get(0).matches("^[0-9 ' _ #]*$")) {
                             return true;
                         }
 
@@ -464,6 +459,7 @@ public class sqlUtils {
         }
 
         variables = getVariables(generationCode[3].substring(1));
+
         switch (generationCode[3].charAt(0)) {
             case '0':
 
@@ -481,11 +477,15 @@ public class sqlUtils {
             case '2':
                 if (variablesValid(variables, 3, 2)) {
                     generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
-                    if (variables.get(3) != "0") {
-                        generatedQuery += "AND date(timestamp) >=" + variables.get(3) + " ";
+                    if (!variables.get(3).equals("0")) {
+                        String time = variables.get(3).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND date(timestamp) >=" + time + " ";
                     }
-                    if (variables.get(4) != "0") {
-                        generatedQuery += "AND date(timestamp) <=" + variables.get(4) + " ";
+                    if (!variables.get(4).equals("0")) {
+                        String time = variables.get(4).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND date(timestamp) <=" + time + " ";
                     }
                 } else {
                     return "Invalid variables! variables: " + variables;
@@ -496,11 +496,15 @@ public class sqlUtils {
             case '3':
                 if (variablesValid(variables, 3, 3)) {
                     generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
-                    if (variables.get(3) != "0") {
-                        generatedQuery += "AND date(timestamp) >= to_timestamp(" + variables.get(3) + ", 'dd-mm-yyyy hh24:mi:ss') ";
+                    if (!variables.get(3).equals("0") ) {
+                        String time = variables.get(3).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND alarm.timestamp >= to_timestamp(" + time + ", 'dd-mm-yyyy hh24:mi:ss') ";
                     }
-                    if (variables.get(4) != "0") {
-                        generatedQuery += "AND date(timestamp) <= to_timestamp(" + variables.get(4) + ", 'dd-mm-yyyy hh24:mi:ss') ";
+                    if (!variables.get(4).equals("0") ) {
+                        String time = variables.get(4).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND alarm.timestamp <= to_timestamp(" + time + ", 'dd-mm-yyyy hh24:mi:ss') ";
                     }
                 } else {
                     return "Invalid variables! variables: " + variables;
@@ -512,8 +516,12 @@ public class sqlUtils {
                 if (variablesValid(variables, 3, 4)) {
                     generatedQuery += "WHERE article.id = alarm.article_id ";
                     if (!variables.get(0).equals("0")) {
+                        String time = variables.get(0).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND date(timestamp) = " + time + " ";
                     } else {
-                        generatedQuery += "AND date(timestamp) = " + variables.get(0) + " ";
+
+
                     }
                 } else {
                     return "Invalid variables! variables: " + variables;
@@ -749,7 +757,7 @@ public class sqlUtils {
         for (String label : columnLabels) {
             for (String requiredLabel : requiredLabels) {
                 if (requiredLabel.equals(label)) {
-                    //TODO make more efficient
+
                     requiredFoundCount++;
                 }
             }
