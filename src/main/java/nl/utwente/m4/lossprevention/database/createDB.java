@@ -27,25 +27,31 @@ public class createDB {
                     DriverManager.getConnection(url, username, password);
 
             // SQL query, note that it does weird stuff if no tables are in phpmyadmin
-            String query = "CREATE TABLE nedap.Store (id INT PRIMARY KEY CHECK (id >= 0),latitude INT,longitude INT); CREATE TABLE nedap.Alarm (\n" +
-                    "    epc VARCHAR(80) PRIMARY KEY,\n" +
-                    "    timestamp TIMESTAMP,\n" +
-                    "    store_id INT,\n" +
-                    "    CONSTRAINT fk_store_id\n" +
-                    "         FOREIGN KEY(store_id)\n" +
-                    "             REFERENCES nedap.Store(id),\n" +
-                    "    article_id INT,\n" +
-                    "    CONSTRAINT fk_article_id\n" +
-                    "         FOREIGN KEY(article_id)\n" +
-                    "             REFERENCES nedap.Article(id)\n" +
-                    ");CREATE TABLE nedap.Article (\n" +
+            String query = "CREATE TABLE nedap.store (id INT PRIMARY KEY CHECK (id >= 0), latitude INT, longitude INT); " +
+                    "CREATE TABLE nedap.alarm ( \n" +
+                    "  epc VARCHAR(80) PRIMARY KEY,\n" +
+                    "  timestamp TIMESTAMP,\n" +
+                    "  store_id INT, CONSTRAINT fk_store_id\n" +
+                    "        FOREIGN KEY(store_id) \n" +
+                    "            REFERENCES nedap.store(id),\n" +
+                    "  article_id BIGINT, \n" +
+                    "  CONSTRAINT fk_article_id \n" +
+                    "        FOREIGN KEY(article_id) \n" +
+                    "            REFERENCES nedap.article(id) );\n" +
+                    "CREATE TABLE nedap.article (\n" +
                     "    id BIGINT PRIMARY KEY CHECK (id > 0),\n" +
                     "    category INT CHECK (category > 0),\n" +
                     "    product INT CHECK (product > 0),\n" +
                     "    color VARCHAR(80),\n" +
                     "    size VARCHAR(80),\n" +
                     "    price DECIMAL(7, 2) CHECK (price >= 0)\n" +
-                    ");";
+                    ");\n" +
+                    "CREATE TABLE nedap.users (email TEXT, hashed_pass bytea, first_name TEXT, last_name TEXT, " +
+                    "   type TEXT, salt TEXT, PRIMARY KEY (email));\n" +
+                    "CREATE TABLE nedap.store_access(store_id INTEGER, allowed_user TEXT, " +
+                    "   PRIMARY KEY(store_id, allowed_user), " +
+                    "   FOREIGN KEY (store_id)  REFERENCES nedap.store(id), \n" +
+                    "   FOREIGN KEY (allowed_user) REFERENCES nedap.users(email));";
 
             PreparedStatement st =
                     connection.prepareStatement(query);

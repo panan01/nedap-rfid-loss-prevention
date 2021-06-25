@@ -10,7 +10,6 @@
     position: relative;
 
     .card-image {
-        background-color: $col-white;
         width: 100%;
         display: block;
         box-sizing: border-box;
@@ -35,6 +34,75 @@
 
         .card-image-inner {
             width: 100%;
+        }
+    }
+
+    .card-table {
+        overflow: auto;
+        max-height: 500px;
+
+        table {
+            border-spacing: 0px;
+            min-width: 100%;
+            thead {
+                background-color: $col-attitude;
+                color: $col-white;
+            }
+
+            tbody {
+                background-color: $col-scientific;
+                tr:nth-child(odd) {
+                    background-color: darken($col-scientific, 10%);
+                }
+            }
+    
+            &.sortable {
+                thead {
+                    #sorttable_sortrevind, #sorttable_sortfwdind {
+                        float: right;
+                        position: absolute;
+                        right: 10px;
+                        font-size: 0px;
+                        top: calc(50% - 12px);
+
+                        &::before {
+                            font-family: MaterialIconsOutlined;
+                            display: inline-block;
+                            width: 24px;
+                            height: 24px;
+                            font-size: 24px;
+                            position: relative;
+                    
+                            line-height: 1;
+                            text-transform: none;
+                            letter-spacing: normal;
+                            word-wrap: normal;
+                            white-space: nowrap;
+                            direction: ltr;
+                          
+                            -webkit-font-smoothing: antialiased;
+                            text-rendering: optimizeLegibility;
+                            -moz-osx-font-smoothing: grayscale;
+                            font-feature-settings: 'liga';
+                        }
+                    }
+                    #sorttable_sortrevind::before {
+                        content: "expand_less";
+                    }
+                    #sorttable_sortfwdind::before {
+                        content: "expand_more";
+                    }
+                    cursor: pointer;
+                    user-select: none;
+                }
+            }
+    
+            td, th {
+                position: relative;
+                padding: 10px;
+                margin: 0px;
+                border: 0px;
+            }
         }
     }
 

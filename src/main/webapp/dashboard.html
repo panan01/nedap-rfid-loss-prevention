@@ -1,279 +1,371 @@
 <!DOCTYPE html>
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard</title>
+<html class="app-html">
+    <head>
+        <link rel="stylesheet" href="font/fonts.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
+        <script src="js/jquery.js"></script>
+        <script src="js/commandbar.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/chart.js"></script>
+        <script src="js/sorttable.js"></script>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
 
-    <link rel="stylesheet" href="css/icons.css">
+        <style>
+            .logo::before {
+                display: block;
+                width: 100%;
+                height: 100%;
+                background-image: url("svg/nedap_inline_logo_on_blue.svg");
+                background-position: center;
+                background-size: contain;
+                background-repeat: no-repeat;
+                content: "";
+                box-sizing: border-box;
+                border: 10px solid transparent;
+            }
+            #navbarLinks {
+                display: none;
+                min-width: 0;
+                text-align: center;
+                vertical-align: middle;
+                background-color: #023A4F;
 
-    <!-- Bootstrap core CSS -->
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+            }
+            #navbarLinks a {
+                text-decoration: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                display: table-cell;
+                position: relative;
+                vertical-align: middle;
+                font-size: 20px;
+                background-color: #023A4F;
+                color: white;
+            }
+            #navbarLinks a:hover {
+                background-color: #01151d;
+            }
+            #icon {
+                position: relative;
+                float: right;
+                color: white;
+                background-color: #FF6C37;
+            }
+            #icon:hover {
+                background-color: #FF4710;
+            }
+            #icon div {
+                text-align: center;
+            }
+            #icon div span {
+                font-size: 48px;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+        </style>
 
-    <style>
-      .bd-placeholder-img {
-          font-size: 1.125rem;
-          text-anchor: middle;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          user-select: none;
-      }
+        <script>
+            // Map marker icons
+            const s = 2;
+            const blueMarkerIcon = L.icon({
+                iconUrl: 'icons/blue_map_marker.png',
+                iconSize: [24*s, 24*s],
+                iconAnchor: [12*s, 22*s],
+                popupAnchor: [0, -20*s]
+            });
+            const redMarkerIcon = L.icon({
+                iconUrl: 'icons/red_map_marker.png',
+                iconSize: [24*s, 24*s],
+                iconAnchor: [12*s, 22*s],
+                popupAnchor: [0, -20*s]
+            });
+            const greenMarkerIcon = L.icon({
+                iconUrl: 'icons/green_map_marker.png',
+                iconSize: [24*s, 24*s],
+                iconAnchor: [12*s, 22*s],
+                popupAnchor: [0, -20*s]
+            });
+            const yellowMarkerIcon = L.icon({
+                iconUrl: 'icons/yellow_map_marker.png',
+                iconSize: [24*s, 24*s],
+                iconAnchor: [12*s, 22*s],
+                popupAnchor: [0, -20*s]
+            });
+            const multiMarkerIcon = L.icon({
+                iconUrl: 'icons/multi_map_marker.png',
+                iconSize: [24*s, 24*s],
+                iconAnchor: [12*s, 22*s],
+                popupAnchor: [0, -20*s]
+            });
+            const markerIcons = [blueMarkerIcon, redMarkerIcon, greenMarkerIcon, yellowMarkerIcon];
+        </script>
+    </head>
 
-      @media (min-width: 768px) {
-          .bd-placeholder-img-lg {
-              font-size: 3.5rem;
-          }
-      }
-    </style>
-
-
-    <!-- Custom styles for this template -->
-    <link href="dashboard.css" rel="stylesheet">
-  </head>
-  <body>
-
-<!-- Top navigation -->
-<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Nedap</a>
-  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-  <ul class="navbar-nav px-3">
-    <li class="nav-item text-nowrap">
-      <a class="nav-link" href="#">Profile</a>
-    </li>
-  </ul>
-</header>
-
-<div class="container-fluid">
-  <div class="row">
-
-
-    <!-- Side navigation -->
-    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-      <div class="position-sticky pt-3">
-        <ul class="nav flex-column">
-
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">
-              <span class="nav-icons">dashboard</span>
-              Dashboard
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-icons">person</span>
-              Account
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-icons">file_upload</span>
-              Data
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-icons">table_view</span>
-              Reports
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-icons">tune</span>
-              Settings
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-icons">admin_panel_settings</span>
-              Admin
-            </a>
-          </li>
-
-        </ul>
-
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-          <span>Saved reports</span>
-          <a class="link-secondary" href="#" aria-label="Add a new report" style="text-decoration: none">
-            <span class="icons">add_circle_outline</span>
-          </a>
-        </h6>
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-icons feather">insert_drive_file</span>
-              Current month
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <span class="nav-icons feather">insert_drive_file</span>
-              Last quarter
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-          <div class="btn-group me-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
-          </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-            <span data-feather="calendar"></span>
-            This week
-          </button>
+    <body class="app">
+        <div class="app-bar">
+            <div class="app-bar-inner" style="display: inline-flex">
+                <div class="logo"> </div>
+                <input class="searchbar" id="searchbar" type="text" placeholder="Type here to search">
+                <a onclick="navbarMenu()" id="icon">
+                    <div class="profile-icon">
+                        <span class="icon">account_circle</span>
+                    </div>
+                </a>
+                <div id="navbarLinks">
+                    <a>[Log out]</a>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <!-- Graph -->
-      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+        <div class="app-nav" id="nav">
+            <a href="/loss_prevention_war/dashboard.html"><div class="nav-entry nav-current" -icon="dashboard" -name="Dashboard"></div></a>
+            <a href="/loss_prevention_war/account.html"><div class="nav-entry" -icon="account_circle" -name="Account"></div></a>
+            <a href="/loss_prevention_war/data_reports.html"><div class="nav-entry" -icon="file_upload" -name="Data"></div></a>
+            <div class="nav-entry" -icon="table_view" -name="Reports"></div>
+            <a href="/loss_prevention_war/settings.html"><div class="nav-entry" -icon="tune" -name="Settings"></div></a>
+            <a href="/loss_prevention_war/admin_overview.html"><div class="nav-entry" -icon="admin_panel_settings" -name="Admin"></div></a>
+            <div class="nav-section" -name="Saved reports"></div>
+            <div class="nav-entry" -icon="insert_drive_file" -name="Current month"></div>
+            <div class="nav-entry" -icon="insert_drive_file" -name="Last quartile"></div>
+        </div>
 
-      <h2>Data</h2>
-      <div class="table-responsive">
-        <table class="table table-striped table-sm">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Header</th>
-              <th>Header</th>
-              <th>Header</th>
-              <th>Header</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1,001</td>
-              <td>random</td>
-              <td>data</td>
-              <td>placeholder</td>
-              <td>text</td>
-            </tr>
-            <tr>
-              <td>1,002</td>
-              <td>placeholder</td>
-              <td>irrelevant</td>
-              <td>visual</td>
-              <td>layout</td>
-            </tr>
-            <tr>
-              <td>1,003</td>
-              <td>data</td>
-              <td>rich</td>
-              <td>dashboard</td>
-              <td>tabular</td>
-            </tr>
-            <tr>
-              <td>1,003</td>
-              <td>information</td>
-              <td>placeholder</td>
-              <td>illustrative</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,004</td>
-              <td>text</td>
-              <td>random</td>
-              <td>layout</td>
-              <td>dashboard</td>
-            </tr>
-            <tr>
-              <td>1,005</td>
-              <td>dashboard</td>
-              <td>irrelevant</td>
-              <td>text</td>
-              <td>placeholder</td>
-            </tr>
-            <tr>
-              <td>1,006</td>
-              <td>dashboard</td>
-              <td>illustrative</td>
-              <td>rich</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,007</td>
-              <td>placeholder</td>
-              <td>tabular</td>
-              <td>information</td>
-              <td>irrelevant</td>
-            </tr>
-            <tr>
-              <td>1,008</td>
-              <td>random</td>
-              <td>data</td>
-              <td>placeholder</td>
-              <td>text</td>
-            </tr>
-            <tr>
-              <td>1,009</td>
-              <td>placeholder</td>
-              <td>irrelevant</td>
-              <td>visual</td>
-              <td>layout</td>
-            </tr>
-            <tr>
-              <td>1,010</td>
-              <td>data</td>
-              <td>rich</td>
-              <td>dashboard</td>
-              <td>tabular</td>
-            </tr>
-            <tr>
-              <td>1,011</td>
-              <td>information</td>
-              <td>placeholder</td>
-              <td>illustrative</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,012</td>
-              <td>text</td>
-              <td>placeholder</td>
-              <td>layout</td>
-              <td>dashboard</td>
-            </tr>
-            <tr>
-              <td>1,013</td>
-              <td>dashboard</td>
-              <td>irrelevant</td>
-              <td>text</td>
-              <td>visual</td>
-            </tr>
-            <tr>
-              <td>1,014</td>
-              <td>dashboard</td>
-              <td>illustrative</td>
-              <td>rich</td>
-              <td>data</td>
-            </tr>
-            <tr>
-              <td>1,015</td>
-              <td>random</td>
-              <td>tabular</td>
-              <td>information</td>
-              <td>text</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </main>
-  </div>
-</div>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Dashboard</h1>
+            </div>
+
+        </main>
+
+        <div class="app-content" id="app">
+            <div class="flex vertical-700">
+
+                <!-- DASHBOARD INFO -->
+                <div class="flex vertical">
+                    <div class="card">
+                        <div class="card-header">
+                            Welcome <span -inject="user.username"></span>!
+                        </div>
+                        <div class="card-content">
+                            Some dashboard information appears here.
+                        </div>
+                        <div class="card-table">
+                            <table class="sortable"> <!--sortable class adds automatic sorting-->
+                                <thead>
+                                    <tr><td>A</td><td>B</td><td>C</td></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Hello</td><td>132</td><td>XB</td></tr>
+                                    <tr><td>World</td><td>124</td><td>B</td></tr>
+                                    <tr><td>Foo</td><td>812</td><td>XB</td></tr>
+                                    <tr><td>Bar</td><td>241</td><td>XS</td></tr>
+                                    <tr><td>Baz</td><td>341</td><td>M</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHART -->
+                <div class="flex vertical">
+                    <div class="card">
+                        <canvas class="card-image" id="chart-canvas" style="width: 100%; height: 400px;">
+                        </canvas>
+                        <script>
+
+                            // (function(){
+                            //     let chart = new PieChart(document.getElementById("chart-canvas"), {margin: 30, hollow: 0.7, angle: -45});
+                            //     chart.updateData("a", app.graphColors[0], 241);
+                            //     chart.updateData("b", app.graphColors[1], 621);
+                            //     chart.updateData("c", app.graphColors[2], 512);
+                            //     chart.updateData("d", app.graphColors[3], 119);
+                            //     chart.updateData("e", app.graphColors[4], 571);
+                            //     chart.redraw();
+                            // })();
+
+                            window.addEventListener("load", function(){
+                                let chart = new BarChart(document.getElementById("chart-canvas"), {margin: 30, hollow: 0.7, angle: -45});
+                                chart.addId("a", app.graphColors[0]);
+                                chart.addId("b", app.graphColors[1]);
+                                chart.setLabels("2016", "2017", "2018", "2019", "2020", "2021")
+                                chart.updateData("a", 42, 281, 102, 37, 184, 212);
+                                chart.updateData("b", 412, 211, 41, 174, 381, 121);
+                                chart.redraw();
+                            });
+
+                            // app.drawChart(function() {
+                            //     var data = google.visualization.arrayToDataTable([
+                            //         ['Year', 'Items Found', 'Items Lost'],
+                            //         ['2016',         1020 ,         590 ],
+                            //         ['2017',          910 ,         720 ],
+                            //         ['2018',         1000 ,         400 ],
+                            //         ['2019',         1170 ,         460 ],
+                            //         ['2020',          660 ,        1120 ],
+                            //         ['2021',         1030 ,         540 ]
+                            //     ]);
+
+                            //     var options = {
+                            //         title: 'Company Performance',
+                            //         hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+                            //         vAxis: {minValue: 0},
+                            //         colors: app.graphColors
+                            //     };
+
+                            //     var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+                            //     chart.draw(data, options);
+                            // });
+                        </script>
+                        <div class="card-header">Chart</div>
+                        <div class="card-content">
+                            Information about chart. Lorem ipsum.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div id="mapid" style="height: 400px;"></div>
+                <script>
+                    var mapData = [
+                        {"id":1023553,"latitude":43,"longitude":-3},
+                        {"id":1023625,"latitude":37,"longitude":-5},
+                        {"id":1023401,"latitude":41,"longitude":-4},
+                        {"id":1023627,"latitude":37,"longitude":-4},
+                        {"id":1023507,"latitude":40,"longitude":-4},
+                        {"id":1023445,"latitude":39,"longitude":0},
+                        {"id":1023515,"latitude":40,"longitude":-4},
+                        {"id":1023617,"latitude":37,"longitude":-4},
+                        {"id":1023619,"latitude":37,"longitude":-6},
+                        {"id":1023623,"latitude":38,"longitude":-5},
+                        {"id":1023449,"latitude":42,"longitude":-1},
+                        {"id":1023409,"latitude":40,"longitude":-4},
+                        {"id":1023411,"latitude":40,"longitude":-4},
+                        {"id":1023417,"latitude":41,"longitude":-4},
+                        {"id":1023573,"latitude":43,"longitude":-6},
+                        {"id":1023455,"latitude":38,"longitude":0},
+                        {"id":1023575,"latitude":43,"longitude":-8},
+                        {"id":1023511,"latitude":43,"longitude":-6},
+                        {"id":1023457,"latitude":41,"longitude":2},
+                        {"id":1023421,"latitude":40,"longitude":3},
+                        {"id":1023571,"latitude":42,"longitude":-9},
+                        {"id":1023425,"latitude":39,"longitude":-7},
+                        {"id":1023423,"latitude":40,"longitude":-4},
+                        {"id":1026517,"latitude":41,"longitude":-9},
+                        {"id":1040895,"latitude":null,"longitude":null},
+                        {"id":1023577,"latitude":43,"longitude":-4},
+                        {"id":1025545,"latitude":42,"longitude":-5},
+                        {"id":1025547,"latitude":null,"longitude":null},
+                        {"id":1025549,"latitude":39,"longitude":0},
+                        {"id":1026645,"latitude":40,"longitude":-4},
+                        {"id":1028361,"latitude":41,"longitude":1},
+                        {"id":1028363,"latitude":null,"longitude":null},
+                        {"id":1026599,"latitude":41,"longitude":-4},
+                        {"id":1031217,"latitude":40,"longitude":3},
+                        {"id":1031551,"latitude":40,"longitude":-4},
+                        {"id":1033615,"latitude":41,"longitude":-4},
+                        {"id":1036171,"latitude":37,"longitude":-4},
+                        {"id":1039143,"latitude":37,"longitude":-2},
+                        {"id":1039621,"latitude":42,"longitude":-4},
+                        {"id":1039623,"latitude":40,"longitude":-4},
+                        {"id":1040891,"latitude":42,"longitude":-1},
+                        {"id":1043925,"latitude":37,"longitude":-5},
+                        {"id":1044341,"latitude":42,"longitude":-2},
+                        {"id":1044871,"latitude":40,"longitude":-4},
+                        {"id":1044937,"latitude":38,"longitude":-5},
+                        {"id":1047191,"latitude":39,"longitude":-2},
+                        {"id":1047859,"latitude":28,"longitude":-15},
+                        {"id":1047861,"latitude":38,"longitude":0},
+                        {"id":1051285,"latitude":43,"longitude":-6},
+                        {"id":1051759,"latitude":37,"longitude":-6},
+                        {"id":1052291,"latitude":40,"longitude":-4},
+                        {"id":1054633,"latitude":42,"longitude":-5},
+                        {"id":1055515,"latitude":40,"longitude":-4}
+                    ];
+
+                    let grouped = {};
+
+                    for (let d of mapData) {
+                        if (d.latitude !== null && d.longitude !== null) {
+                            let key = d.latitude + ";" + d.longitude;
+
+                            let collection = grouped[key];
+                            if (!collection) {
+                                collection = {coords: [d.latitude, d.longitude], ids: []};
+                            }
+
+                            collection.ids.push(d.id);
+                            grouped[key] = collection;
+                        }
+                    }
 
 
-    <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+                    var mymap = L.map('mapid').setView([52.238234, 6.854233], 2);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(mymap);
 
-      <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script><script src="dashboard.js"></script>
-  </body>
+                    for (let k in grouped) {
+                        let d = grouped[k];
+
+                        let icon = d.ids.length === 1 ? markerIcons[Math.floor(Math.random() * 4)] : multiMarkerIcon;
+                        let marker = L.marker(d.coords, {icon: icon}).addTo(mymap);
+
+                        let idHtml = "<b>" + d.ids.length + " store" + (d.ids.length === 1 ? "" : "s") + "</b>"
+
+                        for (let id of d.ids) {
+                            idHtml += "<br>" + id;
+                        }
+
+                        marker.bindPopup(idHtml);
+                    }
+                </script>
+                <div class="card-header">Map</div>
+            </div>
+        </div>
+
+        <div class="modal" id="test-modal">
+            <div class="card card-error">
+                <div class="card-header">I'm a big and important modal</div>
+                <div class="card-content">
+                    This is a big warning modal that wants you to be sure you have seen my information.
+                </div>
+                <div class="card-content align-right">
+                    <button class="btn-primary" onclick="app.hideModal(this)">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="snackbar-container">
+        </div>
+
+        <script src="js/commands.js"></script>
+        <script>
+            $(function() {
+                makeCommandBar({
+                    element: document.getElementById("searchbar")
+                });
+
+                app.inject("user.username", "Four-Zero-Four");
+            });
+            function navbarMenu() {
+                let links = document.getElementById("navbarLinks");
+                if (links.style.display === "table") {
+                    links.style.display = "none";
+                    links.style.minWidth = "0px";
+                } else {
+                    links.style.display = "table";
+                    links.style.minWidth = "100px";
+                }
+            }
+        </script>
+    </body>
 </html>

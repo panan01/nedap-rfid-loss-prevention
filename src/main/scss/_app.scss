@@ -130,7 +130,7 @@ $nav-bar-width: 250px;
         box-sizing: border-box;
         background-color: $col-paper-grey;
 
-        left: 0px;
+        left: 0;
         top: $action-bar-height;
 
         overflow-y: auto;
@@ -139,7 +139,7 @@ $nav-bar-width: 250px;
 
         .nav-entry {
             padding: sz(7pt) sz(20pt) sz(7pt) sz(20pt);
-
+            display: block;
             font-family: $font-ibm-plex-sans;
 
             &::before, &::after {

@@ -4,16 +4,20 @@ import java.sql.*;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
 
+@Path("/app")
 public class sqlUtils {
-    private int type;
+    
 
     /**
      * For testing purposes
@@ -23,46 +27,37 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|size|-1-1-1-1-1";
-        String realQuery = "1-2|store_id|-2|article:alarm|-1|article.article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-3|stolen_items:\"Stolen Items Within Interval\":0|4|1:'2021#01#07':'2021#01#08'|-0-0-0-0-0-0";
+        String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
-        System.out.println(generateSetStringInputs(realQuery));
+
+        //System.out.println(generateSetStringInputs(realQuery));
+
+        String[] generationCodeArray = query.split(";");
+
+        System.out.println(generationCodeArray[1]);
+        System.out.println(generateSetStringInputs(generationCodeArray[1]));
+
+        query = generationCodeArray[0];
+        query = query.replace("?", generateSetStringInputs(generationCodeArray[1]));
+        System.out.println(query);
+        Connection connection = getConnection();
+        assert connection != null;
+        System.out.println(executeQuery(connection, query));
 
 
     }
 
     //============================================== Database Utils  ===============================================\\
-    private static ArrayList<String> requiredLabelsType1 = new ArrayList<>();
-    private static ArrayList<String> requiredLabelsType2 = new ArrayList<>();
-    private static ArrayList<String> requiredLabelsType3 = new ArrayList<>();
-
-
-    /**
-     * Function for filling the required labels
-     */
-    private static void fillRequiredLabels() {
-        // Type one is of alarm type
-
-        requiredLabelsType1.add(0, "EPC (UT)");
-        requiredLabelsType1.add(1, "Timestamp");
-        requiredLabelsType1.add(2, "Store ID (UT)");
-        requiredLabelsType1.add(3, "Article ID (UT)");
-
-        // Type two is of article type
-
-        requiredLabelsType2.add(0, "Article ID (UT)");
-        requiredLabelsType2.add(1, "Category (UT)");
-        requiredLabelsType2.add(2, "Article (UT)");
-        requiredLabelsType2.add(3, "Color");
-        requiredLabelsType2.add(4, "Size");
-        requiredLabelsType2.add(5, "Price (EUR)");
-
-        // Type three is of store type
-
-        requiredLabelsType3.add(0, "Store ID (UT)");
-        requiredLabelsType3.add(1, "Latitude (UT)");
-        requiredLabelsType3.add(2, "Longitude (UT)");
-    }
+    private static final ArrayList<String> requiredLabelsType1 = new ArrayList<>(Arrays.asList(
+            "EPC (UT)", "Timestamp", "Store ID (UT)", "Article ID (UT)"
+    ));  // alarm type
+    private static final ArrayList<String> requiredLabelsType2 = new ArrayList<>(Arrays.asList(
+            "Article ID (UT)", "Category (UT)", "Article (UT)", "Color", "Size", "Price (EUR)"
+    ));  // article type
+    private static final ArrayList<String> requiredLabelsType3 = new ArrayList<>(Arrays.asList(
+            "Store ID (UT)", "Latitude (UT)", "Longitude (UT)"
+    ));  // store type
 
     /**
      * Function for getting the required labels
@@ -148,8 +143,185 @@ public class sqlUtils {
         }
 
 
-
         return variableArrayList;
+    }
+
+    public static boolean checkVariableIsColumn(String variable) {
+        switch (variable) {
+            case "article.id":
+            case "article.product":
+            case "article.category":
+            case "article.color":
+            case "article.size":
+            case "article.price":
+
+            case "alarm.epc":
+            case "alarm.store_id":
+            case "alarm.article_id":
+            case "alarm.timestamp":
+
+            case "store.id":
+            case "store.latitude":
+            case "store.longitude":
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean checkVariableIsTable(String variable) {
+        switch (variable) {
+            case "article":
+            case "alarm":
+            case "store":
+                return true;
+
+        }
+        return false;
+    }
+
+    public static boolean variablesValid(ArrayList<String> variables, int generationCodeInputType, int checkType) {
+        switch (generationCodeInputType) {
+            case 1:
+                switch (checkType) {
+                    case 1:
+                        return checkVariableIsColumn(variables.get(0));
+
+                    case 3:
+                        if (variables.get(0).matches("^[a-zA-Z_ \"]*$") & variables.get(1).matches("^[a-zA-Z_ \"]*$")) {
+                            return true;
+                        }
+                        break;
+                    case 4:
+                        if (checkVariableIsTable(variables.get(1))) {
+
+                            if (checkVariableIsColumn(variables.get(0)) & variables.get(2).matches("^[a-zA-Z_ ]*$")) {
+                                return true;
+                            }
+
+                        }
+
+                        break;
+                }
+                return false;
+
+            case 2:
+                switch (checkType) {
+                    case 1:
+                        if (checkVariableIsTable(variables.get(0))) {
+                            return true;
+                        }
+                        break;
+                    case 2:
+                        if (checkVariableIsTable(variables.get(0)) & checkVariableIsTable(variables.get(1))) {
+                            return true;
+                        }
+                        break;
+                    case 3:
+                        if (checkVariableIsTable(variables.get(0)) & checkVariableIsTable(variables.get(1)) & checkVariableIsTable(variables.get(2))) {
+                            return true;
+                        }
+                        break;
+                    case 4:
+                        if (!Objects.isNull(variables.get(1))) {
+                            if (variables.get(1).charAt(0) == '\'' & variables.get(1).charAt(variables.get(1).length() - 1) == '\'') {
+                                if (variables.get(1).matches("^[0-9 ' -]*$")) {
+
+                                } else {
+                                    return false;
+                                }
+                            } else {
+                                return false;
+                            }
+                        }
+                        if (!Objects.isNull(variables.get(2))) {
+                            if (variables.get(2).charAt(0) == '\'' & variables.get(2).charAt(variables.get(2).length() - 1) == '\'') {
+                                if (variables.get(1).matches("^[0-9 ' -]*$")) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
+                            } else {
+                                return false;
+                            }
+                        } else {
+                            return true;
+                        }
+
+                    case 5:
+                        switch (variables.get(0)) {
+                            case "minute":
+                            case "hour":
+                            case "day":
+                            case "month ":
+                                return true;
+                        }
+                        break;
+
+                }
+
+                break;
+            case 3:
+                switch (checkType) {
+                    case 1:
+                        if ((checkVariableIsColumn(variables.get(0)) | variables.get(0).matches("^[-0-9]*$")) & (variables.get(1).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(2)) | variables.get(2).matches("^[-0-9]*$"))) {
+                            return true;
+                        }
+                        break;
+                    case 2:
+
+                    case 3:
+                        if ((checkVariableIsColumn(variables.get(0)) | variables.get(0).matches("^[-0-9]*$")) & (variables.get(1).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(2)) | variables.get(2).matches("^[-0-9]*$"))) {
+                            if (variables.get(3).matches("^[0-9 ' _ #]*$") & variables.get(4).matches("^[0-9 ' _ #]*$")) {
+                                return true;
+                            }
+                        }
+                        break;
+                    case 4:
+                        if (variables.get(0).matches("^[0-9 ' _ #]*$")) {
+                            return true;
+                        }
+
+                        break;
+                    case 5:
+                        if ((checkVariableIsColumn(variables.get(0)) | variables.get(0).matches("^[-0-9]*$")) & (variables.get(1).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(2)) | variables.get(2).matches("^[-0-9]*$")) & (variables.get(3).equals("AND") | variables.get(3).equals("OR")) & (checkVariableIsColumn(variables.get(4)) | variables.get(4).matches("^[-0-9]*$")) & (variables.get(5).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(6)) | variables.get(6).matches("^[-0-9]*$"))) {
+                            return true;
+                        }
+
+
+                }
+                break;
+            case 4:
+                if (checkType == 1) {
+                    if (checkVariableIsColumn(variables.get(0)) | variables.get(0).equals("timeinterval")) {
+                        return true;
+                    }
+                }
+                break;
+            case 5:
+                if (checkType == 1) {
+                    if (checkVariableIsColumn(variables.get(0)) & (variables.get(1).matches("^[=<> ]*$")) & (variables.get(2).matches("^[0-9 ]*$"))) {
+                        return true;
+                    }
+                }
+                break;
+            case 6:
+                if (checkType == 1) {
+                    if (checkVariableIsColumn(variables.get(0))) {
+                        return true;
+                    }
+                }
+                break;
+            case 7:
+                if (checkType == 1) {
+                    if (variables.get(0).matches("^[0-9 ]*$")) {
+                        return true;
+                    }
+                }
+                break;
+
+        }
+        return false;
+
     }
 
     public static String generateSetStringInputs(String query) {
@@ -173,30 +345,39 @@ public class sqlUtils {
                 generatedQuery += "* ";
                 break;
             case '1':
+                if (variablesValid(variables, 1, 1)) {
+                    generatedQuery += "nedap." + variables.get(0) + ", COUNT(nedap." + variables.get(0) + ") ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
 
-                generatedQuery += "nedap.article." + variables.get(0) + ", COUNT(nedap.article." + variables.get(0) + ") ";
                 break;
+
             case '2':
-
-                generatedQuery += "nedap.alarm." + variables.get(0) + ", COUNT(nedap.alarm." + variables.get(0) + ") ";
-                break;
-            case '3':
                 generatedQuery += "nedap.store.id AS store_id, nedap.store.longitude, nedap.store.latitude ";
                 break;
-            case '4':
-
-                if (variables.get(2).equals("0")) {
-                    generatedQuery += "SUM(";
-                } else if (variables.get(2).equals("1")) {
-                    generatedQuery += "COUNT(";
+            case '3':
+                if (variablesValid(variables, 1, 3)) {
+                    if (variables.get(2).equals("0")) {
+                        generatedQuery += "SUM(";
+                    } else if (variables.get(2).equals("1")) {
+                        generatedQuery += "COUNT(";
+                    }
+                    generatedQuery += variables.get(0) + ") AS " + variables.get(1) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
                 }
-                generatedQuery += variables.get(0) + ") AS " + variables.get(1) + " ";
+                break;
+            case '4':
+                if (variablesValid(variables, 1, 4)) {
+                    generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+
                 break;
             case '5':
-
-                generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
-                break;
-            case '6':
                 generatedQuery += "day AS weekday, COUNT(day) ";
             default:
 
@@ -209,29 +390,49 @@ public class sqlUtils {
 
                 break;
             case '1':
+                if (variablesValid(variables, 2, 1)) {
+                    generatedQuery += "nedap." + variables.get(0) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
 
-                generatedQuery += "nedap." + variables.get(0) + " ";
                 break;
             case '2':
+                if (variablesValid(variables, 2, 2)) {
+                    generatedQuery += "nedap." + variables.get(0) + ", nedap." + variables.get(1) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
 
-                generatedQuery += "nedap." + variables.get(0) + " nedap." + variables.get(1) + " ";
                 break;
             case '3':
+                if (variablesValid(variables, 2, 3)) {
+                    generatedQuery += "nedap." + variables.get(0) + ", nedap." + variables.get(1) + " nedap." + variables.get(2) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
 
-                generatedQuery += "nedap." + variables.get(0) + " nedap." + variables.get(1) + " nedap." + variables.get(2) + " ";
                 break;
             case '4':
+                if (variablesValid(variables, 2, 4)) {
+                    if (variables.get(0).equals("1")) {
+                        generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + variables.get(1) + " AND date(timestamp) <= " + variables.get(2) + " GROUP BY alarm.store_id) AS SumInterval";
 
-                if (variables.get(0).equals("1")) {
-                    generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + variables.get(1) + " AND date(timestamp) <= " + variables.get(1) + " GROUP BY alarm.store_id) AS SumInterval";
-
+                    } else {
+                        generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id GROUP BY alarm.store_id) AS SumInterval";
+                    }
                 } else {
-                    generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id GROUP BY alarm.store_id) AS SumInterval";
+                    return "Invalid variables! variables: " + variables;
                 }
+
                 break;
             case '5':
+                if (variablesValid(variables, 2, 5)) {
+                    generatedQuery += "(SELECT DATE_PART(" + variables.get(0) + ", timestamp) as timeinterval, store_id FROM alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table";
 
-                generatedQuery += "(SELECT DATE_PART(" + variables.get(0) + ", timestamp) as timeinterval, store_id FROM alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
                 break;
             case '6':
                 generatedQuery += "SELECT day AS weekday, COUNT(day) FROM (SELECT trim(to_char(timestamp, 'day')) AS day FROM alarm) AS day_table ";
@@ -239,42 +440,82 @@ public class sqlUtils {
         }
 
         variables = getVariables(generationCode[3].substring(1));
+
         switch (generationCode[3].charAt(0)) {
             case '0':
 
                 break;
             case '1':
-                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
+                if (variablesValid(variables, 3, 1)) {
+                    generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+
                 break;
+
             case '2':
-                generatedQuery += "WHERE " + variables.get(0) + " ";
+                if (variablesValid(variables, 3, 2)) {
+                    generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
+                    if (!variables.get(3).equals("0")) {
+                        String time = variables.get(3).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND date(timestamp) >=" + time + " ";
+                    }
+                    if (!variables.get(4).equals("0")) {
+                        String time = variables.get(4).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND date(timestamp) <=" + time + " ";
+                    }
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+
                 break;
             case '3':
-                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
-                if (variables.get(3) != "0") {
-                    generatedQuery += "AND date(timestamp) >=" + variables.get(3) + " ";
+                if (variablesValid(variables, 3, 3)) {
+                    generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
+                    if (!variables.get(3).equals("0") ) {
+                        String time = variables.get(3).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND alarm.timestamp >= to_timestamp(" + time + ", 'dd-mm-yyyy hh24:mi:ss') ";
+                    }
+                    if (!variables.get(4).equals("0") ) {
+                        String time = variables.get(4).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND alarm.timestamp <= to_timestamp(" + time + ", 'dd-mm-yyyy hh24:mi:ss') ";
+                    }
+                } else {
+                    return "Invalid variables! variables: " + variables;
                 }
-                if (variables.get(4) != "0") {
-                    generatedQuery += "AND date(timestamp) <=" + variables.get(3) + " ";
-                }
+
+
                 break;
             case '4':
-                generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
-                if (variables.get(3) != "0") {
-                    generatedQuery += "AND date(timestamp) >= to_timestamp(" + variables.get(3) + ", 'dd-mm-yyyy hh24:mi:ss') ";
-                }
-                if (variables.get(4) != "0") {
-                    generatedQuery += "AND date(timestamp) <= to_timestamp(" + variables.get(4) + ", 'dd-mm-yyyy hh24:mi:ss') ";
-                }
-                break;
-            case '5':
-                generatedQuery += "WHERE article.id = alarm.article_id ";
-                if (!variables.get(0).equals("0")) {
+                if (variablesValid(variables, 3, 4)) {
+                    generatedQuery += "WHERE article.id = alarm.article_id ";
+                    if (!variables.get(0).equals("0")) {
+                        String time = variables.get(0).replace('_',':');
+                        time = time.replace('#','-');
+                        generatedQuery += "AND date(timestamp) = " + time + " ";
+                    } else {
+
+
+                    }
                 } else {
-                    generatedQuery += "AND date(timestamp) = " + variables.get(0) + " ";
+                    return "Invalid variables! variables: " + variables;
                 }
 
                 break;
+            case '5':
+                if (variablesValid(variables, 3, 5)) {
+                    generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " " + variables.get(3) + " " + variables.get(4) + " " + variables.get(5) + " " + variables.get(6) + " ";
+
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
         }
 
         variables = getVariables(generationCode[4].substring(1));
@@ -282,9 +523,12 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "GROUP BY nedap." + variables.get(0) + " ";
+                if (variablesValid(variables, 4, 1)) {
+                    generatedQuery += "GROUP BY nedap." + variables.get(0) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
                 break;
-
         }
 
         variables = getVariables(generationCode[5].substring(1));
@@ -292,7 +536,13 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "HAVING COUNT(" + variables.get(0) + ") " + variables.get(1) + " " + variables.get(2) + " ";
+                if (variablesValid(variables, 5, 1)) {
+                    generatedQuery += "HAVING COUNT(" + variables.get(0) + ") " + variables.get(1) + " " + variables.get(2) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+
                 break;
 
         }
@@ -302,7 +552,19 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
+                if (variablesValid(variables, 6, 1)) {
+                    generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
+
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+                break;
+            case '2':
+
+                generatedQuery += "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 ";
+
+
                 break;
         }
 
@@ -311,13 +573,32 @@ public class sqlUtils {
             case '0':
                 break;
             case '1':
-                generatedQuery += "LIMIT " + variables.get(0) + " ";
+                if (variablesValid(variables, 7, 1)) {
+
+                    generatedQuery += "LIMIT " + variables.get(0) + " ";
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+
                 break;
         }
 
         return generatedQuery;
     }
 
+    @POST
+    public static JSONArray postMethod(String query) {
+        Connection connection = getConnection();
+
+        StringBuffer sb = new StringBuffer(executeQuery(connection, query));
+        sb.deleteCharAt(sb.length() - 1);
+
+        JSONArray jsonarray = (JSONArray) new JSONTokener(sb.toString()).nextValue();
+        System.out.println("array: " + jsonarray);
+
+        return jsonarray;
+    }
     /**
      * Basic function to execute queries to respective connection, if the query has a return then it's returned as a colon separated String
      *
@@ -327,19 +608,22 @@ public class sqlUtils {
      */
     public static String executeQuery(Connection connection, String query) {
         try {
-            PreparedStatement st = connection.prepareStatement(query);
+
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
                 String[] generationCodeArray = query.split(";");
                 try {
-                    st.setString(1, generateSetStringInputs(generationCodeArray[1]));
+                    query = generationCodeArray[0];
+                    query = query.replace("?", generateSetStringInputs(generationCodeArray[1]));
+
+                    //   st.setString(1, generateSetStringInputs(generationCodeArray[1]));
                 } catch (NullPointerException e) {
                     return "Prepared statement generation code missing";
                 }
 
 
             }
-
+            PreparedStatement st = connection.prepareStatement(query);
 
             ResultSet resultSet = st.executeQuery();
             ResultSetMetaData rsmd = resultSet.getMetaData();
@@ -382,7 +666,6 @@ public class sqlUtils {
      * @return
      */
     public static JSONArray getTableJsonList(int sheetType) {
-        fillRequiredLabels();
         String tableName = "";
         // Check the sheetType and assign corresponding name
         switch (sheetType) {
@@ -431,10 +714,6 @@ public class sqlUtils {
         ArrayList<String> columnLabels = getColumnLabels(sheet);
 
         if (!columnLabels.get(0).equals("Empty file")) {
-            int fileType = -1;
-
-            fillRequiredLabels();
-
             if (checkLabels(columnLabels, getRequiredLabels(0))) {
                 parsePushToDB(sheet, getRequiredLabels(0), 0);
             } else if (checkLabels(columnLabels, getRequiredLabels(1))) {
@@ -444,10 +723,8 @@ public class sqlUtils {
             } else {
                 return "Status-2";
             }
-
             return "Status-0";
         } else {
-
             return "Status-1";
         }
 
@@ -466,7 +743,7 @@ public class sqlUtils {
         for (String label : columnLabels) {
             for (String requiredLabel : requiredLabels) {
                 if (requiredLabel.equals(label)) {
-                    //TODO make more efficient
+
                     requiredFoundCount++;
                 }
             }
@@ -493,10 +770,8 @@ public class sqlUtils {
         int requiredLabelIterator = 0;
         ArrayList<Integer> indexArray = new ArrayList<>();
 
-
         // Get's the indexes of the required labels.
         while (!(getCellData(sheet, row, column).equals("null") || getCellData(sheet, row, column).equals(""))) {
-            fillRequiredLabels();
             ArrayList<String> columnLabel = new ArrayList<String>();
             columnLabel.add(getCellData(sheet, row, column));
 

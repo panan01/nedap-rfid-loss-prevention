@@ -155,7 +155,6 @@
                         hideLoading();
                         if (res.error) {
                             showError(res.error);
-
                             if (res.focus === "email") {
                                 email_field.focus();
                             }
@@ -163,14 +162,14 @@
                                 password_field.focus();
                             }
                         } else if (res.done) {
-                            // TODO More here
+                            document.cookie = "token=" + res.token + "; SameSite=None; Secure; max-age=3600";
                             console.log("Login done");
-                            window.location.href = "app.html";
+                            window.location.href = "dashboard.html";
                         }
                         response = true;
                     });
 
-                    if (! response) {
+                    if (!response) {
                         showLoading("Logging in, please wait...");
                     }
                 }
@@ -178,7 +177,7 @@
                 email_field.onkeypress = password_field.onkeypress = function(event) {
                     var key = event.which || event.keyCode;
 
-                    if (key == 13) { // enter
+                    if (key === 13) { // enter
                         event.stopPropagation();
                         event.preventDefault();
                         _login();
@@ -218,7 +217,7 @@
                 email_field.onkeypress = function(event) {
                     var key = event.which || event.keyCode;
 
-                    if (key == 13) { // enter
+                    if (key === 13) { // enter
                         event.stopPropagation();
                         event.preventDefault();
                         _reset();
@@ -259,7 +258,7 @@
                 email_field.onkeypress = function(event) {
                     var key = event.which || event.keyCode;
 
-                    if (key == 13) { // enter
+                    if (key === 13) { // enter
                         event.stopPropagation();
                         event.preventDefault();
                         _signup();
