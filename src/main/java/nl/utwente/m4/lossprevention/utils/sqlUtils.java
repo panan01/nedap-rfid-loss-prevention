@@ -14,7 +14,7 @@ import java.util.Objects;
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
 
 public class sqlUtils {
-    private int type;
+    
 
     /**
      * For testing purposes
