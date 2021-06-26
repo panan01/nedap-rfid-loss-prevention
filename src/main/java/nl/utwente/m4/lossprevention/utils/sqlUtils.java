@@ -6,6 +6,8 @@ import org.json.JSONTokener;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +18,7 @@ import static nl.utwente.m4.lossprevention.utils.excelUtils.getColumnLabels;
 
 @Path("/app")
 public class sqlUtils {
-    
+
 
     /**
      * For testing purposes
@@ -26,7 +28,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-3|stolen_items:\"Stolen Items Within Interval\":0|4|1:'2021#01#07':'2021#01#08'|-0-0-0-0-0-0";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-1|*|-1|store|-0-0-0-0-0 ";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -162,6 +164,10 @@ public class sqlUtils {
             case "store.id":
             case "store.latitude":
             case "store.longitude":
+
+            case "timeinterval":
+            case "day":
+            case "*":
                 return true;
         }
         return false;
@@ -191,11 +197,9 @@ public class sqlUtils {
                         }
                         break;
                     case 4:
-                        if (checkVariableIsTable(variables.get(1))) {
+                        if (checkVariableIsColumn(variables.get(0)) & variables.get(1).matches("^[a-zA-Z_ ]*$")) {
 
-                            if (checkVariableIsColumn(variables.get(0)) & variables.get(2).matches("^[a-zA-Z_ ]*$")) {
-                                return true;
-                            }
+                            return true;
 
                         }
 
@@ -222,8 +226,8 @@ public class sqlUtils {
                         break;
                     case 4:
                         if (!Objects.isNull(variables.get(1))) {
-                            if (variables.get(1).charAt(0) == '\'' & variables.get(1).charAt(variables.get(1).length() - 1) == '\'') {
-                                if (variables.get(1).matches("^[0-9 ' -]*$")) {
+                            if ((variables.get(1).charAt(0) == '\'' & variables.get(1).charAt(variables.get(1).length() - 1) == '\'') | (variables.get(1).charAt(0) == '0' & variables.get(2).charAt(0) == '0')) {
+                                if (variables.get(1).matches("^[0-9 ' # _]*$")) {
 
                                 } else {
                                     return false;
@@ -231,10 +235,13 @@ public class sqlUtils {
                             } else {
                                 return false;
                             }
+                        } else {
+                            return false;
                         }
+
                         if (!Objects.isNull(variables.get(2))) {
-                            if (variables.get(2).charAt(0) == '\'' & variables.get(2).charAt(variables.get(2).length() - 1) == '\'') {
-                                if (variables.get(1).matches("^[0-9 ' -]*$")) {
+                            if ((variables.get(2).charAt(0) == '\'' & variables.get(2).charAt(variables.get(2).length() - 1) == '\'') | (variables.get(1).charAt(0) == '0' & variables.get(2).charAt(0) == '0')) {
+                                if (variables.get(1).matches("^[0-9 ' # _]*$")) {
                                     return true;
                                 } else {
                                     return false;
@@ -243,15 +250,15 @@ public class sqlUtils {
                                 return false;
                             }
                         } else {
-                            return true;
+                            return false;
                         }
 
                     case 5:
                         switch (variables.get(0)) {
-                            case "minute":
-                            case "hour":
-                            case "day":
-                            case "month ":
+                            case "'minute'":
+                            case "'hour'":
+                            case "'day'":
+                            case "'month'":
                                 return true;
                         }
                         break;
@@ -345,7 +352,17 @@ public class sqlUtils {
                 break;
             case '1':
                 if (variablesValid(variables, 1, 1)) {
-                    generatedQuery += "nedap." + variables.get(0) + ", COUNT(nedap." + variables.get(0) + ") ";
+                    if (variables.get(0).equals("timeinterval") | variables.get(0).equals("*") | variables.get(0).equals("day")) {
+                        if (variables.get(0).equals("*")) {
+                            generatedQuery += "" + variables.get(0) + " ";
+                        } else {
+                            generatedQuery += "" + variables.get(0) + ", COUNT(" + variables.get(0) + ") ";
+                        }
+
+                    } else {
+                        generatedQuery += "nedap." + variables.get(0) + ", COUNT(nedap." + variables.get(0) + ") ";
+                    }
+
                 } else {
                     return "Invalid variables! variables: " + variables;
                 }
@@ -369,7 +386,7 @@ public class sqlUtils {
                 break;
             case '4':
                 if (variablesValid(variables, 1, 4)) {
-                    generatedQuery += "nedap." + variables.get(1) + "." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(2) + " ";
+                    generatedQuery += "nedap." + variables.get(0) + ", COUNT(" + variables.get(0) + ") AS " + variables.get(1) + " ";
                 } else {
                     return "Invalid variables! variables: " + variables;
                 }
@@ -415,7 +432,17 @@ public class sqlUtils {
             case '4':
                 if (variablesValid(variables, 2, 4)) {
                     if (variables.get(0).equals("1")) {
-                        generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + variables.get(1) + " AND date(timestamp) <= " + variables.get(2) + " GROUP BY alarm.store_id) AS SumInterval";
+
+
+                        String time = variables.get(1).replace('_', ':');
+                        time = time.replace('#', '-');
+
+
+                        String time2 = variables.get(2).replace('_', ':');
+                        time2 = time2.replace('#', '-');
+
+
+                        generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id AND date(timestamp) >= " + time + " AND date(timestamp) <= " + time2 + " GROUP BY alarm.store_id) AS SumInterval";
 
                     } else {
                         generatedQuery += "(SELECT DISTINCT nedap.alarm.store_id, COUNT(nedap.alarm.store_id) AS stolen_items FROM nedap.alarm, nedap.article WHERE nedap.article.id = nedap.alarm.article_id GROUP BY alarm.store_id) AS SumInterval";
@@ -427,14 +454,14 @@ public class sqlUtils {
                 break;
             case '5':
                 if (variablesValid(variables, 2, 5)) {
-                    generatedQuery += "(SELECT DATE_PART(" + variables.get(0) + ", timestamp) as timeinterval, store_id FROM alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table";
+                    generatedQuery += "(SELECT DATE_PART(" + variables.get(0) + ", timestamp) as timeinterval, store_id FROM nedap.alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table ";
 
                 } else {
                     return "Invalid variables! variables: " + variables;
                 }
                 break;
             case '6':
-                generatedQuery += "SELECT day AS weekday, COUNT(day) FROM (SELECT trim(to_char(timestamp, 'day')) AS day FROM alarm) AS day_table ";
+                generatedQuery += "(SELECT day AS weekday, COUNT(day) FROM (SELECT trim(to_char(timestamp, 'day')) AS day FROM alarm) AS day_table ";
                 break;
         }
 
@@ -458,13 +485,13 @@ public class sqlUtils {
                 if (variablesValid(variables, 3, 2)) {
                     generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
                     if (!variables.get(3).equals("0")) {
-                        String time = variables.get(3).replace('_',':');
-                        time = time.replace('#','-');
+                        String time = variables.get(3).replace('_', ':');
+                        time = time.replace('#', '-');
                         generatedQuery += "AND date(timestamp) >=" + time + " ";
                     }
                     if (!variables.get(4).equals("0")) {
-                        String time = variables.get(4).replace('_',':');
-                        time = time.replace('#','-');
+                        String time = variables.get(4).replace('_', ':');
+                        time = time.replace('#', '-');
                         generatedQuery += "AND date(timestamp) <=" + time + " ";
                     }
                 } else {
@@ -476,14 +503,14 @@ public class sqlUtils {
             case '3':
                 if (variablesValid(variables, 3, 3)) {
                     generatedQuery += "WHERE " + variables.get(0) + " " + variables.get(1) + " " + variables.get(2) + " ";
-                    if (!variables.get(3).equals("0") ) {
-                        String time = variables.get(3).replace('_',':');
-                        time = time.replace('#','-');
+                    if (!variables.get(3).equals("0")) {
+                        String time = variables.get(3).replace('_', ':');
+                        time = time.replace('#', '-');
                         generatedQuery += "AND alarm.timestamp >= to_timestamp(" + time + ", 'dd-mm-yyyy hh24:mi:ss') ";
                     }
-                    if (!variables.get(4).equals("0") ) {
-                        String time = variables.get(4).replace('_',':');
-                        time = time.replace('#','-');
+                    if (!variables.get(4).equals("0")) {
+                        String time = variables.get(4).replace('_', ':');
+                        time = time.replace('#', '-');
                         generatedQuery += "AND alarm.timestamp <= to_timestamp(" + time + ", 'dd-mm-yyyy hh24:mi:ss') ";
                     }
                 } else {
@@ -496,8 +523,8 @@ public class sqlUtils {
                 if (variablesValid(variables, 3, 4)) {
                     generatedQuery += "WHERE article.id = alarm.article_id ";
                     if (!variables.get(0).equals("0")) {
-                        String time = variables.get(0).replace('_',':');
-                        time = time.replace('#','-');
+                        String time = variables.get(0).replace('_', ':');
+                        time = time.replace('#', '-');
                         generatedQuery += "AND date(timestamp) = " + time + " ";
                     } else {
 
@@ -523,7 +550,14 @@ public class sqlUtils {
                 break;
             case '1':
                 if (variablesValid(variables, 4, 1)) {
-                    generatedQuery += "GROUP BY nedap." + variables.get(0) + " ";
+
+                    if (variables.get(0).equals("timeinterval") | variables.get(0).equals("*") | variables.get(0).equals("day")) {
+                        generatedQuery += "GROUP BY " + variables.get(0) + " ";
+                    } else {
+                        generatedQuery += "GROUP BY nedap." + variables.get(0) + " ";
+                    }
+
+
                 } else {
                     return "Invalid variables! variables: " + variables;
                 }
@@ -552,7 +586,12 @@ public class sqlUtils {
                 break;
             case '1':
                 if (variablesValid(variables, 6, 1)) {
-                    generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
+                    if (variables.get(0).equals("timeinterval") | variables.get(0).equals("*") | variables.get(0).equals("day")) {
+                        generatedQuery += "ORDER BY " + variables.get(0) + " ASC ";
+                    } else {
+                        generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") DESC ";
+                    }
+
 
                 } else {
                     return "Invalid variables! variables: " + variables;
@@ -561,7 +600,7 @@ public class sqlUtils {
                 break;
             case '2':
 
-                generatedQuery += "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 ";
+                generatedQuery += "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 END ASC WHERE store_id = X & Y & Z";
 
 
                 break;
@@ -587,10 +626,12 @@ public class sqlUtils {
     }
 
     @POST
+    @Produces(MediaType.TEXT_PLAIN)
     public static String postMethod(String query) {
         Connection connection = getConnection();
         return executeQuery(connection, query);
     }
+
     /**
      * Basic function to execute queries to respective connection, if the query has a return then it's returned as a colon separated String
      *
