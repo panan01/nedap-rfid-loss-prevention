@@ -28,7 +28,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-1|*|-1|store|-0-0-0-0-0 ";
+        /*String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-1|*|-1|store|-0-0-0-0-0 ";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -44,7 +44,7 @@ public class sqlUtils {
         System.out.println(query);
         Connection connection = getConnection();
         assert connection != null;
-        System.out.println(executeQuery(connection, query));
+        System.out.println(executeQuery(connection, query));*/
 
 
     }
