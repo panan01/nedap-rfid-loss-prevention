@@ -28,7 +28,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        /*String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-1|*|-1|store|-0-0-0-0-0 ";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-5-6-0-1|day|-0-2|1023553:1023625:1023401|-0";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -44,9 +44,16 @@ public class sqlUtils {
         System.out.println(query);
         Connection connection = getConnection();
         assert connection != null;
-        System.out.println(executeQuery(connection, query));*/
+        System.out.println(executeQuery(connection, query));
 
 
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    public static String postMethod(String query) {
+        Connection connection = getConnection();
+        return executeQuery(connection, query);
     }
 
     //============================================== Database Utils  ===============================================\\
@@ -315,6 +322,14 @@ public class sqlUtils {
                     if (checkVariableIsColumn(variables.get(0))) {
                         return true;
                     }
+                } else if (checkType == 2) {
+                    for (String variable : variables) {
+                        if (!variable.matches("^[0-9]*$")) {
+                            return false;
+                        }
+
+                    }
+                    return true;
                 }
                 break;
             case 7:
@@ -461,7 +476,7 @@ public class sqlUtils {
                 }
                 break;
             case '6':
-                generatedQuery += "(SELECT day AS weekday, COUNT(day) FROM (SELECT trim(to_char(timestamp, 'day')) AS day FROM alarm) AS day_table ";
+                generatedQuery += "(SELECT trim(to_char(timestamp, 'day')) AS day FROM nedap.alarm) AS day_table ";
                 break;
         }
 
@@ -599,8 +614,13 @@ public class sqlUtils {
 
                 break;
             case '2':
-
-                generatedQuery += "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 END ASC WHERE store_id = X & Y & Z";
+                if (variablesValid(variables, 6, 2)) {
+                    generatedQuery += "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 END ASC WHERE store_id = ";
+                    for (String variable : variables) {
+                        generatedQuery += variable + " & ";
+                    }
+                    generatedQuery = generatedQuery.substring(0, generatedQuery.length() - 2);
+                }
 
 
                 break;
@@ -623,13 +643,6 @@ public class sqlUtils {
         }
 
         return generatedQuery;
-    }
-
-    @POST
-    @Produces(MediaType.TEXT_PLAIN)
-    public static String postMethod(String query) {
-        Connection connection = getConnection();
-        return executeQuery(connection, query);
     }
 
     /**
