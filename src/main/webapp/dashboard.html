@@ -184,7 +184,7 @@
                         <canvas class="card-image" id="chart-canvas" style="width: 100%; height: 400px;">
                         </canvas>
                         <script>
-
+                            google.charts.load('current', {'packages':['bar']});
                             // (function(){
                             //     let chart = new PieChart(document.getElementById("chart-canvas"), {margin: 30, hollow: 0.7, angle: -45});
                             //     chart.updateData("a", app.graphColors[0], 241);
@@ -206,56 +206,26 @@
                                         response = JSON.parse(response);
                                         console.log(response);
                                         let array = [[
-                                            {label: 'Count', type: 'number'},
-                                            {label: 'Category', type: 'number'},
+                                            'Count', 'Category'
                                         ]];
                                         for (let item of response){
                                             array.push([item.count, item.category]);
                                         }
-
                                         console.log(array);
+                                        let data = google.visualization.arrayToDataTable(array);
+                                        let options = {
+                                            chart: {
+                                                title: 'Company Performance',
+                                                subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+                                            }
+                                        };
+                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas'), {margin: 30, hollow: 0.7, angle: -45});
 
-                                        let chart = new BarChart(document.getElementById("chart-canvas"), {margin: 30, hollow: 0.7, angle: -45});
-                                        chart.addId("a", app.graphColors[0]);
-                                        chart.addId("b", app.graphColors[1]);
-                                        chart.setLabels("2016", "2017", "2018", "2019", "2020", "2021")
-                                        chart.updateData("a", 42, 281, 102, 37, 184, 212);
-                                        chart.updateData("b", 412, 211, 41, 174, 381, 121);
-                                        chart.redraw();
-
-                                        console.log("end method")
+                                        chart.draw(data, google.charts.Bar.convertOptions(options));
                                     }
                                 });
 
-
-
-
-
-
-
                             });
-
-                            // app.drawChart(function() {
-                            //     var data = google.visualization.arrayToDataTable([
-                            //         ['Year', 'Items Found', 'Items Lost'],
-                            //         ['2016',         1020 ,         590 ],
-                            //         ['2017',          910 ,         720 ],
-                            //         ['2018',         1000 ,         400 ],
-                            //         ['2019',         1170 ,         460 ],
-                            //         ['2020',          660 ,        1120 ],
-                            //         ['2021',         1030 ,         540 ]
-                            //     ]);
-
-                            //     var options = {
-                            //         title: 'Company Performance',
-                            //         hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
-                            //         vAxis: {minValue: 0},
-                            //         colors: app.graphColors
-                            //     };
-
-                            //     var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-                            //     chart.draw(data, options);
-                            // });
                         </script>
                         <div class="card-header">Chart</div>
                         <div class="card-content">
