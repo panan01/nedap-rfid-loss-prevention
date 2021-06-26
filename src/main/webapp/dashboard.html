@@ -125,7 +125,7 @@
                     </div>
                 </a>
                 <div id="navbarLinks">
-                    <a>[Log out]</a>
+                    <a onclick="logOut()">[Log out (clear cookies)]</a>
                 </div>
             </div>
         </div>
@@ -181,8 +181,8 @@
                 <!-- CHART -->
                 <div class="flex vertical">
                     <div class="card">
-                        <canvas class="card-image" id="chart-canvas" style="width: 100%; height: 400px;">
-                        </canvas>
+                        <div class="card-image" id="chart-canvas-1" style="height: 400px;">
+                        </div>
                         <script>
                             google.charts.load('current', {'packages':['bar']});
                             // (function(){
@@ -194,7 +194,6 @@
                             //     chart.updateData("e", app.graphColors[4], 571);
                             //     chart.redraw();
                             // })();
-
                             window.addEventListener("load", function(){
                                 $.ajax({
                                     url: "rest/app",
@@ -204,22 +203,117 @@
                                     success: function(response) {
                                         // console.log("response: " + typeof(response) + " = " + response);
                                         response = JSON.parse(response);
-                                        console.log(response);
+                                        // console.log(response);
                                         let array = [[
-                                            'Count', 'Category'
+                                            'Category', 'Amount',
                                         ]];
                                         for (let item of response){
-                                            array.push([item.count, item.category]);
+                                            array.push([item.category, item.count, ]);
+                                        }
+                                        // console.log(array);
+                                        let data = google.visualization.arrayToDataTable(array);
+                                        let options = {
+                                            chart: {
+                                                title: 'Stolen items',
+                                                subtitle: 'An overview of all items ever stolen',
+                                            }
+                                        };
+                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas-1'));
+
+                                        chart.draw(data, google.charts.Bar.convertOptions(options));
+                                    }
+                                });
+
+                            });
+                        </script>
+                        <div class="card-header">Chart</div>
+                        <div class="card-content">
+                            Information about chart. Lorem ipsum.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex vertical-800">
+                <div class="flex vertical">
+                    <div class="card">
+                        <div class="card-image" id="chart-canvas-2" style="height: 400px;">
+                        </div>
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'text',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.price|-1|article|-0-1|article.price|-0-1|article.price|-0",
+                                    success: function(response) {
+                                        console.log("response: " + typeof(response) + " = " + response);
+                                        response = JSON.parse(response);
+                                        console.log(response);
+                                        let array = [[
+                                            {label: 'Price', type: 'number'},
+                                            {label: 'Amount', type: 'number'},
+                                        ]];
+                                        for (let item of response){
+                                            if (item.count > 50 && item.price > 0) {
+                                                array.push([Math.round(item.price), item.count]);
+                                            }
+                                        }
+                                        console.log(array);
+                                        let data = google.visualization.arrayToDataTable(array);
+                                        let formatter = new google.visualization.NumberFormat({prefix: '€'});
+                                        formatter.format(data, 0);
+                                        let options = {
+                                            chart: {
+                                                title: 'Stolen items at price',
+                                                subtitle: 'An overview of all things stolen at a set price',
+                                            }
+                                        };
+                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas-2'));
+
+                                        chart.draw(data, google.charts.Bar.convertOptions(options));
+                                    }
+                                });
+
+                            });
+                        </script>
+                        <div class="card-header">Chart</div>
+                        <div class="card-content">
+                            Information about chart. Lorem ipsum.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex vertical">
+                    <div class="card">
+                        <div class="card-image" id="chart-canvas-3" style="height: 400px;">
+                        </div>
+                        <script>
+                            // TODO: make a table instead?
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'text',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0",
+                                    success: function(response) {
+                                        // console.log("response: " + typeof(response) + " = " + response);
+                                        response = JSON.parse(response);
+                                        console.log(response);
+                                        let array = [[
+                                            'Store', 'Amount',
+                                        ]];
+                                        for (let item of response){
+                                            array.push([item.store_id, item.count]);
                                         }
                                         console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let options = {
                                             chart: {
-                                                title: 'Company Performance',
-                                                subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+                                                title: 'Stolen items at each store',
+                                                subtitle: 'An overview of all items ever stolen for each store',
                                             }
                                         };
-                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas'), {margin: 30, hollow: 0.7, angle: -45});
+                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas-3'));
 
                                         chart.draw(data, google.charts.Bar.convertOptions(options));
                                     }
@@ -368,6 +462,9 @@
                     links.style.display = "table";
                     links.style.minWidth = "100px";
                 }
+            }
+            function logOut() {
+                document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
             }
         </script>
     </body>
