@@ -45,29 +45,29 @@ public enum Queries {
 
         try { // establish connection
             connection = DriverManager.getConnection(url, username, password);
-            //returns true if the email exists in the database
+            // returns true if the email exists in the database
             checkEmailSt = connection.prepareStatement("SELECT EXISTS (select 1 FROM users u WHERE u.email = ? LIMIT 1)");
-            //query that adds a new user in the table database
+            // query that adds a new user in the table database
             addNewUser = connection.prepareStatement("INSERT INTO users (email,hashed_pass,first_name,last_name,type, salt) " +
                                                           "VALUES (?, ?, ?, ?, ?, ?)");
-            //check if the combination of user and pass exists in the database
+            // check if the combination of user and pass exists in the database
             checkUserAndPass = connection.prepareStatement("SELECT EXISTS (SELECT 1 FROM users u " +
                                                                     "WHERE u.email = ? AND u.hashed_pass = ? LIMIT 1)");
-            //get the salt of the user
+            // get the salt of the user
             getSalt = connection.prepareStatement("SELECT salt FROM users WHERE email = ?");
-            //get user's info
+            // get user's info
             getUser = connection.prepareStatement("SELECT u.email,u.first_name,u.last_name,u.type FROM users u WHERE u.email = ?");
-           //modify user's password
+            // modify user's password
             modifyPass = connection.prepareStatement("UPDATE users SET hashed_pass = ? WHERE email = ?");
-            //modify user's first_name
+            // modify user's first_name
             modifyFName = connection.prepareStatement("UPDATE users SET first_name = ? WHERE email = ?");
-            //modify user's last_name
+            // modify user's last_name
             modifyLName = connection.prepareStatement("UPDATE users SET last_name = ? WHERE email = ?");
-            //modify user's type/role
+            // modify user's type/role
             modifyRole = connection.prepareStatement("UPDATE users SET type = ? WHERE email = ?");
-            //delete the account from the database
+            // delete the account from the database
             deleteAccount = connection.prepareStatement("DELETE FROM users WHERE email = ?");
-            //get user's role from the database
+            // get user's role from the database
             getUserRole = connection.prepareStatement("SELECT type FROM users WHERE email = ?");
             //check if the user has the access to the store data
             checkIfUserAllowedToAccessStore = connection.prepareStatement("SELECT EXISTS (SELECT 1 FROM store_access s " +
@@ -84,7 +84,7 @@ public enum Queries {
             System.err.println("Error connecting: " + sqle);
         }
     }
-// Checking if the email already exists on the database (true = exists, false = not exist)
+    // Checking if the email already exists on the database (true = exists, false = not exist)
     public boolean checkIfEmailExists(String email) throws InputNotAllowedException{
         try {
             if (email.matches(emailPattern.pattern())) {
@@ -103,7 +103,7 @@ public enum Queries {
         return false;
     }
 
-//    adding new user to the database
+    // adding new user to the database
     public boolean addNewUser(String email, byte[] hashedPass, String firstName, String lastName, String type, String salt) throws InputNotAllowedException{
         try{
             InputSanitizer.checkEmail(email);
@@ -124,7 +124,7 @@ public enum Queries {
         }
     }
 
-//    check the user name and it's password
+    // check the user name and it's password
     public boolean checkUserAndPass(String email, String password){
         try{
             String salt = this.getSalt(email);
@@ -141,14 +141,14 @@ public enum Queries {
             return false;
         }
     }
-// get user's salt
+    // get user's salt
     public String getSalt(String email) throws SQLException {
         getSalt.setString(1, email);
         ResultSet rs = getSalt.executeQuery();
         rs.next();
         return rs.getString(1);
     }
-// get user's info
+    // get user's info
     public JSONObject getUser(String email) throws SQLException {
             getUser.setString(1,email);
             ResultSet rs = getUser.executeQuery();
