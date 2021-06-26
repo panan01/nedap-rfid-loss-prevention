@@ -663,19 +663,21 @@ public class sqlUtils {
 
             int columnsNumber = rsmd.getColumnCount();
 
-            String result = "";
+            StringBuilder result = new StringBuilder();
             // prints query results
 
             while (resultSet.next()) {
                 for (int i = 1; i < columnsNumber + 1; i++) {
-
-                    result += resultSet.getString(i) + ":";
+                    result.append(resultSet.getString(i));
+                    if (i != columnsNumber) {
+                        result.append(":");
+                    }
                 }
             }
 
             // A wise man once said that if you open a door you should also close it
             connection.close();
-            return result;
+            return result.toString();
         } catch (SQLException sqlE) {
             System.err.println("Error connecting: " + sqlE);
             return "sqlException";

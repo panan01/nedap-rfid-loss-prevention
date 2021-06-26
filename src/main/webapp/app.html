@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="app-html">
     <head>
+        <meta charset="utf-8">
         <link rel="stylesheet" href="font/fonts.css">
         <link rel="stylesheet" href="css/main.css">
         <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
@@ -9,6 +10,8 @@
         <script src="js/jquery.js"></script>
         <script src="js/commandbar.js"></script>
         <script src="js/app.js"></script>
+
+        <title>Nedap App</title>
 
         <style>
             .logo::before {
@@ -146,34 +149,35 @@
                     <div class="card">
                         <div class="card-image" id="chart_div" style="height: 400px">
                             <script>
-                                console.log("before method")
-
                                 app.drawChart(function() {
-
-                                    console.log("inside method !")
-
-                                    var request = $.ajax({
+                                    $.ajax({
                                         url: "rest/app",
                                         method: 'POST',
                                         dataType: 'text',
-                                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-1|article.category|-0"
+                                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-1|article.category|-0",
+                                        success: function(response) {
+                                            // console.log("response: " + typeof(response) + " = " + response);
+                                            response = JSON.parse(response);
+                                            console.log(response);
+                                            let array = [];
+                                            for (let item of response){
+                                                array.push([item.category, item.count]);
+                                            }
+                                            console.log(array);
+                                            let data = google.visualization.arrayToDataTable(array);
+
+                                            let options = {
+                                                title: 'Company Performance',
+                                                hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+                                                vAxis: {minValue: 0},
+                                                colors: app.graphColors
+                                            };
+                                            let chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+                                            chart.draw(data, options);
+
+                                            console.log("end method")
+                                        }
                                     });
-
-                                    console.log(request)
-
-                                    var data = google.visualization.arrayToDataTable(request);
-
-                                    var options = {
-                                        title: 'Company Performance',
-                                        hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
-                                        vAxis: {minValue: 0},
-                                        colors: app.graphColors
-                                    };
-
-                                    var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-                                    chart.draw(data, options);
-
-                                    console.log("end method")
                                 });
                             </script>
                         </div>
