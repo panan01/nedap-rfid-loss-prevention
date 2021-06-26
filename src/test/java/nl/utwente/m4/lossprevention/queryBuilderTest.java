@@ -31,15 +31,15 @@ public class queryBuilderTest {
 
         query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|article.color|-1|article|-0-1|article.color|-0-1|article.color|-0";
         generationCodeArray = query.split(";");
-        assertEquals("SELECT DISTINCT nedap.article.color, COUNT(nedap.article.color) FROM nedap.article GROUP BY article.color ORDER BY COUNT(nedap.article.color) DESC ",generateSetStringInputs(generationCodeArray[1]));
+        assertEquals("SELECT DISTINCT nedap.article.color, COUNT(nedap.article.color) FROM nedap.article GROUP BY nedap.article.color ORDER BY COUNT(article.color) DESC ",generateSetStringInputs(generationCodeArray[1]));
 
         query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|article.size|-1|article|-0-1|article.size|-0-1|article.size|-0";
         generationCodeArray = query.split(";");
-        assertEquals("SELECT DISTINCT article.size, COUNT(article.size) FROM nedap.article GROUP BY article.size ORDER BY COUNT(article.size) DESC ",generateSetStringInputs(generationCodeArray[1]));
+        assertEquals("SELECT DISTINCT nedap.article.size, COUNT(nedap.article.size) FROM nedap.article GROUP BY nedap.article.size ORDER BY COUNT(article.size) DESC ",generateSetStringInputs(generationCodeArray[1]));
 
         query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|article.price|-1|article|-0-1|article.price|-0-1|article.price|-0";
         generationCodeArray = query.split(";");
-        assertEquals("SELECT DISTINCT article.price, COUNT(article.price) FROM nedap.article GROUP BY article.price ORDER BY COUNT(article.price) DESC ",generateSetStringInputs(generationCodeArray[1]));
+        assertEquals("SELECT DISTINCT nedap.article.price, COUNT(nedap.article.price) FROM nedap.article GROUP BY nedap.article.price ORDER BY COUNT(article.price) DESC ",generateSetStringInputs(generationCodeArray[1]));
 
 
 
