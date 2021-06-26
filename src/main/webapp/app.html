@@ -146,7 +146,24 @@
                     <div class="card">
                         <div class="card-image" id="chart_div" style="height: 400px">
                             <script>
+                                console.log("before method")
+
                                 app.drawChart(function() {
+
+                                    console.log("inside method !")
+
+                                    var request = $.ajax({
+                                        url: "rest/app",
+                                        method: 'POST',
+                                        dataType: 'text',
+                                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-1|article.category|-0"
+                                    });
+
+                                    console.log(request)
+
+                                    var data = google.visualization.arrayToDataTable(request);
+
+                                    /*
                                     var data = google.visualization.arrayToDataTable([
                                         ['Year', 'Items Found', 'Items Lost'],
                                         ['2016',    1020,        590],
@@ -156,6 +173,7 @@
                                         ['2020',     660,       1120],
                                         ['2021',    1030,        540]
                                     ]);
+                                    */
 
                                     var options = {
                                         title: 'Company Performance',
@@ -166,6 +184,8 @@
 
                                     var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
                                     chart.draw(data, options);
+
+                                    console.log("end method")
                                 });
                             </script>
                         </div>

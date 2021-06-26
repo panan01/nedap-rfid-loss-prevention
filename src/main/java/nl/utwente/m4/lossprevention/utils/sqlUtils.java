@@ -1,19 +1,18 @@
 package nl.utwente.m4.lossprevention.utils;
 
-import java.sql.*;
-
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.json.JSONArray;
 import org.json.JSONTokener;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-
-import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
+import static nl.utwente.m4.lossprevention.utils.excelUtils.getCellData;
+import static nl.utwente.m4.lossprevention.utils.excelUtils.getColumnLabels;
 
 @Path("/app")
 public class sqlUtils {
@@ -588,16 +587,9 @@ public class sqlUtils {
     }
 
     @POST
-    public static JSONArray postMethod(String query) {
+    public static String postMethod(String query) {
         Connection connection = getConnection();
-
-        StringBuffer sb = new StringBuffer(executeQuery(connection, query));
-        sb.deleteCharAt(sb.length() - 1);
-
-        JSONArray jsonarray = (JSONArray) new JSONTokener(sb.toString()).nextValue();
-        System.out.println("array: " + jsonarray);
-
-        return jsonarray;
+        return executeQuery(connection, query);
     }
     /**
      * Basic function to execute queries to respective connection, if the query has a return then it's returned as a colon separated String
