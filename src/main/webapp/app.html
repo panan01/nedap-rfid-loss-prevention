@@ -159,9 +159,12 @@
                                             // console.log("response: " + typeof(response) + " = " + response);
                                             response = JSON.parse(response);
                                             console.log(response);
-                                            let array = [];
+                                            let array = [[
+                                                {label: 'Count', type: 'number'},
+                                                {label: 'Category', type: 'number'},
+                                            ]];
                                             for (let item of response){
-                                                array.push([item.category, item.count]);
+                                                array.push([item.count, item.category]);
                                             }
                                             console.log(array);
                                             let data = google.visualization.arrayToDataTable(array);
