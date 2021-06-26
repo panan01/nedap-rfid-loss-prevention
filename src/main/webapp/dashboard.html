@@ -332,98 +332,62 @@
             <div class="card">
                 <div id="mapid" style="height: 400px;"></div>
                 <script>
-                    var mapData = [
-                        {"id":1023553,"latitude":43,"longitude":-3},
-                        {"id":1023625,"latitude":37,"longitude":-5},
-                        {"id":1023401,"latitude":41,"longitude":-4},
-                        {"id":1023627,"latitude":37,"longitude":-4},
-                        {"id":1023507,"latitude":40,"longitude":-4},
-                        {"id":1023445,"latitude":39,"longitude":0},
-                        {"id":1023515,"latitude":40,"longitude":-4},
-                        {"id":1023617,"latitude":37,"longitude":-4},
-                        {"id":1023619,"latitude":37,"longitude":-6},
-                        {"id":1023623,"latitude":38,"longitude":-5},
-                        {"id":1023449,"latitude":42,"longitude":-1},
-                        {"id":1023409,"latitude":40,"longitude":-4},
-                        {"id":1023411,"latitude":40,"longitude":-4},
-                        {"id":1023417,"latitude":41,"longitude":-4},
-                        {"id":1023573,"latitude":43,"longitude":-6},
-                        {"id":1023455,"latitude":38,"longitude":0},
-                        {"id":1023575,"latitude":43,"longitude":-8},
-                        {"id":1023511,"latitude":43,"longitude":-6},
-                        {"id":1023457,"latitude":41,"longitude":2},
-                        {"id":1023421,"latitude":40,"longitude":3},
-                        {"id":1023571,"latitude":42,"longitude":-9},
-                        {"id":1023425,"latitude":39,"longitude":-7},
-                        {"id":1023423,"latitude":40,"longitude":-4},
-                        {"id":1026517,"latitude":41,"longitude":-9},
-                        {"id":1040895,"latitude":null,"longitude":null},
-                        {"id":1023577,"latitude":43,"longitude":-4},
-                        {"id":1025545,"latitude":42,"longitude":-5},
-                        {"id":1025547,"latitude":null,"longitude":null},
-                        {"id":1025549,"latitude":39,"longitude":0},
-                        {"id":1026645,"latitude":40,"longitude":-4},
-                        {"id":1028361,"latitude":41,"longitude":1},
-                        {"id":1028363,"latitude":null,"longitude":null},
-                        {"id":1026599,"latitude":41,"longitude":-4},
-                        {"id":1031217,"latitude":40,"longitude":3},
-                        {"id":1031551,"latitude":40,"longitude":-4},
-                        {"id":1033615,"latitude":41,"longitude":-4},
-                        {"id":1036171,"latitude":37,"longitude":-4},
-                        {"id":1039143,"latitude":37,"longitude":-2},
-                        {"id":1039621,"latitude":42,"longitude":-4},
-                        {"id":1039623,"latitude":40,"longitude":-4},
-                        {"id":1040891,"latitude":42,"longitude":-1},
-                        {"id":1043925,"latitude":37,"longitude":-5},
-                        {"id":1044341,"latitude":42,"longitude":-2},
-                        {"id":1044871,"latitude":40,"longitude":-4},
-                        {"id":1044937,"latitude":38,"longitude":-5},
-                        {"id":1047191,"latitude":39,"longitude":-2},
-                        {"id":1047859,"latitude":28,"longitude":-15},
-                        {"id":1047861,"latitude":38,"longitude":0},
-                        {"id":1051285,"latitude":43,"longitude":-6},
-                        {"id":1051759,"latitude":37,"longitude":-6},
-                        {"id":1052291,"latitude":40,"longitude":-4},
-                        {"id":1054633,"latitude":42,"longitude":-5},
-                        {"id":1055515,"latitude":40,"longitude":-4}
-                    ];
+                   $.ajax({
+                        url: "rest/app",
+                        method: 'POST',
+                        dataType: 'text',
+                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-2-1|store|-0-0-0-0-0",
+                        success: function(locationResult) {
+                            locationResult = JSON.parse(locationResult);
+                            console.log(locationResult);
+                            let array = [[
+                                {label: 'Store ID', type: 'number'},
+                                {label: 'Longitude', type: 'number'},
+                                {label: 'Latitude', type: 'number'},
+                            ]];
+                            for (let item of locationResult){
+                                array.push([item.store_id, item.longitude, item.latitude]);
+                            }
+                            var mapData = locationResult;
 
-                    let grouped = {};
+                            let grouped = {};
 
-                    for (let d of mapData) {
-                        if (d.latitude !== null && d.longitude !== null) {
-                            let key = d.latitude + ";" + d.longitude;
+                            for (let d of mapData) {
+                                if (d.latitude !== null && d.longitude !== null) {
+                                    let key = d.latitude + ";" + d.longitude;
 
-                            let collection = grouped[key];
-                            if (!collection) {
-                                collection = {coords: [d.latitude, d.longitude], ids: []};
+                                    let collection = grouped[key];
+                                    if (!collection) {
+                                        collection = {coords: [d.latitude, d.longitude], ids: []};
+                                    }
+
+                                    collection.ids.push(d.store_id);
+                                    grouped[key] = collection;
+                                }
                             }
 
-                            collection.ids.push(d.id);
-                            grouped[key] = collection;
+
+                            var mymap = L.map('mapid').setView([38.3, -3.5], 4);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(mymap);
+
+                            for (let k in grouped) {
+                                let d = grouped[k];
+                                console.log(d)
+                                let icon = d.ids.length === 1 ? markerIcons[Math.floor(Math.random() * 4)] : multiMarkerIcon;
+                                let marker = L.marker(d.coords, {icon: icon}).addTo(mymap);
+
+                                let idHtml = "<b>" + d.ids.length + " store" + (d.ids.length === 1 ? "" : "s") + "</b>"
+
+                                for (let id of d.ids) {
+                                    idHtml += "<br>" + id;
+                                }
+
+                                marker.bindPopup(idHtml);
+                            }
                         }
-                    }
-
-
-                    var mymap = L.map('mapid').setView([52.238234, 6.854233], 2);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    }).addTo(mymap);
-
-                    for (let k in grouped) {
-                        let d = grouped[k];
-
-                        let icon = d.ids.length === 1 ? markerIcons[Math.floor(Math.random() * 4)] : multiMarkerIcon;
-                        let marker = L.marker(d.coords, {icon: icon}).addTo(mymap);
-
-                        let idHtml = "<b>" + d.ids.length + " store" + (d.ids.length === 1 ? "" : "s") + "</b>"
-
-                        for (let id of d.ids) {
-                            idHtml += "<br>" + id;
-                        }
-
-                        marker.bindPopup(idHtml);
-                    }
+                   })
                 </script>
                 <div class="card-header">Map</div>
             </div>
