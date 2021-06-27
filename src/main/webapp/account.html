@@ -50,6 +50,72 @@
                     <h1 class="h2">Your account</h1>
                 </div>
 
+                <div class="flex vertical-700">
+                    <div class="card">
+                        <div class="card-header">
+                            User
+                        </div>
+                        <div class="card-content" id="username">
+                            [User name placeholder]
+                        </div>
+                        <br>
+                        <div class="card-header">
+                            Access level
+                        </div>
+                        <div class="card-content" id="access_level">
+                            [User access level placeholder]
+                        </div>
+                        <br>
+                        <div class="card-header">
+                            E-mail
+                        </div>
+                        <div class="card-content" id="email">
+                            [User mail placeholder]
+                        </div>
+                        <br>
+                        <div class="card-header">
+                            Available stores
+                        </div>
+                        <div class="card-content" id="accessible_stores">
+                            [Accessible stores placeholder]
+                        </div>
+                        <script>
+                            function fillInData() {
+                                // also checks logged in
+                                try {
+                                    const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
+                                    const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                                    $.ajax({
+                                        url: "rest/account/" + email,
+                                        method: 'GET',
+                                        headers: {'Authorization': token},
+                                        dataType: "json",
+                                        success: function(response) {
+                                            let usernameElement = document.getElementById("username");
+                                            usernameElement.innerText = response.first_name + ' ' + response.last_name;
+                                            let accessLevelElement = document.getElementById("access_level");
+                                            accessLevelElement.innerText = response.type;
+                                            let emailElement = document.getElementById("email");
+                                            emailElement.innerText = email;
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            console.log("unsuccessful request");
+                                            window.location.href = "login.html";
+                                        }
+                                    })
+                                    return null;
+                                } catch (err) {
+                                    if (err instanceof TypeError) {
+                                        window.location.href = "login.html";
+                                    } else {
+                                        throw err;
+                                    }
+                                }
+                            }
+                            window.onload = fillInData();
+                        </script>
+                    </div>
+                </div>
             </main>
         </div>
     </body>
