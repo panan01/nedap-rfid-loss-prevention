@@ -1,5 +1,6 @@
 package nl.utwente.m4.lossprevention.account;
 
+
 import nl.utwente.m4.lossprevention.InputSanitization.InputNotAllowedException;
 import nl.utwente.m4.lossprevention.InputSanitization.InputSanitizer;
 import nl.utwente.m4.lossprevention.JWT.*;
@@ -33,7 +34,7 @@ public class account {
     @Produces(MediaType.APPLICATION_JSON)
     // Requires a filed in the header called "Authorization" that returns the token
     @JWTNeeded
-    public Response getAccount(@PathParam("email") String email, @Context HttpServletRequest request) {
+    public Response getAccount(@PathParam("email") String email) {
         try {
             if (Queries.instance.checkIfEmailExists(email)) {
                 JSONObject userJson = Queries.instance.getUser(email);
