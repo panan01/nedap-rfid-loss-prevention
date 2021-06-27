@@ -183,9 +183,6 @@
             <div class="nav-entry" -icon="table_view" -name="Reports"></div>
             <a href="./settings.html"><div class="nav-entry" -icon="tune" -name="Settings"></div></a>
             <a href="./admin_overview.html"><div class="nav-entry" -icon="admin_panel_settings" -name="Admin"></div></a>
-            <div class="nav-section" -name="Saved reports"></div>
-            <div class="nav-entry" -icon="insert_drive_file" -name="Current month"></div>
-            <div class="nav-entry" -icon="insert_drive_file" -name="Last quartile"></div>
         </div>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -227,7 +224,7 @@
                 <!-- CHART -->
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-1" style="height: 400px;">
+                        <div class="card-image" id="chart-canvas-1" style="height: 400px">
                         </div>
                         <script>
                             // (function(){
@@ -256,9 +253,8 @@
                                         // console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let options = {
-                                            chart: {
-                                                title: 'Stolen items',
-                                                subtitle: 'An overview of all items ever stolen',
+                                            legend: {
+                                                position: 'none'
                                             }
                                         };
                                         let chart = new google.charts.Bar(document.getElementById('chart-canvas-1'));
@@ -269,9 +265,9 @@
 
                             });
                         </script>
-                        <div class="card-header">Chart</div>
+                        <div class="card-header">Stolen items</div>
                         <div class="card-content">
-                            Information about chart. Lorem ipsum.
+                            An overview of all items ever stolen.
                         </div>
                     </div>
                 </div>
@@ -279,7 +275,7 @@
             <div class="flex vertical-800">
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-2" style="height: 400px;">
+                        <div class="card-image" id="chart-canvas-2" style="height: 400px">
                         </div>
                         <script>
                             window.addEventListener("load", function(){
@@ -304,9 +300,8 @@
                                         let formatter = new google.visualization.NumberFormat({prefix: '€'});
                                         formatter.format(data, 0);
                                         let options = {
-                                            chart: {
-                                                title: 'Stolen items at price',
-                                                subtitle: 'An overview of all things stolen at a set price',
+                                            legend: {
+                                                position: 'none'
                                             }
                                         };
                                         let chart = new google.charts.Bar(document.getElementById('chart-canvas-2'));
@@ -317,16 +312,16 @@
 
                             });
                         </script>
-                        <div class="card-header">Chart</div>
+                        <div class="card-header">Stolen items at price</div>
                         <div class="card-content">
-                            Information about chart. Lorem ipsum.
+                            An overview of all things stolen at a set price.
                         </div>
                     </div>
                 </div>
 
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-3" style="height: 400px;">
+                        <div class="card-image" id="chart-canvas-3" style="height: 400px">
                         </div>
                         <script>
                             // TODO: make a table instead?
@@ -347,9 +342,8 @@
                                         // console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let options = {
-                                            chart: {
-                                                title: 'Stolen items at each store',
-                                                subtitle: 'An overview of all items ever stolen for each store',
+                                            legend: {
+                                                position: 'none'
                                             }
                                         };
                                         let chart = new google.charts.Bar(document.getElementById('chart-canvas-3'));
@@ -360,16 +354,16 @@
 
                             });
                         </script>
-                        <div class="card-header">Chart</div>
+                        <div class="card-header">Stolen items at each store</div>
                         <div class="card-content">
-                            Information about chart. Lorem ipsum.
+                            An overview of all items ever stolen for each store.
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <div id="mapid" style="height: 400px;"></div>
+                <div id="mapid" style="height: 400px"></div>
                 <script>
                    $.ajax({
                         url: "rest/app",
