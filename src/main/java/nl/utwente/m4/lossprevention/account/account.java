@@ -16,7 +16,6 @@ import java.sql.SQLException;
 @Path("/account/{email}")
 public class account {
 
-
     /*
     What does it return
         1.Status "200" and a user JSON (For successfully getting the user info)
