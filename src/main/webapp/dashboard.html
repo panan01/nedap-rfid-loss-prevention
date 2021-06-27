@@ -6,8 +6,8 @@
         <link rel="stylesheet" href="css/main.css">
         <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-        crossorigin=""/>
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin=""/>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
         <script src="js/jquery.js"></script>
@@ -15,6 +15,7 @@
         <script src="js/app.js"></script>
         <script src="js/chart.js"></script>
         <script src="js/sorttable.js"></script>
+        <script src="js/commands.js"></script>
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""></script>
@@ -111,6 +112,51 @@
                 popupAnchor: [0, -20*s]
             });
             const markerIcons = [blueMarkerIcon, redMarkerIcon, greenMarkerIcon, yellowMarkerIcon];
+            google.charts.load('current', {'packages':['bar']});
+
+            $(function() {
+                makeCommandBar({
+                    element: document.getElementById("searchbar")
+                });
+
+                app.inject("user.username", "Four-Zero-Four");
+            });
+            function navbarMenu() {
+                let links = document.getElementById("navbarLinks");
+                if (links.style.display === "table") {
+                    links.style.display = "none";
+                    links.style.minWidth = "0px";
+                } else {
+                    links.style.display = "table";
+                    links.style.minWidth = "100px";
+                }
+            }
+            function logOut() {
+                document.cookie = "token=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                document.cookie = "email=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                window.location.href = "login.html";
+            }
+
+            function checkLogin() {
+                // check logged in
+                try {
+                    const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
+                    const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                    $.ajax({
+                        url: "rest/account/" + email,
+                        method: 'GET',
+                        headers: {'Authorization': token},
+                        dataType: "json",
+                        success: function(response) {
+                            console.log("successful request");
+                            console.log(response);
+                        }
+                    })
+                    return token;
+                } catch (TypeError) {
+                    window.location.href = "login.html";
+                }
+            }
         </script>
     </head>
 
@@ -125,7 +171,7 @@
                     </div>
                 </a>
                 <div id="navbarLinks">
-                    <a onclick="logOut()">[Log out (clear cookies)]</a>
+                    <a onclick="logOut()">Log out</a>
                 </div>
             </div>
         </div>
@@ -137,7 +183,6 @@
             <div class="nav-entry" -icon="table_view" -name="Reports"></div>
             <a href="./settings.html"><div class="nav-entry" -icon="tune" -name="Settings"></div></a>
             <a href="./admin_overview.html"><div class="nav-entry" -icon="admin_panel_settings" -name="Admin"></div></a>
-            <div class="nav-section" -name="Saved reports"></div>
         </div>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -182,7 +227,6 @@
                         <div class="card-image" id="chart-canvas-1" style="height: 400px">
                         </div>
                         <script>
-                            google.charts.load('current', {'packages':['bar']});
                             // (function(){
                             //     let chart = new PieChart(document.getElementById("chart-canvas"), {margin: 30, hollow: 0.7, angle: -45});
                             //     chart.updateData("a", app.graphColors[0], 241);
@@ -196,11 +240,9 @@
                                 $.ajax({
                                     url: "rest/app",
                                     method: 'POST',
-                                    dataType: 'text',
+                                    dataType: 'json',
                                     data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-1|article.category|-0",
                                     success: function(response) {
-                                        // console.log("response: " + typeof(response) + " = " + response);
-                                        response = JSON.parse(response);
                                         // console.log(response);
                                         let array = [[
                                             'Category', 'Amount',
@@ -223,9 +265,9 @@
 
                             });
                         </script>
-                        <div class="card-header">Stolen Items</div>
+                        <div class="card-header">Stolen items</div>
                         <div class="card-content">
-                            An overview of stolen items per product category.
+                            An overview of all items ever stolen.
                         </div>
                     </div>
                 </div>
@@ -233,19 +275,17 @@
             <div class="flex vertical-800">
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-2" style="height: 400px;">
+                        <div class="card-image" id="chart-canvas-2" style="height: 400px">
                         </div>
                         <script>
                             window.addEventListener("load", function(){
                                 $.ajax({
                                     url: "rest/app",
                                     method: 'POST',
-                                    dataType: 'text',
+                                    dataType: 'json',
                                     data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.price|-1|article|-0-1|article.price|-0-1|article.price|-0",
                                     success: function(response) {
-                                        console.log("response: " + typeof(response) + " = " + response);
-                                        response = JSON.parse(response);
-                                        console.log(response);
+                                        // console.log(response);
                                         let array = [[
                                             {label: 'Price', type: 'number'},
                                             {label: 'Amount', type: 'number'},
@@ -255,7 +295,7 @@
                                                 array.push([Math.round(item.price), item.count]);
                                             }
                                         }
-                                        console.log(array);
+                                        // console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let formatter = new google.visualization.NumberFormat({prefix: '€'});
                                         formatter.format(data, 0);
@@ -281,7 +321,7 @@
 
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-3" style="height: 400px;">
+                        <div class="card-image" id="chart-canvas-3" style="height: 400px">
                         </div>
                         <script>
                             // TODO: make a table instead?
@@ -289,19 +329,17 @@
                                 $.ajax({
                                     url: "rest/app",
                                     method: 'POST',
-                                    dataType: 'text',
+                                    dataType: 'json',
                                     data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0",
                                     success: function(response) {
-                                        // console.log("response: " + typeof(response) + " = " + response);
-                                        response = JSON.parse(response);
-                                        console.log(response);
+                                        // console.log(response);
                                         let array = [[
                                             'Store', 'Amount',
                                         ]];
                                         for (let item of response){
                                             array.push([item.store_id, item.count]);
                                         }
-                                        console.log(array);
+                                        // console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let options = {
                                             legend: {
@@ -325,16 +363,15 @@
             </div>
 
             <div class="card">
-                <div id="mapid" style="height: 400px;"></div>
+                <div id="mapid" style="height: 400px"></div>
                 <script>
                    $.ajax({
                         url: "rest/app",
                         method: 'POST',
-                        dataType: 'text',
+                        dataType: 'json',
                         data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-2-1|store|-0-0-0-0-0",
                         success: function(locationResult) {
-                            locationResult = JSON.parse(locationResult);
-                            console.log(locationResult);
+                            // console.log(locationResult);
                             let array = [[
                                 {label: 'Store ID', type: 'number'},
                                 {label: 'Longitude', type: 'number'},
@@ -369,7 +406,7 @@
 
                             for (let k in grouped) {
                                 let d = grouped[k];
-                                console.log(d)
+                                // console.log(d)
                                 let icon = d.ids.length === 1 ? markerIcons[Math.floor(Math.random() * 4)] : multiMarkerIcon;
                                 let marker = L.marker(d.coords, {icon: icon}).addTo(mymap);
 
@@ -402,29 +439,5 @@
 
         <div class="snackbar-container">
         </div>
-
-        <script src="js/commands.js"></script>
-        <script>
-            $(function() {
-                makeCommandBar({
-                    element: document.getElementById("searchbar")
-                });
-
-                app.inject("user.username", "Four-Zero-Six");
-            });
-            function navbarMenu() {
-                let links = document.getElementById("navbarLinks");
-                if (links.style.display === "table") {
-                    links.style.display = "none";
-                    links.style.minWidth = "0px";
-                } else {
-                    links.style.display = "table";
-                    links.style.minWidth = "100px";
-                }
-            }
-            function logOut() {
-                document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-            }
-        </script>
     </body>
 </html>
