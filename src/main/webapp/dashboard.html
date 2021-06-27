@@ -198,25 +198,21 @@
                 <!-- DASHBOARD INFO -->
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-header">
-                            Welcome <span -inject="user.username"></span>!
+                        <div class="card-header">TO BE IMPLEMENTED</div>
+                        <div class="card-content">
+                            Examples:
                         </div>
                         <div class="card-content">
-                            Some dashboard information appears here.
+                            One specific store ID with most stolen items or one specific category with most stolen items in certain week.
                         </div>
-                        <div class="card-table">
-                            <table class="sortable"> <!--sortable class adds automatic sorting-->
-                                <thead>
-                                    <tr><td>A</td><td>B</td><td>C</td></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Hello</td><td>132</td><td>XB</td></tr>
-                                    <tr><td>World</td><td>124</td><td>B</td></tr>
-                                    <tr><td>Foo</td><td>812</td><td>XB</td></tr>
-                                    <tr><td>Bar</td><td>241</td><td>XS</td></tr>
-                                    <tr><td>Baz</td><td>341</td><td>M</td></tr>
-                                </tbody>
-                            </table>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">TO BE IMPLEMENTED</div>
+                        <div class="card-content">
+                            Examples:
+                        </div>
+                        <div class="card-content">
+                            Average cost of a stolen item or total loss in certain time period.
                         </div>
                     </div>
                 </div>
@@ -227,15 +223,6 @@
                         <div class="card-image" id="chart-canvas-1" style="height: 400px">
                         </div>
                         <script>
-                            // (function(){
-                            //     let chart = new PieChart(document.getElementById("chart-canvas"), {margin: 30, hollow: 0.7, angle: -45});
-                            //     chart.updateData("a", app.graphColors[0], 241);
-                            //     chart.updateData("b", app.graphColors[1], 621);
-                            //     chart.updateData("c", app.graphColors[2], 512);
-                            //     chart.updateData("d", app.graphColors[3], 119);
-                            //     chart.updateData("e", app.graphColors[4], 571);
-                            //     chart.redraw();
-                            // })();
                             window.addEventListener("load", function(){
                                 $.ajax({
                                     url: "rest/app",
@@ -243,23 +230,46 @@
                                     dataType: 'json',
                                     data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-1|article.category|-0",
                                     success: function(response) {
-                                        // console.log(response);
                                         let array = [[
                                             'Category', 'Amount',
                                         ]];
                                         for (let item of response){
                                             array.push([item.category, item.count, ]);
                                         }
-                                        // console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let options = {
+                                            backgroundColor: {
+                                                fill: '#F4F4F4'
+                                            },
+                                            colors: ['#2C7998'],
+                                            chartArea: {
+                                                top: 20,
+                                                height: '80%',
+                                                width: '85%'
+                                            },
+                                            hAxis: {
+                                                gridlines: {
+                                                    count: 0
+                                                },
+                                                viewWindow: {
+                                                    min: 0,
+                                                    max: 63
+                                                },
+                                                showTextEvery: 1,
+                                                title: 'Category Number'
+                                            },
+                                            vAxis: {
+                                                viewWindow: {
+                                                    max: 1600
+                                                }
+                                            },
                                             legend: {
                                                 position: 'none'
                                             }
                                         };
-                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas-1'));
+                                        let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-1'));
 
-                                        chart.draw(data, google.charts.Bar.convertOptions(options));
+                                        chart.draw(data, options);
                                     }
                                 });
 
@@ -285,7 +295,6 @@
                                     dataType: 'json',
                                     data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.price|-1|article|-0-1|article.price|-0-1|article.price|-0",
                                     success: function(response) {
-                                        // console.log(response);
                                         let array = [[
                                             {label: 'Price', type: 'number'},
                                             {label: 'Amount', type: 'number'},
@@ -295,18 +304,40 @@
                                                 array.push([Math.round(item.price), item.count]);
                                             }
                                         }
-                                        // console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let formatter = new google.visualization.NumberFormat({prefix: '€'});
                                         formatter.format(data, 0);
                                         let options = {
+                                            backgroundColor: {
+                                                fill: '#F4F4F4'
+                                            },
+                                            colors: ['#2C7998'],
+                                            chartArea: {
+                                                top: 20,
+                                                height: '80%',
+                                                width: '85%'
+                                            },
+                                            hAxis: {
+                                                gridlines: {
+                                                    count: 0
+                                                },
+                                                viewWindow: {
+                                                    min: 0,
+                                                    max: 300
+                                                },
+                                                showTextEvery: 1,
+                                                title: 'Price in €'
+                                            },
                                             legend: {
                                                 position: 'none'
-                                            }
+                                            },
+                                            bar: {
+                                                groupWidth: 5
+                                            },
                                         };
-                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas-2'));
+                                        let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-2'));
 
-                                        chart.draw(data, google.charts.Bar.convertOptions(options));
+                                        chart.draw(data, options);
                                     }
                                 });
 
@@ -324,7 +355,6 @@
                         <div class="card-image" id="chart-canvas-3" style="height: 400px">
                         </div>
                         <script>
-                            // TODO: make a table instead?
                             window.addEventListener("load", function(){
                                 $.ajax({
                                     url: "rest/app",
@@ -332,23 +362,40 @@
                                     dataType: 'json',
                                     data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0",
                                     success: function(response) {
-                                        // console.log(response);
                                         let array = [[
                                             'Store', 'Amount',
                                         ]];
                                         for (let item of response){
-                                            array.push([item.store_id, item.count]);
+                                            array.push([item.store_id.toString(), item.count]);
                                         }
-                                        // console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let options = {
+                                            backgroundColor: {
+                                                fill: '#F4F4F4'
+                                            },
+                                            colors: ['#2C7998'],
+                                            chartArea: {
+                                                top: 20,
+                                                height: '65%',
+                                                width: '75%'
+                                            },
+                                            hAxis: {
+                                                title: 'Store ID',
+                                                slantedText: true,
+                                                slantedTextAngle: 90,
+                                                showTextEvery: 1
+                                            },
+                                            bar: {
+                                                groupWidth: 3
+                                            },
                                             legend: {
                                                 position: 'none'
-                                            }
-                                        };
-                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas-3'));
+                                            },
 
-                                        chart.draw(data, google.charts.Bar.convertOptions(options));
+                                        };
+                                        let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-3'));
+
+                                        chart.draw(data, options);
                                     }
                                 });
 
@@ -371,7 +418,6 @@
                         dataType: 'json',
                         data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-2-1|store|-0-0-0-0-0",
                         success: function(locationResult) {
-                            // console.log(locationResult);
                             let array = [[
                                 {label: 'Store ID', type: 'number'},
                                 {label: 'Longitude', type: 'number'},
@@ -406,7 +452,6 @@
 
                             for (let k in grouped) {
                                 let d = grouped[k];
-                                // console.log(d)
                                 let icon = d.ids.length === 1 ? markerIcons[Math.floor(Math.random() * 4)] : multiMarkerIcon;
                                 let marker = L.marker(d.coords, {icon: icon}).addTo(mymap);
 
