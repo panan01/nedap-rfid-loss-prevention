@@ -102,7 +102,22 @@
                                             console.log("unsuccessful request");
                                             window.location.href = "login.html";
                                         }
-                                    })
+                                    });
+                                    $.ajax({
+                                        url: "rest/app",
+                                        method: 'POST',
+                                        dataType: 'json',
+                                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;0-6|store_access.store_id|-2|store_access:users|-7|" + email + "|-0-0-0-0",
+                                        success: function (response) {
+                                            let accessibleStoresElement = document.getElementById("accessible_stores");
+                                            let text = "";
+                                            for (let item of response) {
+                                                text += item.store_id + ", ";
+                                            }
+                                            text = text.slice(0, text.length-2);
+                                            accessibleStoresElement.innerText = text;
+                                        }
+                                    });
                                     return null;
                                 } catch (err) {
                                     if (err instanceof TypeError) {
