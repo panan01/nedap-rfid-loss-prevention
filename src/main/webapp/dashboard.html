@@ -6,8 +6,8 @@
         <link rel="stylesheet" href="css/main.css">
         <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-        crossorigin=""/>
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin=""/>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
         <script src="js/jquery.js"></script>
@@ -15,6 +15,7 @@
         <script src="js/app.js"></script>
         <script src="js/chart.js"></script>
         <script src="js/sorttable.js"></script>
+        <script src="js/commands.js"></script>
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
             crossorigin=""></script>
@@ -77,41 +78,7 @@
             }
         </style>
 
-        <script>
-            // Map marker icons
-            const s = 2;
-            const blueMarkerIcon = L.icon({
-                iconUrl: 'icons/blue_map_marker.png',
-                iconSize: [24*s, 24*s],
-                iconAnchor: [12*s, 22*s],
-                popupAnchor: [0, -20*s]
-            });
-            const redMarkerIcon = L.icon({
-                iconUrl: 'icons/red_map_marker.png',
-                iconSize: [24*s, 24*s],
-                iconAnchor: [12*s, 22*s],
-                popupAnchor: [0, -20*s]
-            });
-            const greenMarkerIcon = L.icon({
-                iconUrl: 'icons/green_map_marker.png',
-                iconSize: [24*s, 24*s],
-                iconAnchor: [12*s, 22*s],
-                popupAnchor: [0, -20*s]
-            });
-            const yellowMarkerIcon = L.icon({
-                iconUrl: 'icons/yellow_map_marker.png',
-                iconSize: [24*s, 24*s],
-                iconAnchor: [12*s, 22*s],
-                popupAnchor: [0, -20*s]
-            });
-            const multiMarkerIcon = L.icon({
-                iconUrl: 'icons/multi_map_marker.png',
-                iconSize: [24*s, 24*s],
-                iconAnchor: [12*s, 22*s],
-                popupAnchor: [0, -20*s]
-            });
-            const markerIcons = [blueMarkerIcon, redMarkerIcon, greenMarkerIcon, yellowMarkerIcon];
-        </script>
+        <script src="js/dashboard.js"></script>
     </head>
 
     <body class="app">
@@ -125,7 +92,7 @@
                     </div>
                 </a>
                 <div id="navbarLinks">
-                    <a>[Log out]</a>
+                    <a onclick="logOut()">Log out</a>
                 </div>
             </div>
         </div>
@@ -134,12 +101,8 @@
             <a href="./dashboard.html"><div class="nav-entry nav-current" -icon="dashboard" -name="Dashboard"></div></a>
             <a href="./account.html"><div class="nav-entry" -icon="account_circle" -name="Account"></div></a>
             <a href="./data_reports.html"><div class="nav-entry" -icon="file_upload" -name="Data"></div></a>
-            <div class="nav-entry" -icon="table_view" -name="Reports"></div>
             <a href="./settings.html"><div class="nav-entry" -icon="tune" -name="Settings"></div></a>
             <a href="./admin_overview.html"><div class="nav-entry" -icon="admin_panel_settings" -name="Admin"></div></a>
-            <div class="nav-section" -name="Saved reports"></div>
-            <div class="nav-entry" -icon="insert_drive_file" -name="Current month"></div>
-            <div class="nav-entry" -icon="insert_drive_file" -name="Last quartile"></div>
         </div>
 
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -155,25 +118,21 @@
                 <!-- DASHBOARD INFO -->
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-header">
-                            Welcome <span -inject="user.username"></span>!
+                        <div class="card-header">TO BE IMPLEMENTED</div>
+                        <div class="card-content">
+                            Examples:
                         </div>
                         <div class="card-content">
-                            Some dashboard information appears here.
+                            One specific store ID with most stolen items or one specific category with most stolen items in certain week.
                         </div>
-                        <div class="card-table">
-                            <table class="sortable"> <!--sortable class adds automatic sorting-->
-                                <thead>
-                                    <tr><td>A</td><td>B</td><td>C</td></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Hello</td><td>132</td><td>XB</td></tr>
-                                    <tr><td>World</td><td>124</td><td>B</td></tr>
-                                    <tr><td>Foo</td><td>812</td><td>XB</td></tr>
-                                    <tr><td>Bar</td><td>241</td><td>XS</td></tr>
-                                    <tr><td>Baz</td><td>341</td><td>M</td></tr>
-                                </tbody>
-                            </table>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">TO BE IMPLEMENTED</div>
+                        <div class="card-content">
+                            Examples:
+                        </div>
+                        <div class="card-content">
+                            Average cost of a stolen item or total loss in certain time period.
                         </div>
                     </div>
                 </div>
@@ -181,71 +140,204 @@
                 <!-- CHART -->
                 <div class="flex vertical">
                     <div class="card">
-                        <canvas class="card-image" id="chart-canvas" style="width: 100%; height: 400px;">
-                        </canvas>
+                        <div class="card-image" id="chart-canvas-1" style="height: 400px">
+                        </div>
                         <script>
-                            google.charts.load('current', {'packages':['bar']});
-                            // (function(){
-                            //     let chart = new PieChart(document.getElementById("chart-canvas"), {margin: 30, hollow: 0.7, angle: -45});
-                            //     chart.updateData("a", app.graphColors[0], 241);
-                            //     chart.updateData("b", app.graphColors[1], 621);
-                            //     chart.updateData("c", app.graphColors[2], 512);
-                            //     chart.updateData("d", app.graphColors[3], 119);
-                            //     chart.updateData("e", app.graphColors[4], 571);
-                            //     chart.redraw();
-                            // })();
-
                             window.addEventListener("load", function(){
                                 $.ajax({
                                     url: "rest/app",
                                     method: 'POST',
-                                    dataType: 'text',
+                                    dataType: 'json',
                                     data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-1|article.category|-0",
                                     success: function(response) {
-                                        // console.log("response: " + typeof(response) + " = " + response);
-                                        response = JSON.parse(response);
-                                        console.log(response);
                                         let array = [[
-                                            'Count', 'Category'
+                                            'Category', 'Amount',
                                         ]];
                                         for (let item of response){
-                                            array.push([item.count, item.category]);
+                                            array.push([item.category, item.count, ]);
                                         }
-                                        console.log(array);
                                         let data = google.visualization.arrayToDataTable(array);
                                         let options = {
-                                            chart: {
-                                                title: 'Company Performance',
-                                                subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+                                            backgroundColor: {
+                                                fill: '#F4F4F4'
+                                            },
+                                            colors: ['#2C7998'],
+                                            chartArea: {
+                                                top: 20,
+                                                height: '80%',
+                                                width: '85%'
+                                            },
+                                            hAxis: {
+                                                gridlines: {
+                                                    count: 0
+                                                },
+                                                viewWindow: {
+                                                    min: 0,
+                                                    max: 63
+                                                },
+                                                showTextEvery: 1,
+                                                title: 'Category Number'
+                                            },
+                                            vAxis: {
+                                                viewWindow: {
+                                                    max: 1600
+                                                }
+                                            },
+                                            legend: {
+                                                position: 'none'
                                             }
                                         };
-                                        let chart = new google.charts.Bar(document.getElementById('chart-canvas'), {margin: 30, hollow: 0.7, angle: -45});
+                                        let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-1'));
 
-                                        chart.draw(data, google.charts.Bar.convertOptions(options));
+                                        chart.draw(data, options);
                                     }
                                 });
 
                             });
                         </script>
-                        <div class="card-header">Chart</div>
+                        <div class="card-header">Stolen items</div>
                         <div class="card-content">
-                            Information about chart. Lorem ipsum.
+                            An overview of all items ever stolen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex vertical-800">
+                <div class="flex vertical">
+                    <div class="card">
+                        <div class="card-image" id="chart-canvas-2" style="height: 400px">
+                        </div>
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.price|-1|article|-0-1|article.price|-0-1|article.price|-0",
+                                    success: function(response) {
+                                        let array = [[
+                                            {label: 'Price', type: 'number'},
+                                            {label: 'Amount', type: 'number'},
+                                        ]];
+                                        for (let item of response){
+                                            if (item.count > 50 && item.price > 0) {
+                                                array.push([Math.round(item.price), item.count]);
+                                            }
+                                        }
+                                        let data = google.visualization.arrayToDataTable(array);
+                                        let formatter = new google.visualization.NumberFormat({prefix: '€'});
+                                        formatter.format(data, 0);
+                                        let options = {
+                                            backgroundColor: {
+                                                fill: '#F4F4F4'
+                                            },
+                                            colors: ['#2C7998'],
+                                            chartArea: {
+                                                top: 20,
+                                                height: '80%',
+                                                width: '85%'
+                                            },
+                                            hAxis: {
+                                                gridlines: {
+                                                    count: 0
+                                                },
+                                                viewWindow: {
+                                                    min: 0,
+                                                    max: 300
+                                                },
+                                                showTextEvery: 1,
+                                                title: 'Price in €'
+                                            },
+                                            legend: {
+                                                position: 'none'
+                                            },
+                                            bar: {
+                                                groupWidth: 5
+                                            },
+                                        };
+                                        let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-2'));
+
+                                        chart.draw(data, options);
+                                    }
+                                });
+
+                            });
+                        </script>
+                        <div class="card-header">Stolen items at price</div>
+                        <div class="card-content">
+                            An overview of all things stolen at a set price.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex vertical">
+                    <div class="card">
+                        <div class="card-image" id="chart-canvas-3" style="height: 400px">
+                        </div>
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0",
+                                    success: function(response) {
+                                        let array = [[
+                                            'Store', 'Amount',
+                                        ]];
+                                        for (let item of response){
+                                            array.push([item.store_id.toString(), item.count]);
+                                        }
+                                        let data = google.visualization.arrayToDataTable(array);
+                                        let options = {
+                                            backgroundColor: {
+                                                fill: '#F4F4F4'
+                                            },
+                                            colors: ['#2C7998'],
+                                            chartArea: {
+                                                top: 20,
+                                                height: '65%',
+                                                width: '75%'
+                                            },
+                                            hAxis: {
+                                                title: 'Store ID',
+                                                slantedText: true,
+                                                slantedTextAngle: 90,
+                                                showTextEvery: 1
+                                            },
+                                            bar: {
+                                                groupWidth: 3
+                                            },
+                                            legend: {
+                                                position: 'none'
+                                            },
+
+                                        };
+                                        let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-3'));
+
+                                        chart.draw(data, options);
+                                    }
+                                });
+
+                            });
+                        </script>
+                        <div class="card-header">Stolen items at each store</div>
+                        <div class="card-content">
+                            An overview of all items ever stolen for each store.
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <div id="mapid" style="height: 400px;"></div>
+                <div id="mapid" style="height: 400px"></div>
                 <script>
                    $.ajax({
                         url: "rest/app",
                         method: 'POST',
-                        dataType: 'text',
+                        dataType: 'json',
                         data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-2-1|store|-0-0-0-0-0",
                         success: function(locationResult) {
-                            locationResult = JSON.parse(locationResult);
-                            console.log(locationResult);
                             let array = [[
                                 {label: 'Store ID', type: 'number'},
                                 {label: 'Longitude', type: 'number'},
@@ -280,7 +372,6 @@
 
                             for (let k in grouped) {
                                 let d = grouped[k];
-                                console.log(d)
                                 let icon = d.ids.length === 1 ? markerIcons[Math.floor(Math.random() * 4)] : multiMarkerIcon;
                                 let marker = L.marker(d.coords, {icon: icon}).addTo(mymap);
 
@@ -313,26 +404,5 @@
 
         <div class="snackbar-container">
         </div>
-
-        <script src="js/commands.js"></script>
-        <script>
-            $(function() {
-                makeCommandBar({
-                    element: document.getElementById("searchbar")
-                });
-
-                app.inject("user.username", "Four-Zero-Four");
-            });
-            function navbarMenu() {
-                let links = document.getElementById("navbarLinks");
-                if (links.style.display === "table") {
-                    links.style.display = "none";
-                    links.style.minWidth = "0px";
-                } else {
-                    links.style.display = "table";
-                    links.style.minWidth = "100px";
-                }
-            }
-        </script>
     </body>
 </html>

@@ -133,4 +133,44 @@ public class UserManagementQueriesTest {
         // assertThrows(Exception.class, () -> Queries.instance.DeleteAccount(newUser));
         // assertThrows(SQLException.class, () -> Queries.instance.getUser(newUser));
     }
+
+    @Test
+    public void checkIfUserAllowedToAccessStoreTest(){
+        assertTrue(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "store@test.com"));
+        assertFalse(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
+        assertFalse(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "safatest.com"));
+    }
+
+    @Test
+    public void addStoreAccessTest() {
+        assertFalse(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
+        assertFalse(Queries.instance.addStoreAccess(1023571, "fsfsuifs@test.com"));
+        assertFalse(Queries.instance.addStoreAccess(1023571, "fsfsuifstest.com"));
+        Queries.instance.addStoreAccess(1023571, "division@test.com");
+        assertTrue(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
+    }
+
+    @Test
+    public void deleteUserAccessTest() {
+        assertTrue(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
+        assertTrue(Queries.instance.checkIfUserAllowedToAccessStore(1023425, "division@test.com"));
+        assertFalse(Queries.instance.deleteUserAllAccess("fsdfsdf@test.com"));
+        assertFalse(Queries.instance.deleteUserAllAccess("fsdfsdftest.com"));
+        assertTrue(Queries.instance.deleteUserAllAccess("division@test.com"));
+        assertFalse(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
+        assertFalse(Queries.instance.checkIfUserAllowedToAccessStore(1023425, "division@test.com"));
+    }
+
+    @Test
+    public void deleteUserOneAccesTest() {
+        Queries.instance.addStoreAccess(1023571, "division@test.com");
+        Queries.instance.addStoreAccess(1023425, "division@test.com");
+        assertTrue(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
+        assertFalse(Queries.instance.deleteUserOneAccess(1023571, "divfsdnfsf.com"));
+        assertFalse(Queries.instance.deleteUserOneAccess(1023571, "divfsdnfsf@test.com"));
+        assertTrue(Queries.instance.deleteUserOneAccess(1023571, "division@test.com"));
+        assertTrue(Queries.instance.checkIfUserAllowedToAccessStore(1023425, "division@test.com"));
+        assertFalse(Queries.instance.checkIfUserAllowedToAccessStore(1023571, "division@test.com"));
+    }
+
 }

@@ -2,7 +2,6 @@ package nl.utwente.m4.lossprevention.JWT;
 
 
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.postgresql.util.Base64;
 
@@ -48,5 +47,4 @@ public enum JWTOffice {
         JSONObject jobj = new JSONObject(strBody);
         return jobj;
     }
-
 }

@@ -10,12 +10,15 @@
     position: relative;
 
     .card-image {
-        width: 100%;
         display: block;
         box-sizing: border-box;
         position: relative;
-        
-        margin-bottom: sz(10pt);
+        overflow-x: scroll;
+
+        margin-bottom: 10px;
+        padding-left: 10px;
+        padding-top: 10px;
+        padding-right: 10px;
 
         .card-image-inner {
             width: 100%;
@@ -124,7 +127,8 @@
     .card-header {
         display: block;
         width: 100%;
-        padding: sz(21pt) sz(20pt) sz(21pt) sz(20pt);
+        padding-left: 20px;
+        padding-top: 10px;
         box-sizing: border-box;
         @include text-level-1;
     }
@@ -132,7 +136,7 @@
     .card-content {
         display: block;
         width: 100%;
-        padding: sz(0pt) sz(20pt) sz(10pt) sz(20pt);
+        padding: 5px 5px 10px 20px;
         box-sizing: border-box;
         @include text-body;
         color: inherit;

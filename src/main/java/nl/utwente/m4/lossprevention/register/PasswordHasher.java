@@ -10,14 +10,22 @@ import java.util.Base64;
 public enum PasswordHasher {
     instance;
     private final String PEPPER = "$1$N8qsKOcF$dWj1idimpoRJbyVJhU4uk1";
+    private SecretKeyFactory fact;
+
+    PasswordHasher() {
+        try {
+            fact = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
 
     public byte[] hashPassword(String password, String salt){
         String salted_Pass = salt + password;
         KeySpec spec = new PBEKeySpec(salted_Pass.toCharArray(), this.PEPPER.getBytes(), 65536, 128);
         try {
-            SecretKeyFactory fact = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             return Base64.getEncoder().encode(fact.generateSecret(spec).getEncoded());
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
         return null;
