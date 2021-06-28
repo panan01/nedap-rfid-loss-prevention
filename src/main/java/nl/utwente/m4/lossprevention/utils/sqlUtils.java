@@ -28,7 +28,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-5-6-6|1023553|-1|day|-0-2-0";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-3|alarm.store_id|-1|1|";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -336,6 +336,11 @@ public class sqlUtils {
                         return true;
                     }
                 }
+                if (checkType == 3) {
+                    if (checkVariableIsColumn(variables.get(0))) {
+                        return true;
+                    }
+                }
                 break;
             case 7:
                 if (checkType == 1) {
@@ -565,7 +570,7 @@ public class sqlUtils {
                 break;
             case '6':
                 if (variablesValid(variables, 3, 6)) {
-                    generatedQuery += "WHERE store_id = "+variables.get(0);
+                    generatedQuery += "WHERE store_id = " + variables.get(0);
                    /* for (String variable : variables) {
                         generatedQuery += variable + " OR ";
                     }*/
@@ -638,6 +643,16 @@ public class sqlUtils {
                 generatedQuery += "ORDER BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 END ASC ";
 
 
+                break;
+            case '3':
+                if (variablesValid(variables, 6, 3)) {
+
+                    generatedQuery += "ORDER BY COUNT(" + variables.get(0) + ") ASC ";
+
+
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
                 break;
         }
 
