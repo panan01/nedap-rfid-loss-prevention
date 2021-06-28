@@ -166,7 +166,7 @@ public enum Queries {
             json.put("type", type);
             return json;
     }
-//modify user
+    // modify user
     public void modifyUser(String email, String column, String value) throws SQLException{
             switch (column) {
                 //if password is the column that we need to modify

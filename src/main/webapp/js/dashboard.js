@@ -67,7 +67,6 @@ function checkLogin() {
             headers: {'Authorization': token},
             dataType: "json",
             success: function(response) {
-                console.log("successful request");
                 console.log(response);
             },
             error: function(jqXHR, textStatus, errorThrown) {

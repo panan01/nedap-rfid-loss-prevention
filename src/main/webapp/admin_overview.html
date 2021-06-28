@@ -24,15 +24,84 @@
                 box-sizing: border-box;
                 border: 10px solid transparent;
             }
+            #navbarLinks {
+                display: none;
+                min-width: 0;
+                text-align: center;
+                vertical-align: middle;
+                background-color: #023A4F;
+
+            }
+            #navbarLinks a {
+                text-decoration: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                display: table-cell;
+                position: relative;
+                vertical-align: middle;
+                font-size: 20px;
+                background-color: #023A4F;
+                color: white;
+            }
+            #navbarLinks a:hover {
+                background-color: #01151d;
+            }
+            #icon {
+                position: relative;
+                float: right;
+                color: white;
+                background-color: #FF6C37;
+            }
+            #icon:hover {
+                background-color: #FF4710;
+            }
+            #icon div {
+                text-align: center;
+            }
+            #icon div span {
+                font-size: 48px;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            :not(.searchbar)::placeholder {
+                color: grey;
+                opacity: 0.8;
+            }
         </style>
+        <script>
+            function navbarMenu() {
+                let links = document.getElementById("navbarLinks");
+                if (links.style.display === "table") {
+                    links.style.display = "none";
+                    links.style.minWidth = "0px";
+                } else {
+                    links.style.display = "table";
+                    links.style.minWidth = "100px";
+                }
+            }
+            function logOut() {
+                document.cookie = "token=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                document.cookie = "email=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                window.location.href = "login.html";
+            }
+        </script>
     </head>
 
     <body class="app">
         <div class="app-bar">
-            <div class="app-bar-inner">
-                <div class="logo"><!-- automatically styled with logo by CSS --></div>
+            <div class="app-bar-inner" style="display: inline-flex">
+                <div class="logo"> </div>
                 <input class="searchbar" id="searchbar" type="text" placeholder="Type here to search">
-                <div class="profile-icon" id="#profile"></div>
+                <a onclick="navbarMenu()" id="icon">
+                    <div class="profile-icon">
+                        <span class="icon">account_circle</span>
+                    </div>
+                </a>
+                <div id="navbarLinks">
+                    <a onclick="logOut()">Log out</a>
+                </div>
             </div>
         </div>
 
@@ -58,9 +127,15 @@
                         <div class="card-table">
                             <table class="sortable"> <!--sortable class adds automatic sorting-->
                                 <thead>
-                                    <tr><td>Name</td><td>E-mail</td><td>Access level</td></tr>
+                                    <tr>
+                                        <td>First name</td>
+                                        <td>Last name</td>
+                                        <td>E-mail</td>
+                                        <td>Access level</td>
+                                        <td></td>
+                                    </tr>
                                 </thead>
-                                <tbody id="users">
+                                <tbody id="users_table">
                                     <tr><td>Hello</td><td>132</td><td>XB</td></tr>
                                     <tr><td>World</td><td>124</td><td>B</td></tr>
                                     <tr><td>Foo</td><td>812</td><td>XB</td></tr>
@@ -69,7 +144,15 @@
                                 </tbody>
                             </table>
                         </div>
+                        <br>
+                        <button class="btn-secondary" style="display: none" id="submit-all">Submit all</button>
                         <script>
+                            function showSubmitButton(i) {
+                                let buttonElement = document.getElementById("submit-" + i);
+                                buttonElement.style.display = "block";
+                                buttonElement = document.getElementById("submit-all");
+                                buttonElement.style.display = "block";
+                            }
                             function fillInData() {
                                 // also checks logged in
                                 try {
@@ -80,6 +163,12 @@
                                         method: 'GET',
                                         headers: {'Authorization': token},
                                         dataType: "json",
+                                        success: function(response) {
+                                            if (response.type !== "admin") {
+                                                window.location.href = "dashboard.html";
+                                                alert("You are not an admin!");
+                                            }
+                                        },
                                         error: function(jqXHR, textStatus, errorThrown) {
                                             console.log("unsuccessful request");
                                             window.location.href = "login.html";
@@ -93,13 +182,26 @@
                                         success: function (response) {
                                             console.log("success!");
                                             console.log(response);
-                                            let usersElement = document.getElementById("users");
+                                            let usersElement = document.getElementById("users_table");
                                             let text = "";
-                                            for (let user of response) {
+                                            for (let i = 0; i < response.length; i++) {
+                                                let user = response[i];
                                                 text += "<tr>";
-                                                text += "<td>" + user.first_name + " " + user.last_name + "</td>";
-                                                text += "<td>" + user.email + "</td>";
-                                                text += "<td>" + user.type + "</td>";
+                                                text += '<td><input type="text" class="input" placeholder="' + user.first_name + '" onchange="showSubmitButton('+i+')"></td>';
+                                                text += '<td><input type="text" class="input" placeholder="' + user.last_name + '" onchange="showSubmitButton('+i+')"></td>';
+                                                text += '<td><input type="email" class="input" placeholder="' + user.email + '" onchange="showSubmitButton('+i+')"></td>';
+                                                if (user.type === "admin" || user.email === email) {
+                                                    text += "<td>" + user.type + "</td>";
+                                                } else {
+                                                    text += ('<td><span class="selectbox dark">' +
+                                                        '<select class="btn-primary" onchange="showSubmitButton('+i+')">' +
+                                                        '<option value="store manager">Store manager</option>' +
+                                                        '<option value="loss prevention manager">Loss prevention manager</option>' +
+                                                        '<option value="division manager">Division manager</option>' +
+                                                        '<option value="admin">Admin</option>' +
+                                                        '</select></span></td>').replace('value="' + user.type + '"', 'value="' + user.type + '" selected');
+                                                }
+                                                text += '<td><button class="btn-primary" style="display: none" id="submit-' + i + '">Submit</button></td>'
                                                 text += "</tr>";
                                             }
                                             usersElement.innerHTML = text;

@@ -24,15 +24,80 @@
                 box-sizing: border-box;
                 border: 10px solid transparent;
             }
+            #navbarLinks {
+                display: none;
+                min-width: 0;
+                text-align: center;
+                vertical-align: middle;
+                background-color: #023A4F;
+
+            }
+            #navbarLinks a {
+                text-decoration: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                display: table-cell;
+                position: relative;
+                vertical-align: middle;
+                font-size: 20px;
+                background-color: #023A4F;
+                color: white;
+            }
+            #navbarLinks a:hover {
+                background-color: #01151d;
+            }
+            #icon {
+                position: relative;
+                float: right;
+                color: white;
+                background-color: #FF6C37;
+            }
+            #icon:hover {
+                background-color: #FF4710;
+            }
+            #icon div {
+                text-align: center;
+            }
+            #icon div span {
+                font-size: 48px;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
         </style>
+        <script>
+            function navbarMenu() {
+                let links = document.getElementById("navbarLinks");
+                if (links.style.display === "table") {
+                    links.style.display = "none";
+                    links.style.minWidth = "0px";
+                } else {
+                    links.style.display = "table";
+                    links.style.minWidth = "100px";
+                }
+            }
+            function logOut() {
+                document.cookie = "token=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                document.cookie = "email=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                window.location.href = "login.html";
+            }
+        </script>
     </head>
 
     <body class="app">
         <div class="app-bar">
-            <div class="app-bar-inner">
-                <div class="logo"><!-- automatically styled with logo by CSS --></div>
+            <div class="app-bar-inner" style="display: inline-flex">
+                <div class="logo"> </div>
                 <input class="searchbar" id="searchbar" type="text" placeholder="Type here to search">
-                <div class="profile-icon" id="#profile"></div>
+                <a onclick="navbarMenu()" id="icon">
+                    <div class="profile-icon">
+                        <span class="icon">account_circle</span>
+                    </div>
+                </a>
+                <div id="navbarLinks">
+                    <a onclick="logOut()">Log out</a>
+                </div>
             </div>
         </div>
 
@@ -107,12 +172,12 @@
                                         url: "rest/app",
                                         method: 'POST',
                                         dataType: 'json',
-                                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;0-6|store_access.store_id|-2|store_access:users|-7|" + email + "|-0-0-0-0",
+                                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;0-6|store.id|-2|users:store|-7|" + email + "|-0-0-4|store.id|-0",
                                         success: function (response) {
                                             let accessibleStoresElement = document.getElementById("accessible_stores");
                                             let text = "";
                                             for (let item of response) {
-                                                text += item.store_id + ", ";
+                                                text += item.id + ", ";
                                             }
                                             text = text.slice(0, text.length-2);
                                             accessibleStoresElement.innerText = text;
