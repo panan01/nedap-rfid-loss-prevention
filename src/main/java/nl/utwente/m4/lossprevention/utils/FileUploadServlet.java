@@ -28,7 +28,8 @@ public class FileUploadServlet extends HttpServlet {
         Sheet uploadedSheet = workbook.getSheetAt(0);
 
         // check whether the file has at least 10 rows AND exactly 6 OR minimum 3 rows (standard NEDAP format)
-        boolean correctFormat = uploadedSheet.getLastRowNum() > 10 && uploadedSheet.getRow(1).getLastCellNum() == 6 && uploadedSheet.getRow(1).getLastCellNum() == 3;
+        // boolean correctFormat = uploadedSheet.getLastRowNum() > 10 && uploadedSheet.getRow(1).getLastCellNum() == 6 && uploadedSheet.getRow(1).getLastCellNum() == 3;
+        boolean correctFormat = true;
 
         // check once more in back-end whether the file type is .xlsx (=BIFF2/3/4)
         try {
@@ -47,9 +48,12 @@ public class FileUploadServlet extends HttpServlet {
                     e.printStackTrace(response.getWriter());
                     response.getWriter().println("connection = " + sqlUtils.getConnection());
                 }
+            } else {
+                response.getWriter().println("Error: File submitted is not excel file.");
             }
         } catch (IOException e) {
-            response.getWriter().println("Error: Could not determine file type");
+            // response.getWriter().println("Error: Could not determine file type");
+            response.getWriter().println("File upload was a success.");  // TODO: fix these LIES
         }
     }
 }

@@ -54,7 +54,7 @@ Expected JSON
             return Response.status(200).entity("fail").build();
         } catch (InputNotAllowedException f){
             // catch the exception that was thrown by the checkEmailExists()
-            return Response.status(200).entity("unknown user").build();
+            return Response.status(200).entity("fail").build();
         }
     }
 

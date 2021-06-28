@@ -28,7 +28,7 @@ function onLogin(email, password, result) {
                     token: data
                 });
             }
-            // console.log("data = " + data);
+            console.log("data = " + data);
         },
         error: function() {
             result({
