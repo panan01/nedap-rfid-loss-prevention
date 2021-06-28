@@ -760,7 +760,6 @@ public class sqlUtils {
      */
     public static String executeQuery(Connection connection, String query) {
         try {
-
             // Check if query needs input for prepared statement.
             if (query.contains("?")) {
                 String[] generationCodeArray = query.split(";");

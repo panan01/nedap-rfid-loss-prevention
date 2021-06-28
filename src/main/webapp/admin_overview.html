@@ -50,6 +50,74 @@
                     <h1 class="h2">Admin overview</h1>
                 </div>
 
+                <div class="flex vertical-700">
+                    <div class="card">
+                        <div class="card-header">
+                            Users
+                        </div>
+                        <div class="card-table">
+                            <table class="sortable"> <!--sortable class adds automatic sorting-->
+                                <thead>
+                                    <tr><td>Name</td><td>E-mail</td><td>Access level</td></tr>
+                                </thead>
+                                <tbody id="users">
+                                    <tr><td>Hello</td><td>132</td><td>XB</td></tr>
+                                    <tr><td>World</td><td>124</td><td>B</td></tr>
+                                    <tr><td>Foo</td><td>812</td><td>XB</td></tr>
+                                    <tr><td>Bar</td><td>241</td><td>XS</td></tr>
+                                    <tr><td>Baz</td><td>341</td><td>M</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <script>
+                            function fillInData() {
+                                // also checks logged in
+                                try {
+                                    const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
+                                    const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                                    $.ajax({
+                                        url: "rest/account/" + email,
+                                        method: 'GET',
+                                        headers: {'Authorization': token},
+                                        dataType: "json",
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            console.log("unsuccessful request");
+                                            window.location.href = "login.html";
+                                        }
+                                    });
+                                    $.ajax({
+                                        url: "rest/app",
+                                        method: 'POST',
+                                        dataType: 'json',
+                                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;0-6|users.first_name:users.last_name:users.email:users.type|-1|users|-0-0-0-0-0;",
+                                        success: function (response) {
+                                            console.log("success!");
+                                            console.log(response);
+                                            let usersElement = document.getElementById("users");
+                                            let text = "";
+                                            for (let user of response) {
+                                                text += "<tr>";
+                                                text += "<td>" + user.first_name + " " + user.last_name + "</td>";
+                                                text += "<td>" + user.email + "</td>";
+                                                text += "<td>" + user.type + "</td>";
+                                                text += "</tr>";
+                                            }
+                                            usersElement.innerHTML = text;
+                                        }
+                                    });
+                                    return null;
+                                } catch (err) {
+                                    if (err instanceof TypeError) {
+                                        window.location.href = "login.html";
+                                    } else {
+                                        throw err;
+                                    }
+                                }
+                            }
+                            window.onload = fillInData();
+                        </script>
+                    </div>
+                </div>
             </main>
         </div>
     </body>
