@@ -28,7 +28,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;2-7-0-0-0-0-0-0";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-6|store.id|-2|users:store|-7|test@test.com|-0-0-4|store.id|-0";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -357,7 +357,7 @@ public class sqlUtils {
                 }
                 break;
             case 6:
-                if (checkType == 1) {
+                if (checkType == 1 | checkType==4) {
                     if (checkVariableIsColumn(variables.get(0))) {
                         return true;
                     }
@@ -641,7 +641,7 @@ public class sqlUtils {
             case '7':
 
                 if (variablesValid(variables, 3, 7)) {
-                    generatedQuery += "WHERE users.email = '" + variables.get(0) + "' AND (store_access.allowed_user = '" + variables.get(0) + "' OR users.type = 'admin') ";
+                    generatedQuery += "WHERE users.email = '"+variables.get(0)+"' AND ((SELECT store_access.allowed_user FROM nedap.store_access WHERE nedap.store.id = nedap.store_access.store_id) = '"+variables.get(0)+"' OR users.type = 'admin') ";
 
                 } else {
                     return "Invalid variables! variables: " + variables;
@@ -719,6 +719,17 @@ public class sqlUtils {
                     return "Invalid variables! variables: " + variables;
                 }
                 break;
+            case '4':
+                if (variablesValid(variables, 6, 4)) {
+
+                    generatedQuery += "ORDER BY "+ variables.get(0) + " ";
+
+
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+                break;
+
         }
 
         variables = getVariables(generationCode[7].substring(1));
