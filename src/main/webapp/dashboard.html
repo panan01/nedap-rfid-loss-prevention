@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="app-html" lang="en">
+<html class="app-html" lang="en" xmlns="http://www.w3.org/1999/html">
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="font/fonts.css">
@@ -111,11 +111,150 @@
             </div>
 
         </main>
-
+        <!-- OVERALL INFORMATION CARDS -->
         <div class="app-content" id="app">
             <div class="flex vertical-700">
+                <div class="flex">
+                    <div class="card">
+                        <div class="card-header">Overall store performance</div>
+                        <div class="card-content">
+                            The following cards display useful information about stores and their overall loss prevention performances in a quick overview.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- RED ORANGE GREEN NUMBER OF THEFTS CARDS -->
+            <div class="flex vertical-700">
+                <div class="card card-error">
+                    <div class="card-header">Most amount of thefts</div>
+                    <div class="card-content">
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-1|1|",
+                                    success: function(response) {
+                                        let array = [[ 'StoreID', 'theftAmount'
+                                        ]];
+                                        for (let item of response){
+                                            array.push([item.store_id.toString(), item.count]);
+                                        }
+                                        document.getElementById("storeID_MOST").innerHTML = array[1][0];
+                                        document.getElementById("theftAmount_MOST").innerHTML = array[1][1];
+                                    }
+                                })
+                            });
+                        </script>
+                        Store <b><span id="storeID_MOST"></span></b> has <b><span id="theftAmount_MOST"></span></b> stolen items.<br>
+                        The average is <b><span id="theftAmount_AVERAGE_MOST"></span></b> stolen items per store.
+                    </div>
+                </div>
+                <div class="card card-warning">
+                    <div class="card-header">Increasing amount of thefts</div>
+                    <div class="card-content">
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0",
+                                    success: function(response) {
+                                        let array = [[ 'StoreID', 'theftAmount'
+                                        ]];
+                                        var theftSum = 0;
+                                        for (let item of response){
+                                            array.push([item.store_id.toString(), item.count]);
+                                            theftSum += item.count;
+                                        }
+                                        var average = (theftSum / 53).toFixed(0);
+                                        document.getElementById("theftAmount_AVERAGE_MOST").innerHTML = average;
+                                        document.getElementById("theftAmount_AVERAGE_LOWEST").innerHTML = average;
 
-                <!-- DASHBOARD INFO -->
+                                        var amountStore1 = array[1][1]
+                                        var amountStore2 = array[2][1]
+                                        var percentageDifference = (((amountStore1-amountStore2)/((amountStore1+amountStore2)/2))*100).toFixed(2)
+                                        document.getElementById("percentageDifference_INCREASING").innerHTML = percentageDifference.toString();
+                                        document.getElementById("storeID_INCREASING").innerHTML = array[2][0];
+                                        document.getElementById("theftAmount_INCREASING").innerHTML = array[2][1];
+                                    }
+                                })
+                            });
+                        </script>
+                        Store <b><span id="storeID_INCREASING"></span></b> has <b><span id="theftAmount_INCREASING"></span></b> stolen items.<br>
+                        This store has increased and needs to increase <b><span id="percentageDifference_INCREASING"></span>%</b> to become the store with most stolen items.
+                    </div>
+                </div>
+                <div class="card card-success">
+                    <div class="card-header">Lowest amount of thefts</div>
+                    <div class="card-content">
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-3|alarm.store_id|-1|1|",
+                                    success: function(response) {
+                                        let array = [[ 'StoreID', 'theftAmount'
+                                        ]];
+                                        for (let item of response){
+                                            array.push([item.store_id.toString(), item.count]);
+                                        }
+                                        document.getElementById("storeID_LOWEST").innerHTML = array[1][0];
+                                        document.getElementById("theftAmount_LOWEST").innerHTML = array[1][1];
+                                    }
+                                })
+                            });
+                        </script>
+                        Store <b><span id="storeID_LOWEST"></span></b> has <b><span id="theftAmount_LOWEST"></span></b> stolen items.<br>
+                        The average is <b><span id="theftAmount_AVERAGE_LOWEST"></span></b> stolen items per store.
+                    </div>
+                </div>
+            </div>
+            <!-- RED ORANGE GREEN NUMBER OF CATEGORIES THEFTS -->
+            <div class="flex vertical-700">
+                <div class="card card-error">
+                    <div class="card-header">Most thefts in category</div>
+                    <div class="card-content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                </div>
+                <div class="card card-warning">
+                    <div class="card-header">Increasing thefts in category</div>
+                    <div class="card-content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                </div>
+                <div class="card card-success">
+                    <div class="card-header">Lowest thefts in category</div>
+                    <div class="card-content">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRAPHS EXPLANATION CARD -->
+            <div class="flex vertical-700">
+                <div class="flex">
+                    <div class="card">
+                        <div class="card-header">Graphs</div>
+                        <div class="card-content">
+                            The following graphs display detailed and useful information about stores and their overall loss prevention performances. Graphs can be used for deeper analysis and better understanding of stores' performances.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- DASHBOARD GRAPHS -->
+            <div class="flex vertical-700">
                 <div class="flex vertical">
                     <div class="card">
                         <div class="card-header">TO BE IMPLEMENTED</div>
@@ -154,7 +293,7 @@
                                             'Category', 'Amount',
                                         ]];
                                         for (let item of response){
-                                            array.push([item.category, item.count, ]);
+                                            array.push([item.category.toString(), item.count]);
                                         }
                                         let data = google.visualization.arrayToDataTable(array);
                                         let options = {
@@ -164,8 +303,10 @@
                                             colors: ['#2C7998'],
                                             chartArea: {
                                                 top: 20,
-                                                height: '80%',
-                                                width: '85%'
+                                                left: 50,
+                                                bottom: 50,
+                                                height: '100%',
+                                                width: '100%'
                                             },
                                             hAxis: {
                                                 gridlines: {
@@ -173,10 +314,12 @@
                                                 },
                                                 viewWindow: {
                                                     min: 0,
-                                                    max: 63
+                                                    max: 65
                                                 },
                                                 showTextEvery: 1,
-                                                title: 'Category Number'
+                                                title: 'Category Number',
+                                                slantedText: true,
+                                                slantedTextAngle: 90
                                             },
                                             vAxis: {
                                                 viewWindow: {
@@ -184,7 +327,8 @@
                                                 }
                                             },
                                             legend: {
-                                                position: 'none'
+                                                position: 'in',
+                                                alignment: 'end'
                                             }
                                         };
                                         let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-1'));
@@ -234,8 +378,11 @@
                                             colors: ['#2C7998'],
                                             chartArea: {
                                                 top: 20,
-                                                height: '80%',
-                                                width: '85%'
+                                                left: 50,
+                                                bottom: 50,
+                                                height: '100%',
+                                                width: '100%'
+
                                             },
                                             hAxis: {
                                                 gridlines: {
@@ -245,11 +392,11 @@
                                                     min: 0,
                                                     max: 300
                                                 },
-                                                showTextEvery: 1,
                                                 title: 'Price in €'
                                             },
                                             legend: {
-                                                position: 'none'
+                                                position: 'in',
+                                                alignment: 'end'
                                             },
                                             bar: {
                                                 groupWidth: 5
@@ -296,22 +443,25 @@
                                             colors: ['#2C7998'],
                                             chartArea: {
                                                 top: 20,
-                                                height: '65%',
-                                                width: '75%'
+                                                left: 50,
+                                                bottom: 80,
+                                                height: '70%',
+                                                width: '100%'
                                             },
                                             hAxis: {
                                                 title: 'Store ID',
                                                 slantedText: true,
                                                 slantedTextAngle: 90,
-                                                showTextEvery: 1
+                                                showTextEvery: 1,
+                                                maxAlternation: 5,
                                             },
                                             bar: {
                                                 groupWidth: 3
                                             },
                                             legend: {
-                                                position: 'none'
+                                                position: 'in',
+                                                alignment: 'end'
                                             },
-
                                         };
                                         let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-3'));
 
