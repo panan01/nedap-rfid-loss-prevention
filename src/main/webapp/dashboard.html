@@ -146,9 +146,32 @@
                                     }
                                 })
                             });
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;4-7-0-0-0-0-0-0",
+                                    success: function(response) {
+                                        let array = [[ 'StoreID', 'theftAmount'
+                                        ]];
+                                        var sumLosses = 0;
+                                        for (let item of response){
+                                            array.push([item.product.toString(), item.count, item.price]);
+                                            sumLosses += item.count * item.price;
+                                        }
+
+                                        var averageLoss = sumLosses / 1948;
+
+                                        document.getElementById("sumLosses").innerHTML = sumLosses.toFixed(2);
+                                        document.getElementById("averageLoss").innerHTML = averageLoss.toFixed(2);
+                                    }
+                                })
+                            });
                         </script>
                         Store <b><span id="storeID_MOST"></span></b> has <b><span id="theftAmount_MOST"></span></b> stolen items.<br>
-                        The average is <b><span id="theftAmount_AVERAGE_MOST"></span></b> stolen items per store.
+                        The average is <b><span id="theftAmount_AVERAGE_MOST"></span></b> stolen items per store.<br>
+                        This results in a total loss of <b>€ <span id="sumLosses"></span></b>, with an average of <b>€ <span id="averageLoss"></span></b> per item.
                     </div>
                 </div>
                 <div class="card card-warning">
@@ -194,8 +217,6 @@
                                                 minItemsStolenEnd = array[i][3]
                                             }
                                         }
-                                        console.log(minDifference)
-
                                         document.getElementById("maxDifference").innerHTML = maxDifference.toFixed(2);
                                         document.getElementById("storeInDanger").innerHTML = storeInDanger;
                                         document.getElementById("minDifference").innerHTML = minDifference.toFixed(2);
@@ -302,49 +323,61 @@
                 <div class="card card-warning">
                     <div class="card-header">Increasing thefts in category</div>
                     <div class="card-content">
-                        <!--<script>
+                        <script>
                             window.addEventListener("load", function(){
                                 $.ajax({
                                     url: "rest/app",
                                     method: 'POST',
                                     dataType: 'json',
-                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;2-7-0-0-0-0-0-0",
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;3-7-0-0-0-0-0-0",
                                     success: function(response) {
-                                        let array = [[ 'StoreID', 'janAmount', 'febAmount', 'marAmount', 'differenceFebMar']];
+                                        let array = [[ 'Category', 'janAmount', 'febAmount', 'marAmount', 'differenceFebMar']];
                                         for (let item of response) {
-                                            var differenceFebMar = (item.mar_amount-item.feb_amount)/item.feb_amount*100
-                                            array.push([item.id.toString(), item.jan_amount, item.feb_amount, item.mar_amount, differenceFebMar]);
+                                            var differenceFebMar = (item.feb_amount-item.jan_amount)/item.jan_amount*100
+                                            array.push([item.category.toString(), item.jan_amount, item.feb_amount, item.mar_amount, differenceFebMar]);
                                         }
-
                                         var maxDifference = 0
                                         var minDifference = 0
-                                        var storeInDanger = null;
-                                        var storeNotInDanger = null;
+                                        var categoryInDanger = null;
+                                        var categoryNotInDanger = null;
+
+                                        var maxItemsStolenBegin = 0;
+                                        var maxItemsStolenEnd = 0;
+                                        var minItemsStolenBegin = 0;
+                                        var minItemsStolenEnd = 0;
 
                                         for (var i = 1; i < array.length; i++) {
-                                            if(isNaN(array[i][4])) {
+                                            if(!isFinite(array[i][4]) || isNaN(array[i][4])) {
                                                 array[i][4]=0;
                                             }
                                             if (array[i][4] > maxDifference) {
                                                 maxDifference = array[i][4]
-                                                storeInDanger = array[i][0]
+                                                categoryInDanger = array[i][0]
+                                                maxItemsStolenBegin = array[i][1]
+                                                maxItemsStolenEnd = array[i][2]
                                             } else if (array[i][4] < minDifference) {
                                                 minDifference = array[i][4]
-                                                storeNotInDanger = array[i][0]
+                                                categoryNotInDanger = array[i][0]
+                                                minItemsStolenBegin = array[i][1]
+                                                minItemsStolenEnd = array[i][2]
                                             }
                                         }
+                                        document.getElementById("maxDifferenceCategory").innerHTML = maxDifference.toFixed(2);
+                                        document.getElementById("categoryInDangerCategory").innerHTML = categoryInDanger;
+                                        document.getElementById("minDifferenceCategory").innerHTML = minDifference.toFixed(2);
+                                        document.getElementById("categoryNotInDangerCategory").innerHTML = categoryNotInDanger;
 
-                                        document.getElementById("maxDifference").innerHTML = maxDifference.toFixed(2);
-                                        document.getElementById("storeInDanger").innerHTML = storeInDanger;
-                                        document.getElementById("minDifference").innerHTML = minDifference.toFixed(2);
-                                        document.getElementById("storeNotInDanger").innerHTML = storeNotInDanger;
-
+                                        document.getElementById("maxItemsStolenBeginCategory").innerHTML = maxItemsStolenBegin;
+                                        document.getElementById("maxItemsStolenEndCategory").innerHTML = maxItemsStolenEnd;
+                                        document.getElementById("minItemsStolenBeginCategory").innerHTML = minItemsStolenBegin;
+                                        document.getElementById("minItemsStolenEndCategory").innerHTML = minItemsStolenEnd;
                                     }
                                 })
                             });
-                        </script>-->
-                        In <b>March</b>, there was an increase of <b>1013.2%</b> thefts in store <b>1052966</b>.
-                        The thefts increased from <b>35</b> to <b>355</b>.
+
+                        </script>
+                        In <b>Februari</b>, there was an increase of <b><span id="maxDifferenceCategory"></span>%</b> thefts in category <b><span id="categoryInDangerCategory"></span></b>.<br>
+                        The thefts increased from <b><span id="maxItemsStolenBeginCategory"></span></b> to <b><span id="maxItemsStolenEndCategory"></span></b>.
                     </div>
                 </div>
                 <div class="card card-success">
@@ -363,6 +396,7 @@
                                         for (let item of response) {
                                             array.push([item.category.toString(), item.count]);
                                         }
+
                                         document.getElementById("category_LOWEST").innerHTML = array[1][0];
                                         document.getElementById("categoryTheft_LOWEST").innerHTML = array[1][1];
                                     }
@@ -370,7 +404,9 @@
                             });
                         </script>
                         Category <b><span id="category_LOWEST"></span></b> has <b><span id="categoryTheft_LOWEST"></span></b> stolen item.<br>
-                        The average is <b><span id="categoryAverage_LOWEST"></span></b> stolen items per category.
+                        The average is <b><span id="categoryAverage_LOWEST"></span></b> stolen items per category.<br>
+                        In <b>Februari</b>, there was a decrease of <b><span id="minDifferenceCategory"></span>%</b> thefts in category <b><span id="categoryNotInDangerCategory"></span></b>.<br>
+                        The thefts decreased from <b><span id="minItemsStolenBeginCategory"></span></b> to <b><span id="minItemsStolenEndCategory"></span></b>.
                     </div>
                 </div>
             </div>

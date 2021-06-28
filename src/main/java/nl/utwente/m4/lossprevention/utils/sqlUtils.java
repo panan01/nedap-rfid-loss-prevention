@@ -399,8 +399,13 @@ public class sqlUtils {
                         "    FROM nedap.store GROUP BY store.id ORDER BY store.id ), mar AS (SELECT store.id, (SELECT COALESCE(SUM(1), 0) FROM nedap.alarm WHERE store.id = alarm.store_id AND alarm.timestamp >= to_timestamp('01-03-2021', 'dd-mm-yyyy') AND alarm.timestamp < to_timestamp('01-04-2021', 'dd-mm-yyyy')) AS amount\n" +
                         "    FROM nedap.store GROUP BY store.id  ORDER BY store.id  ) SELECT jan.id, jan.amount AS jan_amount, feb.amount AS feb_amount, mar.amount AS mar_amount FROM jan, feb, mar WHERE jan.id = feb.id AND feb.id = mar.id";
                 break;
-
-            default:
+            case '3':
+                generatedQuery += "WITH jan AS (SELECT article.category, COUNT(alarm.article_id) AS amount FROM nedap.article LEFT JOIN (SELECT * FROM nedap.alarm WHERE alarm.timestamp >= to_timestamp('01-01-2021', 'dd-mm-yyyy') AND alarm.timestamp < to_timestamp('01-02-2021', 'dd-mm-yyyy')) AS alarm ON article.id = alarm.article_id GROUP BY article.category ORDER BY article.category), feb AS (SELECT article.category, COUNT(alarm.article_id) AS amount FROM nedap.article LEFT JOIN (SELECT * FROM nedap.alarm WHERE alarm.timestamp >= to_timestamp('01-02-2021', 'dd-mm-yyyy') AND alarm.timestamp < to_timestamp('01-03-2021', 'dd-mm-yyyy')) AS alarm ON article.id = alarm.article_id GROUP BY article.category ORDER BY article.category), mar AS (SELECT article.category, COUNT(alarm.article_id) AS amount FROM nedap.article LEFT JOIN (SELECT * FROM nedap.alarm WHERE alarm.timestamp >= to_timestamp('01-03-2021', 'dd-mm-yyyy') AND alarm.timestamp < to_timestamp('01-04-2021', 'dd-mm-yyyy')) AS alarm ON article.id = alarm.article_id GROUP BY article.category ORDER BY article.category) SELECT jan.category, jan.amount AS jan_amount, feb.amount AS feb_amount, mar.amount AS mar_amount FROM jan, feb, mar WHERE jan.category = feb.category AND feb.category = mar.category";
+                break;
+            case '4':
+                generatedQuery += "SELECT DISTINCT nedap.article.product, COUNT(nedap.article.product), article.price FROM nedap.article, alarm WHERE store_id = 1023553 AND article.id = alarm.article_id GROUP BY nedap.article.product, article.price ORDER BY COUNT(nedap.article.product) DESC";
+                break;
+                default:
 
         }
         ArrayList<String> variables = getVariables(generationCode[1].substring(1));
