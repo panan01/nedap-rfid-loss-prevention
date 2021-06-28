@@ -28,7 +28,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-3|alarm.store_id|-1|1|";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-6|users.first_name:users.last_name:users.email:users.type|-1|users|-0-0-0-0-0";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -172,6 +172,15 @@ public class sqlUtils {
             case "store.latitude":
             case "store.longitude":
 
+            case "store_access.store_id":
+            case "store_access.allowed_user":
+
+            case "users.email":
+            case "users.last_name":
+            case "users.first_name":
+            case "users.type":
+
+
             case "timeinterval":
             case "day":
             case "*":
@@ -185,6 +194,8 @@ public class sqlUtils {
             case "article":
             case "alarm":
             case "store":
+            case "store_access":
+            case "users":
                 return true;
 
         }
@@ -196,7 +207,14 @@ public class sqlUtils {
             case 1:
                 switch (checkType) {
                     case 1:
-                        return checkVariableIsColumn(variables.get(0));
+                    case 6:
+                        for (String variable : variables) {
+                            if (!checkVariableIsColumn(variable)) {
+                                return false;
+                            }
+
+                        }
+                        return true;
 
                     case 3:
                         if (variables.get(0).matches("^[a-zA-Z_ \"]*$") & variables.get(1).matches("^[a-zA-Z_ \"]*$")) {
@@ -312,6 +330,14 @@ public class sqlUtils {
                         }
 
                         break;
+                    case 7:
+
+
+                        if (variables.get(0).matches("^[a-zA-Z @ .]*$")) {
+                            return true;
+                        }
+
+                        break;
 
 
                 }
@@ -420,7 +446,21 @@ public class sqlUtils {
                 break;
             case '5':
                 generatedQuery += "day AS weekday, COUNT(day) ";
-            default:
+
+            case '6':
+                if (variablesValid(variables, 1, 6)) {
+                    for (String variable : variables) {
+                        generatedQuery += "nedap." + variable + ", ";
+                    }
+                    generatedQuery = generatedQuery.substring(0, generatedQuery.length() - 2);
+                    generatedQuery += " ";
+
+
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+                break;
 
         }
 
@@ -581,6 +621,15 @@ public class sqlUtils {
                 }
 
 
+                break;
+            case '7':
+
+                if (variablesValid(variables, 3, 7)) {
+                    generatedQuery += "WHERE users.email = '" + variables.get(0) + "' AND (store_access.allowed_user = '" + variables.get(0) + "' OR users.type = 'admin') ";
+
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
                 break;
         }
 
