@@ -160,31 +160,58 @@
                                     url: "rest/app",
                                     method: 'POST',
                                     dataType: 'json',
-                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0",
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;2-7-0-0-0-0-0-0",
                                     success: function(response) {
-                                        let array = [[ 'StoreID', 'theftAmount'
-                                        ]];
-                                        var theftSum = 0;
-                                        for (let item of response){
-                                            array.push([item.store_id.toString(), item.count]);
-                                            theftSum += item.count;
+                                        let array = [[ 'StoreID', 'janAmount', 'febAmount', 'marAmount', 'differenceFebMar']];
+                                        for (let item of response) {
+                                            var differenceFebMar = (item.mar_amount-item.feb_amount)/item.feb_amount*100
+                                            array.push([item.id.toString(), item.jan_amount, item.feb_amount, item.mar_amount, differenceFebMar]);
                                         }
-                                        var average = (theftSum / 53).toFixed(0);
-                                        document.getElementById("theftAmount_AVERAGE_MOST").innerHTML = average;
-                                        document.getElementById("theftAmount_AVERAGE_LOWEST").innerHTML = average;
 
-                                        var amountStore1 = array[1][1]
-                                        var amountStore2 = array[2][1]
-                                        var percentageDifference = (((amountStore1-amountStore2)/((amountStore1+amountStore2)/2))*100).toFixed(2)
-                                        document.getElementById("percentageDifference_INCREASING").innerHTML = percentageDifference.toString();
-                                        document.getElementById("storeID_INCREASING").innerHTML = array[2][0];
-                                        document.getElementById("theftAmount_INCREASING").innerHTML = array[2][1];
+                                        var maxDifference = 0
+                                        var minDifference = 0
+                                        var storeInDanger = null;
+                                        var storeNotInDanger = null;
+
+                                        var maxItemsStolenBegin = 0;
+                                        var maxItemsStolenEnd = 0;
+                                        var minItemsStolenBegin = 0;
+                                        var minItemsStolenEnd = 0;
+
+                                        for (var i = 1; i < array.length; i++) {
+                                            if(isNaN(array[i][4])) {
+                                                array[i][4]=0;
+                                            }
+                                            if (array[i][4] > maxDifference) {
+                                                maxDifference = array[i][4]
+                                                storeInDanger = array[i][0]
+                                                maxItemsStolenBegin = array[i][2]
+                                                maxItemsStolenEnd = array[i][3]
+                                            } else if (array[i][4] < minDifference) {
+                                                minDifference = array[i][4]
+                                                storeNotInDanger = array[i][0]
+                                                minItemsStolenBegin = array[i][2]
+                                                minItemsStolenEnd = array[i][3]
+                                            }
+                                        }
+                                        console.log(minDifference)
+
+                                        document.getElementById("maxDifference").innerHTML = maxDifference.toFixed(2);
+                                        document.getElementById("storeInDanger").innerHTML = storeInDanger;
+                                        document.getElementById("minDifference").innerHTML = minDifference.toFixed(2);
+                                        document.getElementById("storeNotInDanger").innerHTML = storeNotInDanger;
+
+                                        document.getElementById("maxItemsStolenBegin").innerHTML = maxItemsStolenBegin;
+                                        document.getElementById("maxItemsStolenEnd").innerHTML = maxItemsStolenEnd;
+                                        document.getElementById("minItemsStolenBegin").innerHTML = minItemsStolenBegin;
+                                        document.getElementById("minItemsStolenEnd").innerHTML = minItemsStolenEnd;
                                     }
                                 })
                             });
+
                         </script>
-                        Store <b><span id="storeID_INCREASING"></span></b> has <b><span id="theftAmount_INCREASING"></span></b> stolen items.<br>
-                        This store has increased and needs to increase <b><span id="percentageDifference_INCREASING"></span>%</b> to become the store with most stolen items.
+                        In <b>March</b>, there was an increase of <b><span id="maxDifference"></span>%</b> thefts in store <b><span id="storeInDanger"></span></b>.<br>
+                        The thefts increased from <b><span id="maxItemsStolenBegin"></span></b> to <b><span id="maxItemsStolenEnd"></span></b>.
                     </div>
                 </div>
                 <div class="card card-success">
@@ -209,8 +236,33 @@
                                 })
                             });
                         </script>
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|alarm.store_id|-2|alarm:article|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0",
+                                    success: function(response) {
+                                        let array = [[ 'StoreID', 'theftAmount'
+                                        ]];
+                                        var theftSum = 0;
+                                        for (let item of response){
+                                            array.push([item.store_id.toString(), item.count]);
+                                            theftSum += item.count;
+                                        }
+                                        var average = (theftSum / 53).toFixed(0);
+                                        document.getElementById("theftAmount_AVERAGE_MOST").innerHTML = average;
+                                        document.getElementById("theftAmount_AVERAGE_LOWEST").innerHTML = average;
+                                    }
+                                })
+                            });
+                        </script>
                         Store <b><span id="storeID_LOWEST"></span></b> has <b><span id="theftAmount_LOWEST"></span></b> stolen items.<br>
-                        The average is <b><span id="theftAmount_AVERAGE_LOWEST"></span></b> stolen items per store.
+                        The average is <b><span id="theftAmount_AVERAGE_LOWEST"></span></b> stolen items per store.<br>
+
+                        In <b>March</b>, there was a decrease of <b><span id="minDifference"></span>%</b> thefts in store <b><span id="storeNotInDanger"></span></b>.<br>
+                        The thefts decreased from <b><span id="minItemsStolenBegin"></span></b> to <b><span id="minItemsStolenEnd"></span></b>.
                     </div>
                 </div>
             </div>
@@ -219,25 +271,106 @@
                 <div class="card card-error">
                     <div class="card-header">Most thefts in category</div>
                     <div class="card-content">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-1|article.category|-0",
+                                    success: function(response) {
+                                        let array = [[ 'Category', 'categoryTheft'
+                                        ]];
+                                        var categoryTheftSum = 0;
+                                        for (let item of response){
+                                            array.push([item.category.toString(), item.count]);
+                                            categoryTheftSum += item.count;
+                                        }
+                                        document.getElementById("category_MOST").innerHTML = array[1][0];
+                                        document.getElementById("categoryTheft_MOST").innerHTML = array[1][1];
+                                        var categoryAverage = (categoryTheftSum / 64).toFixed(0)
+                                        document.getElementById("categoryAverage_MOST").innerHTML = categoryAverage;
+                                        document.getElementById("categoryAverage_LOWEST").innerHTML = categoryAverage;
+                                    }
+                                })
+                            });
+                        </script>
+                        Category <b><span id="category_MOST"></span></b> has <b><span id="categoryTheft_MOST"></span></b> stolen items.<br>
+                        The average is <b><span id="categoryAverage_MOST"></span></b> stolen items per store.
                     </div>
                 </div>
                 <div class="card card-warning">
                     <div class="card-header">Increasing thefts in category</div>
                     <div class="card-content">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        <!--<script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;2-7-0-0-0-0-0-0",
+                                    success: function(response) {
+                                        let array = [[ 'StoreID', 'janAmount', 'febAmount', 'marAmount', 'differenceFebMar']];
+                                        for (let item of response) {
+                                            var differenceFebMar = (item.mar_amount-item.feb_amount)/item.feb_amount*100
+                                            array.push([item.id.toString(), item.jan_amount, item.feb_amount, item.mar_amount, differenceFebMar]);
+                                        }
+
+                                        var maxDifference = 0
+                                        var minDifference = 0
+                                        var storeInDanger = null;
+                                        var storeNotInDanger = null;
+
+                                        for (var i = 1; i < array.length; i++) {
+                                            if(isNaN(array[i][4])) {
+                                                array[i][4]=0;
+                                            }
+                                            if (array[i][4] > maxDifference) {
+                                                maxDifference = array[i][4]
+                                                storeInDanger = array[i][0]
+                                            } else if (array[i][4] < minDifference) {
+                                                minDifference = array[i][4]
+                                                storeNotInDanger = array[i][0]
+                                            }
+                                        }
+
+                                        document.getElementById("maxDifference").innerHTML = maxDifference.toFixed(2);
+                                        document.getElementById("storeInDanger").innerHTML = storeInDanger;
+                                        document.getElementById("minDifference").innerHTML = minDifference.toFixed(2);
+                                        document.getElementById("storeNotInDanger").innerHTML = storeNotInDanger;
+
+                                    }
+                                })
+                            });
+                        </script>
+                        Category <b><span id=""></span></b> has <b><span id=""></span></b> stolen item.<br>
+                        The average is <b><span id=""></span></b> stolen items per category.-->
                     </div>
                 </div>
                 <div class="card card-success">
                     <div class="card-header">Lowest thefts in category</div>
                     <div class="card-content">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                        exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.category|-1|article|-0-1|article.category|-0-3|article.category|-1|1|",
+                                    success: function(response) {
+                                        let array = [[ 'StoreID', 'theftAmount'
+                                        ]];
+                                        for (let item of response) {
+                                            array.push([item.category.toString(), item.count]);
+                                        }
+                                        document.getElementById("category_LOWEST").innerHTML = array[1][0];
+                                        document.getElementById("categoryTheft_LOWEST").innerHTML = array[1][1];
+                                    }
+                                })
+                            });
+                        </script>
+                        Category <b><span id="category_LOWEST"></span></b> has <b><span id="categoryTheft_LOWEST"></span></b> stolen item.<br>
+                        The average is <b><span id="categoryAverage_LOWEST"></span></b> stolen items per category.
                     </div>
                 </div>
             </div>
@@ -305,9 +438,10 @@
                                                 top: 20,
                                                 left: 50,
                                                 bottom: 50,
-                                                height: '100%',
                                                 width: '100%'
                                             },
+                                            height: 375,
+                                            width: 1200,
                                             hAxis: {
                                                 gridlines: {
                                                     count: 0
@@ -316,10 +450,10 @@
                                                     min: 0,
                                                     max: 65
                                                 },
+                                                slantedText: true,
+                                                slantedTextAngle: 90,
                                                 showTextEvery: 1,
                                                 title: 'Category Number',
-                                                slantedText: true,
-                                                slantedTextAngle: 90
                                             },
                                             vAxis: {
                                                 viewWindow: {
@@ -339,7 +473,7 @@
 
                             });
                         </script>
-                        <div class="card-header">Stolen items</div>
+                        <div class="card-header" style="padding-top: 10px">Stolen items</div>
                         <div class="card-content">
                             An overview of all items ever stolen.
                         </div>
@@ -349,7 +483,7 @@
             <div class="flex vertical-800">
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-2" style="height: 400px; width: 100%">
+                        <div class="card-image" id="chart-canvas-2" style="height: 400px">
                         </div>
                         <script>
                             window.addEventListener("load", function(){
@@ -380,19 +514,23 @@
                                                 top: 20,
                                                 left: 50,
                                                 bottom: 50,
+                                                height: '100%',
+                                                width: '100%'
                                             },
+                                            height: 375,
+                                            width: 1000,
                                             hAxis: {
                                                 gridlines: {
                                                     count: 0
                                                 },
-                                                title: 'Price in €'
+                                                title: 'Price in €',
                                             },
                                             legend: {
                                                 position: 'in',
                                                 alignment: 'end'
                                             },
                                             bar: {
-                                                groupWidth: 5
+                                                groupWidth: 10
                                             },
                                         };
                                         let chart = new google.visualization.ColumnChart(document.getElementById('chart-canvas-2'));
@@ -403,7 +541,7 @@
 
                             });
                         </script>
-                        <div class="card-header">Stolen items at price</div>
+                        <div class="card-header" style="padding-top: 10px">Stolen items at price</div>
                         <div class="card-content">
                             An overview of all things stolen at a set price.
                         </div>
@@ -438,18 +576,19 @@
                                                 top: 20,
                                                 left: 50,
                                                 bottom: 80,
-                                                height: '70%',
+                                                height: '50%',
                                                 width: '100%'
                                             },
+                                            height: 365,
+                                            width: 1200,
                                             hAxis: {
                                                 title: 'Store ID',
                                                 slantedText: true,
                                                 slantedTextAngle: 90,
                                                 showTextEvery: 1,
-                                                maxAlternation: 5,
                                             },
                                             bar: {
-                                                groupWidth: 3
+                                                groupWidth: 10
                                             },
                                             legend: {
                                                 position: 'in',
@@ -464,7 +603,7 @@
 
                             });
                         </script>
-                        <div class="card-header">Stolen items at each store</div>
+                        <div class="card-header" style="padding-top: 10px">Stolen items at each store</div>
                         <div class="card-content">
                             An overview of all items ever stolen for each store.
                         </div>
@@ -529,7 +668,7 @@
                         }
                    })
                 </script>
-                <div class="card-header">Map</div>
+                <div class="card-header" style="padding-bottom: 10px">Map</div>
             </div>
         </div>
 
