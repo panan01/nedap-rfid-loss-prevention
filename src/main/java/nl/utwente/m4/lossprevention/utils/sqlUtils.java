@@ -28,7 +28,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-5-6-0-1|day|-0-2|1023553:1023625:1023401|-0";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-5-6-6|1023553|-1|day|-0-2-0";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -299,6 +299,19 @@ public class sqlUtils {
                         if ((checkVariableIsColumn(variables.get(0)) | variables.get(0).matches("^[-0-9]*$")) & (variables.get(1).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(2)) | variables.get(2).matches("^[-0-9]*$")) & (variables.get(3).equals("AND") | variables.get(3).equals("OR")) & (checkVariableIsColumn(variables.get(4)) | variables.get(4).matches("^[-0-9]*$")) & (variables.get(5).matches("^[=<> ]*$")) & (checkVariableIsColumn(variables.get(6)) | variables.get(6).matches("^[-0-9]*$"))) {
                             return true;
                         }
+                        break;
+                    case 6:
+
+                        for (String variable : variables) {
+                            if (!variable.matches("^[0-9]*$")) {
+                                return false;
+                            }
+
+
+                            return true;
+                        }
+
+                        break;
 
 
                 }
@@ -322,14 +335,6 @@ public class sqlUtils {
                     if (checkVariableIsColumn(variables.get(0))) {
                         return true;
                     }
-                } else if (checkType == 2) {
-                    for (String variable : variables) {
-                        if (!variable.matches("^[0-9]*$")) {
-                            return false;
-                        }
-
-                    }
-                    return true;
                 }
                 break;
             case 7:
@@ -476,7 +481,7 @@ public class sqlUtils {
                 }
                 break;
             case '6':
-                generatedQuery += "(SELECT trim(to_char(timestamp, 'day')) AS day FROM nedap.alarm) AS day_table ";
+                generatedQuery += "(SELECT trim(to_char(timestamp, 'day')) AS day, store_id FROM nedap.alarm) AS day_table ";
                 break;
         }
 
@@ -557,6 +562,21 @@ public class sqlUtils {
                 } else {
                     return "Invalid variables! variables: " + variables;
                 }
+                break;
+            case '6':
+                if (variablesValid(variables, 3, 6)) {
+                    generatedQuery += "WHERE store_id = "+variables.get(0);
+                   /* for (String variable : variables) {
+                        generatedQuery += variable + " OR ";
+                    }*/
+
+                    /*generatedQuery = generatedQuery.substring(0, generatedQuery.length() - 3);*/
+                } else {
+                    return "Invalid variables! variables: " + variables;
+                }
+
+
+                break;
         }
 
         variables = getVariables(generationCode[4].substring(1));
@@ -614,13 +634,8 @@ public class sqlUtils {
 
                 break;
             case '2':
-                if (variablesValid(variables, 6, 2)) {
-                    generatedQuery += "ORDER BY BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 END ASC WHERE store_id = ";
-                    for (String variable : variables) {
-                        generatedQuery += variable + " & ";
-                    }
-                    generatedQuery = generatedQuery.substring(0, generatedQuery.length() - 2);
-                }
+
+                generatedQuery += "ORDER BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 END ASC ";
 
 
                 break;
