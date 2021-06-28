@@ -349,7 +349,7 @@
             <div class="flex vertical-800">
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-2" style="height: 400px">
+                        <div class="card-image" id="chart-canvas-2" style="height: 400px; width: 100%">
                         </div>
                         <script>
                             window.addEventListener("load", function(){
@@ -380,17 +380,10 @@
                                                 top: 20,
                                                 left: 50,
                                                 bottom: 50,
-                                                height: '100%',
-                                                width: '100%'
-
                                             },
                                             hAxis: {
                                                 gridlines: {
                                                     count: 0
-                                                },
-                                                viewWindow: {
-                                                    min: 0,
-                                                    max: 300
                                                 },
                                                 title: 'Price in €'
                                             },
