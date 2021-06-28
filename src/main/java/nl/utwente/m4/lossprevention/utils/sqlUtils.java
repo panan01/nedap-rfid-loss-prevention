@@ -28,7 +28,7 @@ public class sqlUtils {
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-6|users.first_name:users.last_name:users.email:users.type|-1|users|-0-0-0-0-0";
+        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;2-7-0-0-0-0-0-0";
         String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
 
 
@@ -393,6 +393,13 @@ public class sqlUtils {
             case '1':
                 generatedQuery += "SELECT DISTINCT ";
                 break;
+            case '2':
+                generatedQuery += "WITH jan AS (SELECT store.id, (SELECT COALESCE(SUM(1), 0) FROM nedap.alarm WHERE store.id = alarm.store_id AND alarm.timestamp >= to_timestamp('01-01-2021', 'dd-mm-yyyy') AND alarm.timestamp < to_timestamp('01-02-2021', 'dd-mm-yyyy')) AS amount\n" +
+                        "    FROM nedap.store GROUP BY store.id ORDER BY store.id ), feb AS (SELECT store.id, (SELECT COALESCE(SUM(1), 0) FROM nedap.alarm WHERE store.id = alarm.store_id AND alarm.timestamp >= to_timestamp('01-02-2021', 'dd-mm-yyyy') AND alarm.timestamp < to_timestamp('01-03-2021', 'dd-mm-yyyy')) AS amount\n" +
+                        "    FROM nedap.store GROUP BY store.id ORDER BY store.id ), mar AS (SELECT store.id, (SELECT COALESCE(SUM(1), 0) FROM nedap.alarm WHERE store.id = alarm.store_id AND alarm.timestamp >= to_timestamp('01-03-2021', 'dd-mm-yyyy') AND alarm.timestamp < to_timestamp('01-04-2021', 'dd-mm-yyyy')) AS amount\n" +
+                        "    FROM nedap.store GROUP BY store.id  ORDER BY store.id  ) SELECT jan.id, jan.amount AS jan_amount, feb.amount AS feb_amount, mar.amount AS mar_amount FROM jan, feb, mar WHERE jan.id = feb.id AND feb.id = mar.id";
+                break;
+
             default:
 
         }
@@ -461,16 +468,20 @@ public class sqlUtils {
                 }
 
                 break;
+            case '7':
+
+                break;
 
         }
 
-        generatedQuery += "FROM ";
+
         variables = getVariables(generationCode[2].substring(1));
         switch (generationCode[2].charAt(0)) {
             case '0':
 
                 break;
             case '1':
+                generatedQuery += "FROM ";
                 if (variablesValid(variables, 2, 1)) {
                     generatedQuery += "nedap." + variables.get(0) + " ";
                 } else {
@@ -479,6 +490,7 @@ public class sqlUtils {
 
                 break;
             case '2':
+                generatedQuery += "FROM ";
                 if (variablesValid(variables, 2, 2)) {
                     generatedQuery += "nedap." + variables.get(0) + ", nedap." + variables.get(1) + " ";
                 } else {
@@ -487,6 +499,7 @@ public class sqlUtils {
 
                 break;
             case '3':
+                generatedQuery += "FROM ";
                 if (variablesValid(variables, 2, 3)) {
                     generatedQuery += "nedap." + variables.get(0) + ", nedap." + variables.get(1) + " nedap." + variables.get(2) + " ";
                 } else {
@@ -495,6 +508,7 @@ public class sqlUtils {
 
                 break;
             case '4':
+                generatedQuery += "FROM ";
                 if (variablesValid(variables, 2, 4)) {
                     if (variables.get(0).equals("1")) {
 
@@ -518,6 +532,7 @@ public class sqlUtils {
 
                 break;
             case '5':
+                generatedQuery += "FROM ";
                 if (variablesValid(variables, 2, 5)) {
                     generatedQuery += "(SELECT DATE_PART(" + variables.get(0) + ", timestamp) as timeinterval, store_id FROM nedap.alarm GROUP BY alarm.timestamp, store_id) AS timeinterval_table ";
 
@@ -526,6 +541,7 @@ public class sqlUtils {
                 }
                 break;
             case '6':
+                generatedQuery += "FROM ";
                 generatedQuery += "(SELECT trim(to_char(timestamp, 'day')) AS day, store_id FROM nedap.alarm) AS day_table ";
                 break;
         }
