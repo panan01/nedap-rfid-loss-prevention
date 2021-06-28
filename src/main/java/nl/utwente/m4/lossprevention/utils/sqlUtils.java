@@ -829,11 +829,9 @@ public class sqlUtils {
         Connection connection = getConnection();
         assert connection != null;
 
-        // Remove colon from end
-        StringBuffer sb = new StringBuffer(executeQuery(connection, query));
-        sb.deleteCharAt(sb.length() - 1);
-
-        JSONArray jsonarray = (JSONArray) new JSONTokener(sb.toString()).nextValue();
+        // turn result into JSON
+        String result = executeQuery(connection, query);
+        JSONArray jsonarray = (JSONArray) new JSONTokener(result).nextValue();
 
         return jsonarray;
 

@@ -31,17 +31,21 @@ public class FileDownloadServlet extends HttpServlet {
 
         // FileInputStream fileInputStream = new FileInputStream("C:\\Users\\larsw\\Downloads\\20210503_UTwente_Nedap_Stores.xlsx");
         XSSFSheet sheet;
-        if (requestedFile.equals("alarm")) {
-            sheet = excelUtils.exportSheet(0);
-        } else if (requestedFile.equals("article")) {
-            sheet = excelUtils.exportSheet(1);
-        } else if (requestedFile.equals("store")) {
-            sheet = excelUtils.exportSheet(2);
-        } else {
-            out.write("unknown data name '" + requestedFile + "'");
-            response.setContentType("text/html");
-            out.close();
-            return;
+        switch (requestedFile) {
+            case "alarm":
+                sheet = excelUtils.exportSheet(0);
+                break;
+            case "article":
+                sheet = excelUtils.exportSheet(1);
+                break;
+            case "store":
+                sheet = excelUtils.exportSheet(2);
+                break;
+            default:
+                out.write("unknown data name '" + requestedFile + "'");
+                response.setContentType("text/html");
+                out.close();
+                return;
         }
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition","attachment; filename=\"" + requestedFile + ".xlsx" + "\"");
