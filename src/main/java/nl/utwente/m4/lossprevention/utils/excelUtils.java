@@ -23,24 +23,24 @@ public class excelUtils {
     /**
      * For testing purposes
      */
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         //System.out.println(getRowCount(read("20210503_UTwente_Nedap_Stores.xlsx")));
         //System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 0, 5));
         //System.out.println(getCellData(read("20210503_UTwente_Nedap_Stores.xlsx"), 1, 1));
 
-        /*System.out.println(getRowCount(exportSheet(2)));*/
-        /*XSSFSheet sheet = exportSheet(1);
+        *//*System.out.println(getRowCount(exportSheet(2)));*//*
+        *//*XSSFSheet sheet = exportSheet(1);
         for (int i = 0; i < getRowCount(sheet); i++) {
             String row = "";
             for (int k = 0; k < getColumnLabels(sheet).size(); k++) {
-                *//*System.out.println("size "+ getColumnLabels(exportSheet(2)).size());*//*
+                *//**//*System.out.println("size "+ getColumnLabels(exportSheet(2)).size());*//**//*
                 row += getCellData(sheet, i, k) + " | ";
             }
             System.out.println(row);
 
-        }*/
+        }*//*
 
-    }
+    }*/
 
     /**
      * Function for retrieving the excel file from the data folder
