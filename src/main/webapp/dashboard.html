@@ -171,7 +171,6 @@
                         </script>
                         Store <b><span id="storeID_MOST"></span></b> has <b><span id="theftAmount_MOST"></span></b> stolen items.<br>
                         The average is <b><span id="theftAmount_AVERAGE_MOST"></span></b> stolen items per store.<br>
-                        This results in a total loss of <b>€ <span id="sumLosses"></span></b>, with an average of <b>€ <span id="averageLoss"></span></b> per item.
                     </div>
                 </div>
                 <div class="card card-warning">
@@ -226,13 +225,20 @@
                                         document.getElementById("maxItemsStolenEnd").innerHTML = maxItemsStolenEnd;
                                         document.getElementById("minItemsStolenBegin").innerHTML = minItemsStolenBegin;
                                         document.getElementById("minItemsStolenEnd").innerHTML = minItemsStolenEnd;
+
+                                        var overallDifferenceSum = 0;
+
+                                        for (var j = 1; j < array.length; j++) {
+                                            overallDifferenceSum += array[j][4]
+                                        }
+
+                                        var overallDifferenceAverage = overallDifferenceSum / 53
+                                        document.getElementById("overallDifferenceAverage").innerHTML = overallDifferenceAverage.toFixed(2);
                                     }
                                 })
                             });
-
                         </script>
-                        In <b>March</b>, there was an increase of <b><span id="maxDifference"></span>%</b> thefts in store <b><span id="storeInDanger"></span></b>.<br>
-                        The thefts increased from <b><span id="maxItemsStolenBegin"></span></b> to <b><span id="maxItemsStolenEnd"></span></b>.
+                           In <b>March</b>, there was an average <b>increase</b> of <b><span id="overallDifferenceAverage"></span>%</b> thefts in <b>all</b> stores.
                     </div>
                 </div>
                 <div class="card card-success">
@@ -281,9 +287,26 @@
                         </script>
                         Store <b><span id="storeID_LOWEST"></span></b> has <b><span id="theftAmount_LOWEST"></span></b> stolen items.<br>
                         The average is <b><span id="theftAmount_AVERAGE_LOWEST"></span></b> stolen items per store.<br>
-
-                        In <b>March</b>, there was a decrease of <b><span id="minDifference"></span>%</b> thefts in store <b><span id="storeNotInDanger"></span></b>.<br>
-                        The thefts decreased from <b><span id="minItemsStolenBegin"></span></b> to <b><span id="minItemsStolenEnd"></span></b>.
+                    </div>
+                </div>
+            </div>
+            <!-- SMALL CARDS AMOUNT OF THEFTS STORE -->
+            <div class="flex vertical-700" style="margin-top: -13px">
+                <div class="card card-error">
+                    <div class="card-content">
+                        This results in a total loss of <b>€ <span id="sumLosses"></span></b>, with an average of <b>€ <span id="averageLoss"></span></b> per item.
+                    </div>
+                </div>
+                <div class="card card-warning">
+                    <div class="card-content">
+                        In <b>March</b>, there was an <b>increase</b> of <b><span id="maxDifference"></span>%</b> thefts in store <b><span id="storeInDanger"></span></b>
+                        <br>The thefts increased from <b><span id="maxItemsStolenBegin"></span></b> to <b><span id="maxItemsStolenEnd"></span></b>.
+                    </div>
+                </div>
+                <div class="card card-success">
+                    <div class="card-content">
+                        In <b>March</b>, there was a <b>decrease</b> of <b><span id="minDifference"></span>%</b> thefts in store <b><span id="storeNotInDanger"></span></b>.
+                        <br>The thefts decreased from <b><span id="minItemsStolenBegin"></span></b> to <b><span id="minItemsStolenEnd"></span></b>.
                     </div>
                 </div>
             </div>
@@ -371,13 +394,20 @@
                                         document.getElementById("maxItemsStolenEndCategory").innerHTML = maxItemsStolenEnd;
                                         document.getElementById("minItemsStolenBeginCategory").innerHTML = minItemsStolenBegin;
                                         document.getElementById("minItemsStolenEndCategory").innerHTML = minItemsStolenEnd;
+
+                                        var overallDifferenceSum = 0;
+
+                                        for (var k = 1; k < array.length; k++) {
+                                            overallDifferenceSum += array[k][4]
+                                        }
+
+                                        var overallDifferenceAverageCategory = overallDifferenceSum / 53
+                                        document.getElementById("overallDifferenceAverageCategory").innerHTML = overallDifferenceAverageCategory.toFixed(2);
                                     }
                                 })
                             });
-
                         </script>
-                        In <b>Februari</b>, there was an increase of <b><span id="maxDifferenceCategory"></span>%</b> thefts in category <b><span id="categoryInDangerCategory"></span></b>.<br>
-                        The thefts increased from <b><span id="maxItemsStolenBeginCategory"></span></b> to <b><span id="maxItemsStolenEndCategory"></span></b>.
+                        In <b>February</b>, there was an average <b>decrease</b> of <b><span id="overallDifferenceAverageCategory"></span>%</b> thefts in <b>all</b> stores.
                     </div>
                 </div>
                 <div class="card card-success">
@@ -405,8 +435,46 @@
                         </script>
                         Category <b><span id="category_LOWEST"></span></b> has <b><span id="categoryTheft_LOWEST"></span></b> stolen item.<br>
                         The average is <b><span id="categoryAverage_LOWEST"></span></b> stolen items per category.<br>
-                        In <b>Februari</b>, there was a decrease of <b><span id="minDifferenceCategory"></span>%</b> thefts in category <b><span id="categoryNotInDangerCategory"></span></b>.<br>
-                        The thefts decreased from <b><span id="minItemsStolenBeginCategory"></span></b> to <b><span id="minItemsStolenEndCategory"></span></b>.
+                    </div>
+                </div>
+            </div>
+            <!-- SMALL CARDS AMOUNT OF THEFTS CATEGORY -->
+            <div class="flex vertical-700" style="margin-top: -13px">
+                <div class="card card-error">
+                    <div class="card-content">
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;5-7-0-0-0-0-0-0",
+                                    success: function(response) {
+                                        let array = [[ 'AveragePriceCategoryOne' ]];
+                                        for (let item of response) {
+                                            array.push([item.avg]);
+                                        }
+                                        var totalLossesCategory = 1410 * array[1][0]
+
+                                        document.getElementById("AveragePriceCategoryOne").innerHTML = array[1][0].toFixed(2);
+                                        document.getElementById("totalLossesCategory").innerHTML = totalLossesCategory.toFixed(2);
+                                    }
+                                })
+                            });
+                        </script>
+                        This results in a total loss of <b>€ <span id="totalLossesCategory"></span></b>, with an average of <b>€ <span id="AveragePriceCategoryOne"></span></b> per item.
+                    </div>
+                </div>
+                <div class="card card-warning">
+                    <div class="card-content">
+                        In <b>February</b>, there was an <b>increase</b> of <b><span id="maxDifferenceCategory"></span>%</b> thefts in category <b><span id="categoryInDangerCategory"></span></b>.
+                        <br>The thefts increased from <b><span id="maxItemsStolenBeginCategory"></span></b> to <b><span id="maxItemsStolenEndCategory"></span></b>.
+                    </div>
+                </div>
+                <div class="card card-success">
+                    <div class="card-content">
+                        In <b>February</b>, there was a <b>decrease</b> of <b><span id="minDifferenceCategory"></span>%</b> thefts in category <b><span id="categoryNotInDangerCategory"></span></b>.
+                        <br>The thefts decreased from <b><span id="minItemsStolenBeginCategory"></span></b> to <b><span id="minItemsStolenEndCategory"></span></b>.
                     </div>
                 </div>
             </div>
@@ -424,23 +492,58 @@
             </div>
             <!-- DASHBOARD GRAPHS -->
             <div class="flex vertical-700">
+                <!-- CHART -->
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-header">Information card</div>
-                        <div class="card-content">
-                            Examples:
+                        <div class="card-image" id="chart-canvas-pie-1" style="height: 400px; overflow-x: hidden"></div>
+                            <script>
+                                window.addEventListener("load", function() {
+                                    $.ajax({
+                                        url: "rest/app",
+                                        method: 'POST',
+                                        dataType: 'json',
+                                        data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;1-1|article.product|-1|article|-0-1|article.product|-0-1|article.product|-1|10|",
+                                        success: function (response) {
+                                            let array = [[
+                                                'Product', 'Amount',
+                                            ]];
+                                            for (let item of response) {
+                                                array.push([item.product.toString(), item.count]);
+                                            }
+
+                                            let data = google.visualization.arrayToDataTable(array)
+
+                                            var options = {
+                                                backgroundColor: {
+                                                    fill: '#F4F4F4'
+                                                },
+                                                colors: ['#163C4C', '#1B4C5F', '#215B72', '#276A85', '#2C7998', '#468AA5', '#619BB2', '#7BABBF', '#95BCCC', '#B0CDD8'],
+                                                chartArea: {
+                                                    top: 20,
+                                                    left: 110,
+                                                    bottom: 30,
+                                                    width: '100%'
+                                                },
+                                                width: '100%',
+                                                legend: {
+                                                    alignment: 'center',
+                                                    position: 'right',
+                                                }
+
+                                            };
+
+                                            var chart = new google.visualization.PieChart(document.getElementById('chart-canvas-pie-1'));
+
+                                            chart.draw(data, options);
+                                        }
+                                    })
+                                })
+                            </script>
+                        <div class="card-header" style="padding-top: 10px">
+                            Top 10 most stolen items
                         </div>
                         <div class="card-content">
-                            One specific store ID with most stolen items or one specific category with most stolen items in certain week.
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">Information card</div>
-                        <div class="card-content">
-                            Examples:
-                        </div>
-                        <div class="card-content">
-                            Average cost of a stolen item or total loss in certain time period.
+                            An overview of all items ever stolen.
                         </div>
                     </div>
                 </div>
@@ -509,9 +612,9 @@
 
                             });
                         </script>
-                        <div class="card-header" style="padding-top: 10px">Stolen items</div>
+                        <div class="card-header" style="padding-top: 10px">Stolen items per category</div>
                         <div class="card-content">
-                            An overview of all items ever stolen.
+                            An overview of all items ever stolen per category.
                         </div>
                     </div>
                 </div>
@@ -583,7 +686,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="flex vertical">
                     <div class="card">
                         <div class="card-image" id="chart-canvas-3" style="height: 400px">
@@ -646,7 +748,185 @@
                     </div>
                 </div>
             </div>
+            <div class="flex vertical-700">
+                <div class="flex vertical grow-2">
+                    <div class="card">
+                        <div class="card-image" id="chart-canvas-timestamps" style="height: 400px; width: 720px; overflow-x: hidden; margin-bottom: -10px">
+                            <div id="weekDays" style="padding-bottom: 10px">
+                                <script>
+                                    window.addEventListener("load", function(){
+                                        $.ajax({
+                                            url: "rest/app",
+                                            method: 'POST',
+                                            dataType: 'json',
+                                            data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;6-7-0-0-0-0-0-0",
+                                            success: function(response) {
+                                                let array = [[
+                                                    'Weekday', 'Count',
+                                                ]];
+                                                for (let item of response){
+                                                    array.push([item.weekday.toString(), item.count]);
+                                                }
 
+                                                var weekdayMost = null;
+                                                var weekdayMostTotal = 0;
+                                                for (var  m = 1; m < array.length; m++) {
+                                                    if (array[m][1] > weekdayMostTotal) {
+                                                        weekdayMostTotal = array[m][1]
+                                                        weekdayMost = array[m][0]
+                                                    }
+                                                }
+                                                weekdayMost = weekdayMost[0].toUpperCase() + weekdayMost.substring(1)
+                                                document.getElementById("weekdayMost").innerHTML = weekdayMost
+
+                                                // document.getElementById("weekdayMostTotal").innerHTML = weekdayMostTotal
+
+                                                let data = google.visualization.arrayToDataTable(array);
+                                                let options = {
+                                                    backgroundColor: {
+                                                        fill: '#F4F4F4'
+                                                    },
+                                                    colors: ['#2C7998'],
+                                                    height: 365,
+                                                    width: 700,
+                                                    chartArea: {
+                                                        top: 20,
+                                                        left: 60,
+                                                        bottom: 40,
+                                                        height: '50%',
+                                                        width: '90%'
+                                                    },
+                                                    hAxis: {
+                                                        title: 'Weekday',
+                                                        showTextEvery: 1,
+                                                    },
+                                                    bar: {
+                                                        groupWidth: 40
+                                                    },
+                                                    legend: {
+                                                        position: 'in',
+                                                        alignment: 'end'
+                                                    },
+                                                };
+                                                let chart = new google.visualization.ColumnChart(document.getElementById('weekDays'));
+
+                                                chart.draw(data, options);
+                                            }
+                                        });
+                                    });
+                                </script>
+                            </div>
+                            <div id="hours">
+                                <script>
+                                    window.addEventListener("load", function(){
+                                        $.ajax({
+                                            url: "rest/app",
+                                            method: 'POST',
+                                            dataType: 'json',
+                                            data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;0-1|timeinterval|-5|'hour'|-0-1|timeinterval|-0-1|timeinterval|-0",
+                                            success: function(response) {
+                                                let array = [[
+                                                    'Hour', 'Count',
+                                                ]];
+                                                for (let item of response){
+                                                    array.push([item.timeinterval.toString(), item.count]);
+                                                }
+
+                                                var hourMost = null;
+                                                var hourMostTotal = 0;
+                                                for (var  m = 1; m < array.length; m++) {
+                                                    if (array[m][1] > hourMostTotal) {
+                                                        hourMostTotal = array[m][1]
+                                                        hourMost = array[m][0]
+                                                    }
+                                                }
+                                                document.getElementById("hourMost").innerHTML = hourMost
+                                                // document.getElementById("hourMostTotal").innerHTML = hourMostTotal
+
+                                                let data = google.visualization.arrayToDataTable(array);
+                                                let options = {
+                                                    backgroundColor: {
+                                                        fill: '#F4F4F4'
+                                                    },
+                                                    colors: ['#2C7998'],
+                                                    chartArea: {
+                                                        top: 20,
+                                                        left: 50,
+                                                        bottom: 40,
+                                                        height: '50%',
+                                                        width: '90%'
+                                                    },
+                                                    height: 365,
+                                                    width: 710,
+                                                    hAxis: {
+                                                        title: 'Hour',
+                                                        showTextEvery: 1,
+                                                    },
+                                                    bar: {
+                                                        groupWidth: 10
+                                                    },
+                                                    legend: {
+                                                        position: 'in',
+                                                        alignment: 'end'
+                                                    },
+                                                };
+                                                let chart = new google.visualization.ColumnChart(document.getElementById('hours'));
+                                                chart.draw(data, options);
+                                            }
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="card-header" style="padding-top: 10px">Thefts per timeframe</div>
+                        <div class="card-content">
+                            An overview of all thefts per timeframe for all stores.
+                        </div>
+                        <script>
+                            function changeTimeframe() {
+                                var weekdayGraph = document.getElementById("weekDays")
+                                var hourGraph = document.getElementById("hours")
+
+                                if(weekdayGraph.style.display === "none") {
+                                    weekdayGraph.style.display = "block";
+                                    weekdayGraph.style.visibility = "visible";
+                                    hourGraph.style.display = "none";
+                                    hourGraph.style.display = "hidden";
+                                } else {
+                                    weekdayGraph.style.display = "none";
+                                    weekdayGraph.style.visibility = "hidden";
+                                    hourGraph.style.display = "block";
+                                    hourGraph.style.display = "visible";
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
+                <div class="flex vertical">
+                    <div class="card card-dark wrap">
+                        <div class="card-header" style="text-align: center; padding-top: 60px">
+                            Timeframes most <br> prone for theft
+                        </div>
+                        <div class="card-header" style="text-align: center">
+                            Day:
+                        </div>
+                        <div class="card-content" style="text-align: center">
+                            <span class="card-content" id="weekdayMost" style="color: whitesmoke; font-size: 17pt">day</span><br>
+                        <div class="card-header" style="text-align: center">
+                            Hour:
+                        </div>
+                        <div class="card-content" style="text-align: center">
+                            <span class="card-content" id="hourMost" style="color: whitesmoke; font-size: 17pt">hour</span><br>
+                        </div>
+                        <div class="card-content" style="text-align: center; padding-top: 30px">
+                            <button class="btn btn-alt btn-outline" onclick="app.showSnackbar({text: 'Timeframe changed', style: 'dark', buttons: [{text: 'Hide', handler: sb => sb.close()}]}); changeTimeframe()">Change timeframe</button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAP -->
             <div class="card">
                 <div id="mapid" style="height: 400px"></div>
                 <script>
