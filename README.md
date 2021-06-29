@@ -59,15 +59,15 @@ The online deployed version of our application can be found via the following li
 ## Credentials for testing
 The following credentials can be used for testing
 
-###Admin account:
+### Admin account:
 username: `test@test.com`\
 password: `123456`
 
-###For Stefano (admin):
+### For Stefano (admin):
 username: `s.m.nicoletti@utwente.nl` \
 password: `thebestproductowner`
 
-###For Ivo (division manager):
+### For Ivo (division manager):
 username: `s.m.nicoletti@utwente.nl` \
 password: `thebestproductowner`
 
