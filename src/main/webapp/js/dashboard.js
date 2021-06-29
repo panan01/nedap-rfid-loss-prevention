@@ -35,7 +35,7 @@ google.charts.load('current', {'packages':['bar']});
 
 let dispatcher = new CommandDispatcher([
     {
-        aliases: ["dashboard", "main"],
+        aliases: ["dashboard", "main", "home", "dash", "homepage"],
         trigger: function() {
             window.location.href = "dashboard.html";
         }

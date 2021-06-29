@@ -23,37 +23,26 @@ public class FileUploadServlet extends HttpServlet {
         // get the InputStream
         InputStream inputStream = filePart.getInputStream();
 
-        // create Workbook and Sheet instances to validate user's file
-        Workbook workbook = new XSSFWorkbook(inputStream);
-        Sheet uploadedSheet = workbook.getSheetAt(0);
-
-        // check whether the file has at least 10 rows AND exactly 6 OR minimum 3 rows (standard NEDAP format)
-        // boolean correctFormat = uploadedSheet.getLastRowNum() > 10 && uploadedSheet.getRow(1).getLastCellNum() == 6 && uploadedSheet.getRow(1).getLastCellNum() == 3;
-        boolean correctFormat = true;
-
         // check once more in back-end whether the file type is .xlsx (=BIFF2/3/4)
         try {
-            if (correctFormat && (FileMagic.valueOf(inputStream).equals(FileMagic.BIFF2) || FileMagic.valueOf(inputStream).equals(FileMagic.BIFF3) || FileMagic.valueOf(inputStream).equals(FileMagic.BIFF4))) {
-                XSSFSheet sheet = excelUtils.read(inputStream);
-                try {
-                    if (sheet == null) {
-                        response.getWriter().println("Error: Could not read excel file.");
-                    } else {
-                        String result = sqlUtils.XSSFSheet_to_DB(sheet);
-                        response.getWriter().println("File upload was a "
-                                + (result.equals("Status-0") ? "success." : ("failure! status=" + result)));
-                    }
-                } catch (Exception e) {
-                    response.getWriter().println("Error: Could not connect to database!\n");
-                    e.printStackTrace(response.getWriter());
-                    response.getWriter().println("connection = " + sqlUtils.getConnection());
+            // if (FileMagic.valueOf(inputStream).equals(FileMagic.BIFF2) || FileMagic.valueOf(inputStream).equals(FileMagic.BIFF3) || FileMagic.valueOf(inputStream).equals(FileMagic.BIFF4)) {
+            XSSFSheet sheet = excelUtils.read(inputStream);
+            try {
+                if (sheet == null) {
+                    response.getWriter().println("Error: Could not read excel file.");
+                } else {
+                    String result = sqlUtils.XSSFSheet_to_DB(sheet);
+                    response.getWriter().println("File upload was a "
+                            + (result.equals("Status-0") ? "success." : ("failure! status=" + result)));
                 }
-            } else {
-                response.getWriter().println("Error: File submitted is not excel file.");
+            } catch (Exception e) {
+                response.getWriter().println("Error: Could not connect to database!\n");
+                e.printStackTrace(response.getWriter());
+                response.getWriter().println("connection = " + sqlUtils.getConnection());
             }
         } catch (IOException e) {
-            // response.getWriter().println("Error: Could not determine file type");
-            response.getWriter().println("File upload was a success.");  // TODO: fix these LIES
+            response.getWriter().println("Error: Could not determine file type\n");
+            e.printStackTrace(response.getWriter());
         }
     }
 }
