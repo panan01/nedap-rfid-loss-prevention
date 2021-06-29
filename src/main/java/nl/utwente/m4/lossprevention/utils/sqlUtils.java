@@ -113,7 +113,7 @@ public class sqlUtils {
             String url = "jdbc:postgresql://" + host + ":5432/" + dbName + "?currentSchema=nedap";
 
             // Sets credentials
-            String username = "dab_di20212b_225";  // TODO: make these system variables or something
+            String username = "dab_di20212b_225";
             String password = "4gPNr326lyRQcR1J";
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException sqlE) {

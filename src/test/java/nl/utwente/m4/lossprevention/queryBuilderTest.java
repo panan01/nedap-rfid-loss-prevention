@@ -4,6 +4,9 @@ package nl.utwente.m4.lossprevention;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.sql.*;
+import java.util.ArrayList;
+
 import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
 import static nl.utwente.m4.lossprevention.utils.sqlUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,10 +15,48 @@ import static org.junit.jupiter.api.Assertions.*;
 public class queryBuilderTest {
     @BeforeEach
     public void setUp() {
-
+        Connection connection = getConnection();
+        assertEquals(true, connection != null);
 
     }
 
+    @Test
+    public void getVariablesFromQuerycode() {
+        assertEquals("[test, test2, 02323]", getVariables("|test:test2:02323|").toString());
+        assertEquals("[123123, -23123 02323, 02323, 4$23##]", getVariables("|123123:-23123 02323:02323:4$23##|").toString());
+        assertEquals("[_dfdsf]", getVariables("|_dfdsf|").toString());
+    }
+
+    @Test
+    public void checkColumnsTest() {
+        assertEquals(true, checkVariableIsColumn("alarm.store_id"));
+        assertNotEquals(true, checkVariableIsColumn("users.password"));
+        assertNotEquals(true, checkVariableIsColumn("test"));
+    }
+
+    @Test
+    public void checkTableTest() {
+        assertEquals(true, checkVariableIsTable("article"));
+        assertEquals(true, checkVariableIsTable("alarm"));
+        assertEquals(true, checkVariableIsTable("store"));
+        assertEquals(true, checkVariableIsTable("store_access"));
+        assertEquals(true, checkVariableIsTable("users"));
+        assertNotEquals(true, checkVariableIsTable("sometable"));
+        assertNotEquals(true, checkVariableIsTable("test"));
+    }
+
+    @Test
+    public void checkVariableSecurity() {
+        ArrayList<String> variables = new ArrayList<>();
+        variables.add("OR");
+        variables.add("=");
+        variables.add("1");
+        assertNotEquals(true, variablesValid(variables, 3, 1));
+
+        variables = new ArrayList<>();
+        variables.add("'year'");
+        assertNotEquals(true, variablesValid(variables, 2, 5));
+    }
 
     @Test
     public void mostStolenByQueriesTest() {
