@@ -121,7 +121,7 @@
         <div class="app-bar">
             <div class="app-bar-inner" style="display: inline-flex">
                 <div class="logo"> </div>
-                <input class="searchbar" id="searchbar" type="text" placeholder="Type here to search">
+                <input class="searchbar" id="searchbar" type="text" placeholder="Type here to navigate">
                 <a onclick="navbarMenu()" id="icon">
                     <div class="profile-icon">
                         <span class="icon">account_circle</span>
@@ -137,7 +137,6 @@
             <a href="./dashboard.html"><div class="nav-entry" -icon="dashboard" -name="Dashboard"></div></a>
             <a href="./account.html"><div class="nav-entry" -icon="account_circle" -name="Account"></div></a>
             <a href="./data_reports.html"><div class="nav-entry nav-current" -icon="file_upload" -name="Data"></div></a>
-            <a href="./settings.html"><div class="nav-entry" -icon="tune" -name="Settings"></div></a>
             <a href="./admin_overview.html"><div class="nav-entry" -icon="admin_panel_settings" -name="Admin"></div></a>
         </div>
 
@@ -176,40 +175,27 @@
     <script>
         let dispatcher = new CommandDispatcher([
             {
-                aliases: ["add"],
-                args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
-                trigger: function(result) {
-                    alert(result.value("$main", 0) + result.value("$main", 1));
+                aliases: ["dashboard", "main", "home", "dash", "homepage"],
+                trigger: function() {
+                    window.location.href = "dashboard.html";
                 }
             }, {
-                aliases: ["sub"],
-                args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
-                trigger: function(result) {
-                    alert(result.value("$main", 0) - result.value("$main", 1));
+                aliases: ["log out", "log-out", "logout"],
+                trigger: logOut
+            }, {
+                aliases: ["account"],
+                trigger: function() {
+                    window.location.href = "account.html";
                 }
             }, {
-                aliases: ["hello"],
-                trigger: function(result) {
-                    alert("Hello world!");
+                aliases: ["data", "report", "data report", "upload", "download", "excel"],
+                trigger: function() {
+                    window.location.href = "data_reports.html";
                 }
             }, {
-                aliases: ["say"],
-                args: [{ name: "$main", params: [ArgTypes.string] }],
-                trigger: function(result) {
-                    alert(result.value("$main"));
-                }
-            }, {
-                aliases: ["arg"],
-                args: [
-                    { name: "a", params: [ArgTypes.string], required: true },
-                    { name: "b", params: [ArgTypes.int] }
-                ],
-                trigger: function(result) {
-                    if (result.has("b")) {
-                        alert(result.value("a") + result.value("b"));
-                    } else {
-                        alert(result.value("a"));
-                    }
+                aliases: ["admin", "admin dashboard", "admin overview"],
+                trigger: function() {
+                    window.location.href = "admin_overview.html";
                 }
             }
         ]);

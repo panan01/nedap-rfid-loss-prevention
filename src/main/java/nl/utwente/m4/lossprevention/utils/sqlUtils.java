@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static nl.utwente.m4.lossprevention.utils.excelUtils.getCellData;
-import static nl.utwente.m4.lossprevention.utils.excelUtils.getColumnLabels;
+import static nl.utwente.m4.lossprevention.utils.excelUtils.*;
 
 @Path("/app")
 public class sqlUtils {
@@ -23,18 +22,20 @@ public class sqlUtils {
     /**
      * For testing purposes
      */
-    public static void main(String[] args) {
-        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
-        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
-        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
+   // public static void main(String[] args) {
 
-        String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-6|store.id|-2|users:store|-7|test@test.com|-0-0-4|store.id|-0";
-        String realQuery = "1-2|store_id|-2|article:alarm|-1|article.id:=:alarm.article_id|-1|alarm.store_id|-0-1|alarm.store_id|-0";
+
+        //System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
+        //System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
+
+        //String query = "SELECT array_to_json(array_agg(t)) FROM (?) AS t;0-6|store.id|-2|users:store|-7|test@test.com|-0-0-4|store.id|-0";
+        //String realQuery = "2-7-0-0-0-0-0-0";
 
 
         //System.out.println(generateSetStringInputs(realQuery));
 
-        String[] generationCodeArray = query.split(";");
+     /* String[] generationCodeArray = query.split(";");
 
         System.out.println(generationCodeArray[1]);
         System.out.println(generateSetStringInputs(generationCodeArray[1]));
@@ -44,10 +45,10 @@ public class sqlUtils {
         System.out.println(query);
         Connection connection = getConnection();
         assert connection != null;
-        System.out.println(executeQuery(connection, query));
+        System.out.println(executeQuery(connection, query));*/
 
 
-    }
+    //}
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
@@ -112,7 +113,7 @@ public class sqlUtils {
             String url = "jdbc:postgresql://" + host + ":5432/" + dbName + "?currentSchema=nedap";
 
             // Sets credentials
-            String username = "dab_di20212b_225";  // TODO: make these system variables or something
+            String username = "dab_di20212b_225";
             String password = "4gPNr326lyRQcR1J";
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException sqlE) {
@@ -122,6 +123,11 @@ public class sqlUtils {
         }
     }
 
+    /**
+     * Extracts all variables from an |variable:variable| array which uses | as begin/end and : as separators
+     * @param variableString string to extract variables from
+     * @return if variables are present they will be returned in the arraylist
+     */
     public static ArrayList<String> getVariables(String variableString) {
         ArrayList<String> variableArrayList = new ArrayList<>();
         try {
@@ -154,6 +160,11 @@ public class sqlUtils {
         return variableArrayList;
     }
 
+    /**
+     * Checks if a variable is a column in our database
+     * @param variable variable to check
+     * @return true if it's a (allowed) column in our database, false if not
+     */
     public static boolean checkVariableIsColumn(String variable) {
         switch (variable) {
             case "article.id":
@@ -189,6 +200,11 @@ public class sqlUtils {
         return false;
     }
 
+    /**
+     * Checks if a variable is a table in our database
+     * @param variable variable to check
+     * @return true if it's a table in our database, false if not
+     */
     public static boolean checkVariableIsTable(String variable) {
         switch (variable) {
             case "article":
@@ -202,6 +218,13 @@ public class sqlUtils {
         return false;
     }
 
+    /**
+     * Check if the variable doesn't have un-allowed symbols or characters
+     * @param variables
+     * @param generationCodeInputType to indicate which section to check variables for
+     * @param checkType to indicate which subsection has to correct checks
+     * @return returns true if variable is valid, otherwise false.
+     */
     public static boolean variablesValid(ArrayList<String> variables, int generationCodeInputType, int checkType) {
         switch (generationCodeInputType) {
             case 1:
@@ -357,7 +380,7 @@ public class sqlUtils {
                 }
                 break;
             case 6:
-                if (checkType == 1 | checkType==4) {
+                if (checkType == 1 | checkType == 4) {
                     if (checkVariableIsColumn(variables.get(0))) {
                         return true;
                     }
@@ -381,6 +404,11 @@ public class sqlUtils {
 
     }
 
+    /**
+     * This methods generates a query using a querybuilder code (called query) which is split on dashes
+     * @param query generation coe
+     * @return returns the functional query (if no incorrect/un-allowed inputs)
+     */
     public static String generateSetStringInputs(String query) {
 
         String[] generationCode = query.split("-");
@@ -410,7 +438,7 @@ public class sqlUtils {
                 break;
             case '6':
                 generatedQuery += "SELECT day AS weekday, COUNT(day) FROM (SELECT trim(to_char(timestamp, 'day')) AS day, store_id FROM nedap.alarm) AS day_table GROUP BY day ORDER BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 END ASC";
-                default:
+            default:
 
         }
         ArrayList<String> variables = getVariables(generationCode[1].substring(1));
@@ -651,7 +679,7 @@ public class sqlUtils {
             case '7':
 
                 if (variablesValid(variables, 3, 7)) {
-                    generatedQuery += "WHERE users.email = '"+variables.get(0)+"' AND ((SELECT store_access.allowed_user FROM nedap.store_access WHERE nedap.store.id = nedap.store_access.store_id) = '"+variables.get(0)+"' OR users.type = 'admin') ";
+                    generatedQuery += "WHERE users.email = '" + variables.get(0) + "' AND ((SELECT store_access.allowed_user FROM nedap.store_access WHERE nedap.store.id = nedap.store_access.store_id) = '" + variables.get(0) + "' OR users.type = 'admin') ";
 
                 } else {
                     return "Invalid variables! variables: " + variables;
@@ -732,7 +760,7 @@ public class sqlUtils {
             case '4':
                 if (variablesValid(variables, 6, 4)) {
 
-                    generatedQuery += "ORDER BY "+ variables.get(0) + " ";
+                    generatedQuery += "ORDER BY " + variables.get(0) + " ";
 
 
                 } else {
@@ -966,19 +994,20 @@ public class sqlUtils {
         while (!getCellData(sheet, row, column).equals("null")) {
             for (Integer index : indexArray) {
                 String cellContent = getCellData(sheet, row, index);
-
-                if (cellContent.equals("")) {
-                    cellContent = "NULL";
-                    sheetRow += cellContent + ", ";
+                if (cellContent.toUpperCase().contains("SELECT") || cellContent.toUpperCase().contains("FROM") || cellContent.toUpperCase().contains("DELETE") || cellContent.toUpperCase().contains("FROM") || cellContent.toUpperCase().contains("UPDATE") || cellContent.toUpperCase().contains("INSERT") || cellContent.toUpperCase().contains("CREATE") || cellContent.toUpperCase().contains("ALTER") || cellContent.toUpperCase().contains("DROP") || cellContent.toUpperCase().contains("TABLE") || cellContent.toUpperCase().contains("INDEX")) {
                 } else {
-                    cellContent = cellContent.replace("Store-", "");
-                    cellContent = cellContent.replace("Article-", "");
-                    cellContent = cellContent.replace("Category-", "");
-                    cellContent = cellContent.replace("\'", "^");
+                    if (cellContent.equals("")) {
+                        cellContent = "NULL";
+                        sheetRow += cellContent + ", ";
+                    } else {
+                        cellContent = cellContent.replace("Store-", "");
+                        cellContent = cellContent.replace("Article-", "");
+                        cellContent = cellContent.replace("Category-", "");
+                        cellContent = cellContent.replace("\'", "^");
 
-                    sheetRow += "\'" + cellContent + "\'" + ", ";
+                        sheetRow += "\'" + cellContent + "\'" + ", ";
+                    }
                 }
-
             }
             sheetRow = sheetRow.substring(0, sheetRow.length() - 2);
             parsedSheetRowStrings.add(sheetRow);
