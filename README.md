@@ -71,5 +71,12 @@ password: `thebestproductowner`
 username: `s.m.nicoletti@utwente.nl` \
 password: `thebestproductowner`
 
+## Search Bar
+Using the search bar, you can easily navigate to a page by typing `/` 
+followed by the page name and pressing enter.
+
+## Exporting Data
+Due to the large amounts of data that are exported when downloading 
+alarm data and article data the download time can take up to 25s. Store data has less data and thus downloads almost instantly.
 
 
