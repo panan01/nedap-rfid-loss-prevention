@@ -13,7 +13,7 @@ public enum Queries {
 
     private final String host = "bronto.ewi.utwente.nl";
     private final String dbName = "dab_di20212b_225";
-    private final String url = "jdbc:postgresql://" + host + "/" + dbName + "?currentSchema=nedap";
+    private final String url = "jdbc:postgresql://" + host + "/" + dbName;
     private final String username = "dab_di20212b_225";
     private final String password = "4gPNr326lyRQcR1J";
     private Pattern emailPattern = Pattern.compile("^\\S+@\\S+.\\S+$");
@@ -46,29 +46,29 @@ public enum Queries {
         try { // establish connection
             connection = DriverManager.getConnection(url, username, password);
             // returns true if the email exists in the database
-            checkEmailSt = connection.prepareStatement("SELECT EXISTS (select 1 FROM users u WHERE u.email = ? LIMIT 1)");
+            checkEmailSt = connection.prepareStatement("SELECT EXISTS (select 1 FROM nedap.users u WHERE u.email = ? LIMIT 1)");
             // query that adds a new user in the table database
-            addNewUser = connection.prepareStatement("INSERT INTO users (email,hashed_pass,first_name,last_name,type, salt) " +
+            addNewUser = connection.prepareStatement("INSERT INTO nedap.users (email,hashed_pass,first_name,last_name,type, salt) " +
                                                           "VALUES (?, ?, ?, ?, ?, ?)");
             // check if the combination of user and pass exists in the database
-            checkUserAndPass = connection.prepareStatement("SELECT EXISTS (SELECT 1 FROM users u " +
+            checkUserAndPass = connection.prepareStatement("SELECT EXISTS (SELECT 1 FROM nedap.users u " +
                                                                     "WHERE u.email = ? AND u.hashed_pass = ? LIMIT 1)");
             // get the salt of the user
-            getSalt = connection.prepareStatement("SELECT salt FROM users WHERE email = ?");
+            getSalt = connection.prepareStatement("SELECT salt FROM nedap.users WHERE email = ?");
             // get user's info
-            getUser = connection.prepareStatement("SELECT u.email,u.first_name,u.last_name,u.type FROM users u WHERE u.email = ?");
+            getUser = connection.prepareStatement("SELECT u.email,u.first_name,u.last_name,u.type FROM nedap.users u WHERE u.email = ?");
             // modify user's password
-            modifyPass = connection.prepareStatement("UPDATE users SET hashed_pass = ? WHERE email = ?");
+            modifyPass = connection.prepareStatement("UPDATE nedap.users SET hashed_pass = ? WHERE email = ?");
             // modify user's first_name
-            modifyFName = connection.prepareStatement("UPDATE users SET first_name = ? WHERE email = ?");
+            modifyFName = connection.prepareStatement("UPDATE nedap.users SET first_name = ? WHERE email = ?");
             // modify user's last_name
-            modifyLName = connection.prepareStatement("UPDATE users SET last_name = ? WHERE email = ?");
+            modifyLName = connection.prepareStatement("UPDATE nedap.users SET last_name = ? WHERE email = ?");
             // modify user's type/role
-            modifyRole = connection.prepareStatement("UPDATE users SET type = ? WHERE email = ?");
+            modifyRole = connection.prepareStatement("UPDATE nedap.users SET type = ? WHERE email = ?");
             // delete the account from the database
-            deleteAccount = connection.prepareStatement("DELETE FROM users WHERE email = ?");
+            deleteAccount = connection.prepareStatement("DELETE FROM nedap.users WHERE email = ?");
             // get user's role from the database
-            getUserRole = connection.prepareStatement("SELECT type FROM users WHERE email = ?");
+            getUserRole = connection.prepareStatement("SELECT type FROM nedap.users WHERE email = ?");
             //check if the user has the access to the store data
             checkIfUserAllowedToAccessStore = connection.prepareStatement("SELECT EXISTS (SELECT 1 FROM store_access s " +
                                                                                     "WHERE s.store_id = ? AND s.allowed_user = ? LIMIT 1)");
@@ -125,7 +125,7 @@ public enum Queries {
     }
 
     // check the user name and it's password
-    public boolean checkUserAndPass(String email, String password){
+    public boolean checkUserAndPass(String email, String password) {
         try{
             String salt = this.getSalt(email);
             byte[] hashedPass = PasswordHasher.instance.hashPassword(password, salt);
@@ -137,7 +137,7 @@ public enum Queries {
             rs.close();
             return result;
         } catch (SQLException e){
-            System.err.println("User checking failed " + e);
+            System.err.println("SQL Exception while checking user and pass");
             return false;
         }
     }

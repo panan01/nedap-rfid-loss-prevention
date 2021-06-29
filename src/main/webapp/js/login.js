@@ -17,7 +17,7 @@ function onLogin(email, password, result) {
         data: JSON.stringify({ email: email, password: password}),
         processData: false,
         success: function(data) {
-            if (data === "fail") {
+            if (data.startsWith("fail")) {
                 result({
                     error: "Unknown e-mail address or password.",
                     focus: "email"
