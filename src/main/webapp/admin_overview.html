@@ -126,7 +126,7 @@
                             Users
                         </div>
                         <br>
-                        <div class="card-table">
+                        <div class="card-table" style="overflow: hidden">
                             <table class="sortable"> <!--sortable class adds automatic sorting-->
                                 <thead>
                                     <tr>
@@ -134,6 +134,7 @@
                                         <td>Last name</td>
                                         <td>E-mail</td>
                                         <td>Access level</td>
+                                        <td></td>
                                         <td></td>
                                     </tr>
                                 </thead>
@@ -176,44 +177,137 @@
                                         throw err;
                                     }
                                 }
+                                if (inputValues.children[2].textContent !== "") {
+                                    $.ajax({
+                                        url: "rest/account/" + inputValues.children[2].textContent,
+                                        method: 'PUT',
+                                        headers: {'Authorization': token},
+                                        contentType: 'application/json',
+                                        data: JSON.stringify({
+                                            "first_name": inputFirstName,
+                                            "last_name": inputLastName,
+                                            "password": "",
+                                            "type": inputType
+                                        }),
+                                        success: function (response) {
+                                            if (response === "fail") {
+                                                alert("Failure!");
+                                            } else if (response === "success") {
+                                                buttonElement.style.display = "none";
+                                                // check whether `submit-all` can be hidden again
+                                                let usersElement = document.getElementById("users_table");
+                                                let tableRows = usersElement.parentElement.tBodies[0].rows.length;
+                                                for (let i = 0; i < tableRows; i++) {
+                                                    let buttonElement = document.getElementById("submit-" + i);
+                                                    if (buttonElement === null){
+                                                        continue;
+                                                    }
+                                                    if (buttonElement.style.display === "block") {
+                                                        return null;
+                                                    }
+                                                }
+                                                // no other visible submit buttons found, let's hide submit-all & refresh data
+                                                buttonElement = document.getElementById("submit-all");
+                                                buttonElement.style.display = "none";
+                                                buttonElement = document.getElementById("submit-cancel");
+                                                buttonElement.style.display = "none";
+                                                fillInData();
+                                            } else {
+                                                alert("unknown error occurred");
+                                            }
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            console.log("unsuccessful request; " +
+                                                "textStatus=" + textStatus + ", " +
+                                                "errorThrown=" + errorThrown + ", " +
+                                                "jqXHR=");
+                                            console.log(jqXHR)
+                                        }
+                                    });
+                                } else {
+                                    $.ajax({
+                                        url: "rest/register",
+                                        method: 'POST',
+                                        headers: {'Authorization': token},
+                                        contentType: 'application/json',
+                                        data: JSON.stringify({
+                                            "first_name": inputFirstName,
+                                            "last_name": inputLastName,
+                                            "email": inputValues.children[2].children[0].value,
+                                            "password": "123456",
+                                            "type": inputType
+                                        }),
+                                        success: function (response) {
+                                            if (response === "fail") {
+                                                alert("Failure!");
+                                            } else if (response === "success") {
+                                                buttonElement.style.display = "none";
+                                                // check whether `submit-all` can be hidden again
+                                                let usersElement = document.getElementById("users_table");
+                                                let tableRows = usersElement.parentElement.tBodies[0].rows.length;
+                                                for (let i = 0; i < tableRows; i++) {
+                                                    let buttonElement = document.getElementById("submit-" + i);
+                                                    if (buttonElement.style.display === "block") {
+                                                        return null;
+                                                    }
+                                                }
+                                                // no other visible submit buttons found, let's hide submit-all & refresh data
+                                                buttonElement = document.getElementById("submit-all");
+                                                buttonElement.style.display = "none";
+                                                buttonElement = document.getElementById("submit-cancel");
+                                                buttonElement.style.display = "none";
+                                                fillInData();
+                                            } else {
+                                                alert("unknown error occurred");
+                                            }
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            console.log("unsuccessful request; " +
+                                                "textStatus=" + textStatus + ", " +
+                                                "errorThrown=" + errorThrown + ", " +
+                                                "jqXHR=");
+                                            console.log(jqXHR)
+                                        }
+                                    });
+                                }
+                            }
+                            function removeUser(i) {
+                                const token = sessionStorage.getItem("token");
+                                let inputValues = document.getElementById("users_table").parentElement.tBodies[0].children[i];
                                 $.ajax({
                                     url: "rest/account/" + inputValues.children[2].textContent,
-                                    method: 'PUT',
+                                    method: 'DELETE',
                                     headers: {'Authorization': token},
                                     contentType: 'application/json',
-                                    data: JSON.stringify({"first_name": inputFirstName, "last_name": inputLastName, "password": "", "type": inputType}),
-                                    success: function(response) {
+                                    success: function (response) {
                                         if (response === "fail") {
                                             alert("Failure!");
                                         } else if (response === "success") {
-                                            buttonElement.style.display = "none";
-                                            // check whether `submit-all` can be hidden again
-                                            let usersElement = document.getElementById("users_table");
-                                            let tableRows = usersElement.parentElement.tBodies[0].rows.length;
-                                            for (let i = 0; i < tableRows; i++) {
-                                                let buttonElement = document.getElementById("submit-" + i);
-                                                if (buttonElement.style.display === "block") {
-                                                    return null;
-                                                }
-                                            }
-                                            // no other visible submit buttons found, let's hide submit-all & refresh data
-                                            buttonElement = document.getElementById("submit-all");
-                                            buttonElement.style.display = "none";
-                                            buttonElement = document.getElementById("submit-cancel");
-                                            buttonElement.style.display = "none";
                                             fillInData();
                                         } else {
                                             alert("unknown error occurred");
                                         }
                                     },
-                                    error: function(jqXHR, textStatus, errorThrown) {
+                                    error: function (jqXHR, textStatus, errorThrown) {
                                         console.log("unsuccessful request; " +
                                             "textStatus=" + textStatus + ", " +
                                             "errorThrown=" + errorThrown + ", " +
                                             "jqXHR=");
-                                        console.log(jqXHR)
+                                        console.log(jqXHR);
                                     }
                                 });
+                            }
+                            function showNewUser(i) {
+                                let inputValues = document.getElementById("users_table").parentElement.tBodies[0].children[i];
+                                inputValues.children[0].children[0].style.display = "initial";  // first name
+                                inputValues.children[1].children[0].style.display = "initial";  // last name
+                                inputValues.children[2].children[0].style.display = "initial";  // email
+                                inputValues.children[3].children[0].style.display = "initial";  // type/access level
+                                let newUserButtonElement = document.getElementById("add-user");
+                                newUserButtonElement.style.display = "none";
+                                newUserButtonElement.id = "submit-" + i;
+                                newUserButtonElement.onclick = function() {submit(i)};
+                                newUserButtonElement.innerText = "Submit";
                             }
                             function showSubmitButton(i) {
                                 let buttonElement = document.getElementById("submit-" + i);
@@ -286,8 +380,27 @@
                                                     '</select></span></td>').replace('value="' + user.type + '"', 'value="' + user.type + '" selected');
                                             }
                                             text += '<td><button class="btn-primary" style="display: none" id="submit-' + i + '" onclick="submit(' + i + ')">Submit</button></td>'
+                                            if (user.type === "admin" || user.email === email) {
+                                                text += "<td></td>";
+                                            } else {
+                                                text += '<td><button class="btn-error" onclick="removeUser(' + i + ')">Delete</button></td>'
+                                            }
                                             text += "</tr>";
                                         }
+                                        text += "<tr>";
+                                        text += '<td><input type="text" class="input" style="display: none" placeholder="insert first name..."></td>';
+                                        text += '<td><input type="text" class="input" style="display: none" placeholder="insert last name..."></td>';
+                                        text += '<td><input type="email" class="input" style="display: none" placeholder="insert email..." onchange="showSubmitButton('+response.length+')"></td>';
+                                        text += '<td><span class="selectbox dark" style="display: none">' +
+                                            '<select class="btn-primary">' +
+                                            '<option value="store manager" selected>Store manager</option>' +
+                                            '<option value="loss prevention manager">Loss prevention manager</option>' +
+                                            '<option value="division manager">Division manager</option>' +
+                                            '<option value="admin">Admin</option>' +
+                                            '</select></span></td>';
+                                        text += '<td><button class="btn-primary" id="add-user" onclick="showNewUser(' + response.length + ')">Add new user</button></td>';
+                                        text += "<td></td>";
+                                        text += "</tr>";
                                         usersElement.innerHTML = text;
                                         let buttonElement = document.getElementById("submit-all");
                                         buttonElement.style.display = "none";
