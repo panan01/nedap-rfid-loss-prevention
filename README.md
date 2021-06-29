@@ -68,8 +68,8 @@ username: `s.m.nicoletti@utwente.nl` \
 password: `thebestproductowner`
 
 ### For Ivo (division manager):
-username: `s.m.nicoletti@utwente.nl` \
-password: `thebestproductowner`
+username: `i.broekhof@student.utwente.nl` \
+password: `thebestscrummentor`
 
 ## Search Bar
 Using the search bar, you can easily navigate to a page by typing `/` 
