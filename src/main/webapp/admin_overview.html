@@ -95,7 +95,7 @@
         <div class="app-bar">
             <div class="app-bar-inner" style="display: inline-flex">
                 <div class="logo"> </div>
-                <input class="searchbar" id="searchbar" type="text" placeholder="Type here to search">
+                <input class="searchbar" id="searchbar" type="text" placeholder="Type here to navigate">
                 <a onclick="navbarMenu()" id="icon">
                     <div class="profile-icon">
                         <span class="icon">account_circle</span>
@@ -310,7 +310,7 @@
     <script>
         let dispatcher = new CommandDispatcher([
             {
-                aliases: ["dashboard", "main"],
+                aliases: ["dashboard", "main", "home", "dash", "homepage"],
                 trigger: function() {
                     window.location.href = "dashboard.html";
                 }
