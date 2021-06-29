@@ -164,8 +164,8 @@
                                 password_field.focus();
                             }
                         } else if (res.done) {
-                            document.cookie = "token=" + res.token + "; SameSite=None; Secure; max-age=1800";
-                            document.cookie = "email=" + email_field.value + "; SameSite=None; Secure; max-age=1800";
+                            document.cookie = "token=" + res.token + "; SameSite=None; max-age=1800";
+                            document.cookie = "email=" + email_field.value + "; SameSite=None; max-age=1800";
                             window.location.href = "dashboard.html";
                         }
                         response = true;
