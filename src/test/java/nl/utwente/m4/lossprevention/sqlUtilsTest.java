@@ -29,9 +29,7 @@ public class sqlUtilsTest {
     public void setUp() {
         Connection connection = getConnection();
         assertEquals(true, connection != null);
-
     }
-
 
     @Test
     public void queryBuilderTest() {
@@ -176,16 +174,23 @@ public class sqlUtilsTest {
         labels.add("Latitude");
         assertNotEquals(true, checkLabels(labels, getRequiredLabels(2)));
 
-        labels = new ArrayList<>();
-        labels.add("Store ID (UT)");
-        labels.add("Longitude (UT)");
-        labels.add("Latitude (UT)");
+        labels = requiredLabelsType3;
         assertEquals(true, checkLabels(labels, getRequiredLabels(2)));
 
         labels = new ArrayList<>(Arrays.asList(
                 "Article ID (UT)", "Category (UT)", "Article (UT)", "Color", "Size", "Price (EUR)"
         ));
         assertEquals(true, checkLabels(labels, getRequiredLabels(1)));
+
+        labels = requiredLabelsType1;
+        assertEquals(true, checkLabels(labels, getRequiredLabels(0)));
+
+        labels = new ArrayList<>(Arrays.asList(
+                "EPC (UT)", "Timestamp", "Stores ", "Not a store"
+        ));
+        assertNotEquals(true, checkLabels(labels, getRequiredLabels(0)));
+
+
     }
 
     @Test
