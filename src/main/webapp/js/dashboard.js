@@ -33,13 +33,85 @@ const multiMarkerIcon = L.icon({
 const markerIcons = [blueMarkerIcon, redMarkerIcon, greenMarkerIcon, yellowMarkerIcon];
 google.charts.load('current', {'packages':['bar']});
 
+let dispatcher = new CommandDispatcher([
+    {
+        aliases: ["dashboard", "main"],
+        trigger: function() {
+            window.location.href = "dashboard.html";
+        }
+    }, {
+        aliases: ["log out", "log-out", "logout"],
+        trigger: logOut
+    }, {
+        aliases: ["account"],
+        trigger: function() {
+            window.location.href = "account.html";
+        }
+    }, {
+        aliases: ["data", "report", "data report", "upload", "download", "excel"],
+        trigger: function() {
+            window.location.href = "data_reports.html";
+        }
+    }, {
+        aliases: ["admin", "admin dashboard", "admin overview"],
+        trigger: function() {
+            window.location.href = "admin_overview.html";
+        }
+    }
+]);
+function makeCommandBar(opts) {
+    var element = opts.element;
+    var $element = $(element);
+
+    $element.on("input", (event) => {
+        if ($element.val()[0] === '/') {
+            $element.addClass("command-mode");
+
+            let parseResult = dispatcher.parse($element.val().substring(1));
+            if (parseResult.errors.length > 0) {
+                $element.addClass("command-error");
+            } else {
+                $element.removeClass("command-error");
+            }
+        } else {
+            $element.removeClass("command-mode");
+            $element.removeClass("command-error");
+        }
+    });
+
+    $element.keypress((event) => {
+        var key = event.which || event.keyCode;
+
+        if (key === 13) { // enter
+            event.stopPropagation();
+            event.preventDefault();
+
+            if ($element.val()[0] === '/') {
+                $element.addClass("command-mode");
+
+                let parseResult = dispatcher.parse($element.val().substring(1));
+                if (parseResult.errors.length > 0) {
+                    $element.addClass("command-error");
+                    console.log(parseResult.errors);
+                } else {
+                    $element.val("");
+                    $element.removeClass("command-mode");
+                    $element.removeClass("command-error");
+                    parseResult.execute();
+                }
+            } else {
+                $element.removeClass("command-mode");
+                $element.removeClass("command-error");
+            }
+        }
+    });
+}
 $(function() {
     makeCommandBar({
         element: document.getElementById("searchbar")
     });
-
-    app.inject("user.username", "Four-Zero-Four");
 });
+
 function navbarMenu() {
     let links = document.getElementById("navbarLinks");
     if (links.style.display === "table") {

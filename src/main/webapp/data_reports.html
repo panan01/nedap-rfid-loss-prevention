@@ -175,40 +175,27 @@
     <script>
         let dispatcher = new CommandDispatcher([
             {
-                aliases: ["add"],
-                args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
-                trigger: function(result) {
-                    alert(result.value("$main", 0) + result.value("$main", 1));
+                aliases: ["dashboard", "main"],
+                trigger: function() {
+                    window.location.href = "dashboard.html";
                 }
             }, {
-                aliases: ["sub"],
-                args: [{ name: "$main", params: [ArgTypes.float, ArgTypes.float] }],
-                trigger: function(result) {
-                    alert(result.value("$main", 0) - result.value("$main", 1));
+                aliases: ["log out", "log-out", "logout"],
+                trigger: logOut
+            }, {
+                aliases: ["account"],
+                trigger: function() {
+                    window.location.href = "account.html";
                 }
             }, {
-                aliases: ["hello"],
-                trigger: function(result) {
-                    alert("Hello world!");
+                aliases: ["data", "report", "data report", "upload", "download", "excel"],
+                trigger: function() {
+                    window.location.href = "data_reports.html";
                 }
             }, {
-                aliases: ["say"],
-                args: [{ name: "$main", params: [ArgTypes.string] }],
-                trigger: function(result) {
-                    alert(result.value("$main"));
-                }
-            }, {
-                aliases: ["arg"],
-                args: [
-                    { name: "a", params: [ArgTypes.string], required: true },
-                    { name: "b", params: [ArgTypes.int] }
-                ],
-                trigger: function(result) {
-                    if (result.has("b")) {
-                        alert(result.value("a") + result.value("b"));
-                    } else {
-                        alert(result.value("a"));
-                    }
+                aliases: ["admin", "admin dashboard", "admin overview"],
+                trigger: function() {
+                    window.location.href = "admin_overview.html";
                 }
             }
         ]);
