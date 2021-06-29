@@ -283,7 +283,7 @@
                         + "<div class='card card-error' style='max-width: 400px'>Could not reach server!</div>"
                 }
             }
-            let URI = "http://localhost:8080/loss_prevention_war/upload";
+            let URI = "./upload";
             let formData = new FormData();
             formData.append("fileToUpload", document.getElementById("fileToUpload").files[0]);
             xmlHttp.open("POST", URI, true);
