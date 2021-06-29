@@ -521,8 +521,9 @@
                                                 chartArea: {
                                                     top: 20,
                                                     left: 110,
-                                                    bottom: 30,
-                                                    width: '100%'
+                                                    bottom: 10,
+                                                    width: '100%',
+                                                    height: '100%',
                                                 },
                                                 width: '100%',
                                                 legend: {
@@ -540,10 +541,10 @@
                                 })
                             </script>
                         <div class="card-header" style="padding-top: 10px">
-                            Top 10 most stolen items
+                            Top 10 most stolen articles
                         </div>
                         <div class="card-content">
-                            An overview of all items ever stolen.
+                            An overview of the top 10 articles ever stolen.
                         </div>
                     </div>
                 </div>
@@ -749,6 +750,37 @@
                 </div>
             </div>
             <div class="flex vertical-700">
+                <div class="flex vertical">
+                    <div class="card card-dark wrap">
+                        <div class="card-content" style="text-align: center">
+                            <div class="card-header">
+                                Timeframes most <br> prone to theft
+                            </div>
+                            <div class="card-header">
+                                Day
+                            </div>
+                            <div class="card-content">
+                                <span class="card-content" id="weekdayMost" style="color: whitesmoke; font-size: 17pt; padding-top: 0">day</span>
+                            </div>
+                            <div class="card-header" style="padding-top: 2%">
+                                Hour
+                            </div>
+                            <div class="card-content">
+                                <span class="card-content" id="hourMost" style="color: whitesmoke; font-size: 17pt; padding-top: 0">hour</span>
+                            </div>
+                            <div class="card-header" style="padding-top: 1%">
+                                Percentage
+                            </div>
+                            <div class="card-content">
+                                <span class="card-content" id="percentageWeekday" style="color: whitesmoke; font-size: 17pt; padding-top: 0">percentage</span>
+                                of the total thefts occur between <br> 12:00 and 12:59
+                            </div>
+                            <div class="card-content">
+                                <button class="btn btn-alt btn-outline" onclick="app.showSnackbar({text: 'Timeframe changed', style: 'dark', buttons: [{text: 'Hide', handler: sb => sb.close()}]}); changeTimeframe()">Change timeframe</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="flex vertical grow-2">
                     <div class="card">
                         <div class="card-image" id="chart-canvas-timestamps" style="height: 400px; width: 720px; overflow-x: hidden; margin-bottom: -10px">
@@ -764,7 +796,9 @@
                                                 let array = [[
                                                     'Weekday', 'Count',
                                                 ]];
+                                                var weekday = null;
                                                 for (let item of response){
+                                                    item.weekday = item.weekday[0].toUpperCase() + item.weekday.substring(1)
                                                     array.push([item.weekday.toString(), item.count]);
                                                 }
 
@@ -776,10 +810,10 @@
                                                         weekdayMost = array[m][0]
                                                     }
                                                 }
-                                                weekdayMost = weekdayMost[0].toUpperCase() + weekdayMost.substring(1)
                                                 document.getElementById("weekdayMost").innerHTML = weekdayMost
+                                                var percentage = weekdayMostTotal / 7663
+                                                document.getElementById("percentageWeekday").innerHTML = percentage.toFixed(2) + '%'
 
-                                                // document.getElementById("weekdayMostTotal").innerHTML = weekdayMostTotal
 
                                                 let data = google.visualization.arrayToDataTable(array);
                                                 let options = {
@@ -840,8 +874,7 @@
                                                         hourMost = array[m][0]
                                                     }
                                                 }
-                                                document.getElementById("hourMost").innerHTML = hourMost
-                                                // document.getElementById("hourMostTotal").innerHTML = hourMostTotal
+                                                document.getElementById("hourMost").innerHTML = hourMost + ':00 - 12:59';
 
                                                 let data = google.visualization.arrayToDataTable(array);
                                                 let options = {
@@ -902,33 +935,11 @@
                         </script>
                     </div>
                 </div>
-                <div class="flex vertical">
-                    <div class="card card-dark wrap">
-                        <div class="card-header" style="text-align: center; padding-top: 60px">
-                            Timeframes most <br> prone for theft
-                        </div>
-                        <div class="card-header" style="text-align: center">
-                            Day:
-                        </div>
-                        <div class="card-content" style="text-align: center">
-                            <span class="card-content" id="weekdayMost" style="color: whitesmoke; font-size: 17pt">day</span><br>
-                        <div class="card-header" style="text-align: center">
-                            Hour:
-                        </div>
-                        <div class="card-content" style="text-align: center">
-                            <span class="card-content" id="hourMost" style="color: whitesmoke; font-size: 17pt">hour</span><br>
-                        </div>
-                        <div class="card-content" style="text-align: center; padding-top: 30px">
-                            <button class="btn btn-alt btn-outline" onclick="app.showSnackbar({text: 'Timeframe changed', style: 'dark', buttons: [{text: 'Hide', handler: sb => sb.close()}]}); changeTimeframe()">Change timeframe</button>
-                        </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- MAP -->
             <div class="card">
-                <div id="mapid" style="height: 400px"></div>
+                <div id="mapid" style="height: 400px; z-index: 0;"></div>
                 <script>
                    $.ajax({
                         url: "rest/app",
