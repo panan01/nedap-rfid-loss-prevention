@@ -51,4 +51,25 @@ The trello board can be accessed via the following link:
 
 `https://trello.com/b/o0QQeesf/2021-m4-nedap-team-1`
 
-## 
+## Deployment Site
+The online deployed version of our application can be found via the following link
+
+`http://nedap-6.paas.hosted-by-previder.com/loss-prevention/`
+
+## Credentials for testing
+The following credentials can be used for testing
+
+###Admin account:
+username: `test@test.com`\
+password: `123456`
+
+###For Stefano (admin):
+username: `s.m.nicoletti@utwente.nl` \
+password: `thebestproductowner`
+
+###For Ivo (division manager):
+username: `s.m.nicoletti@utwente.nl` \
+password: `thebestproductowner`
+
+
+

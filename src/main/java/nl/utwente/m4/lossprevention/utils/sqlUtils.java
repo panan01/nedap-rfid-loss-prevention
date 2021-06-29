@@ -22,10 +22,10 @@ public class sqlUtils {
     /**
      * For testing purposes
      */
-   /* public static void main(String[] args) {
+   // public static void main(String[] args) {
 
 
-        // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
+        //System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Stores.xlsx")));
         // System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Articles.xlsx")));
         //System.out.println(XSSFSheet_to_DB(read("20210503_UTwente_Nedap_Alarms.xlsx")));
 
@@ -35,7 +35,7 @@ public class sqlUtils {
 
         //System.out.println(generateSetStringInputs(realQuery));
 
-     *//*   String[] generationCodeArray = query.split(";");
+     /* String[] generationCodeArray = query.split(";");
 
         System.out.println(generationCodeArray[1]);
         System.out.println(generateSetStringInputs(generationCodeArray[1]));
@@ -45,10 +45,10 @@ public class sqlUtils {
         System.out.println(query);
         Connection connection = getConnection();
         assert connection != null;
-        System.out.println(executeQuery(connection, query));*//*
+        System.out.println(executeQuery(connection, query));*/
 
 
-    }*/
+    //}
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
@@ -113,7 +113,7 @@ public class sqlUtils {
             String url = "jdbc:postgresql://" + host + ":5432/" + dbName + "?currentSchema=nedap";
 
             // Sets credentials
-            String username = "dab_di20212b_225";  // TODO: make these system variables or something
+            String username = "dab_di20212b_225";
             String password = "4gPNr326lyRQcR1J";
             return DriverManager.getConnection(url, username, password);
         } catch (SQLException sqlE) {
@@ -123,6 +123,11 @@ public class sqlUtils {
         }
     }
 
+    /**
+     * Extracts all variables from an |variable:variable| array which uses | as begin/end and : as separators
+     * @param variableString string to extract variables from
+     * @return if variables are present they will be returned in the arraylist
+     */
     public static ArrayList<String> getVariables(String variableString) {
         ArrayList<String> variableArrayList = new ArrayList<>();
         try {
@@ -155,6 +160,11 @@ public class sqlUtils {
         return variableArrayList;
     }
 
+    /**
+     * Checks if a variable is a column in our database
+     * @param variable variable to check
+     * @return true if it's a (allowed) column in our database, false if not
+     */
     public static boolean checkVariableIsColumn(String variable) {
         switch (variable) {
             case "article.id":
@@ -190,6 +200,11 @@ public class sqlUtils {
         return false;
     }
 
+    /**
+     * Checks if a variable is a table in our database
+     * @param variable variable to check
+     * @return true if it's a table in our database, false if not
+     */
     public static boolean checkVariableIsTable(String variable) {
         switch (variable) {
             case "article":
@@ -203,6 +218,13 @@ public class sqlUtils {
         return false;
     }
 
+    /**
+     * Check if the variable doesn't have un-allowed symbols or characters
+     * @param variables
+     * @param generationCodeInputType to indicate which section to check variables for
+     * @param checkType to indicate which subsection has to correct checks
+     * @return returns true if variable is valid, otherwise false.
+     */
     public static boolean variablesValid(ArrayList<String> variables, int generationCodeInputType, int checkType) {
         switch (generationCodeInputType) {
             case 1:
@@ -382,6 +404,11 @@ public class sqlUtils {
 
     }
 
+    /**
+     * This methods generates a query using a querybuilder code (called query) which is split on dashes
+     * @param query generation coe
+     * @return returns the functional query (if no incorrect/un-allowed inputs)
+     */
     public static String generateSetStringInputs(String query) {
 
         String[] generationCode = query.split("-");

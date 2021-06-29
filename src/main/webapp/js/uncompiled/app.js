@@ -70,7 +70,7 @@
             }
             $el.fadeOut(200);
         },
-        showSnackbar: function(props, dur = 2000) {
+        showSnackbar: function(props, dur = 5000) {
             if (typeof props === "string") {
                 props = {text: props, duration: dur};
             }
