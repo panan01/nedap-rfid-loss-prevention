@@ -78,8 +78,10 @@
                 }
             }
             function logOut() {
-                document.cookie = "token=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                document.cookie = "email=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                // document.cookie = "token=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                // document.cookie = "email=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                sessionStorage.removeItem("token");
+                sessionStorage.removeItem("email");
                 window.location.href = "login.html";
             }
         </script>
@@ -148,8 +150,10 @@
                             function fillInData() {
                                 // also checks logged in
                                 try {
-                                    const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
-                                    const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                                    // const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
+                                    // const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                                    const token = sessionStorage.getItem("token");
+                                    const email = sessionStorage.getItem("email");
                                     $.ajax({
                                         url: "rest/account/" + email,
                                         method: 'GET',

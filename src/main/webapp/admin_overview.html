@@ -82,8 +82,10 @@
                 }
             }
             function logOut() {
-                document.cookie = "token=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-                document.cookie = "email=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                // document.cookie = "token=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                // document.cookie = "email=; Secure; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                sessionStorage.removeItem("token");
+                sessionStorage.removeItem("email");
                 window.location.href = "login.html";
             }
         </script>
@@ -159,7 +161,8 @@
                                 fillInData();
                             }
                             function submit(i) {
-                                const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
+                                // const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
+                                const token = sessionStorage.getItem("token");
                                 let buttonElement = document.getElementById("submit-" + i);
                                 let inputValues = document.getElementById("users_table").parentElement.tBodies[0].children[i];
                                 let inputFirstName = inputValues.children[0].children[0].value || inputValues.children[0].children[0].placeholder;
@@ -222,9 +225,12 @@
                                 buttonElement.style.display = "block";
                             }
                             function checkLogin() {
+                                // check logged in
                                 try {
-                                    const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
-                                    const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                                    // const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
+                                    // const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                                    const token = sessionStorage.getItem("token");
+                                    const email = sessionStorage.getItem("email");
                                     $.ajax({
                                         url: "rest/account/" + email,
                                         method: 'GET',
@@ -240,7 +246,8 @@
                                             console.log("unsuccessful request");
                                             window.location.href = "login.html";
                                         }
-                                    });
+                                    })
+                                    return null;
                                 } catch (err) {
                                     if (err instanceof TypeError) {
                                         window.location.href = "login.html";
@@ -250,7 +257,8 @@
                                 }
                             }
                             function fillInData() {
-                                const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                                // const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
+                                const email = sessionStorage.getItem("email");
                                 $.ajax({
                                     url: "rest/app",
                                     method: 'POST',
