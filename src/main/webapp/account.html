@@ -121,31 +121,87 @@
                         <div class="card-header">
                             User
                         </div>
-                        <div class="card-content" id="username" style="padding-top: 0">
-                            [User name placeholder]
+                        <div class="card-content" style="padding-top: 0">
+                            <h3 style="margin-bottom: 0">First name</h3>
+                            <div id="first_name"></div>
+                            <h3 style="margin-bottom: 0">Last name</h3>
+                            <div id="last_name"></div>
                         </div>
                         <br>
                         <div class="card-header">
                             Access Level
                         </div>
                         <div class="card-content" id="access_level">
-                            [User access level placeholder]
                         </div>
                         <br>
                         <div class="card-header">
                             E-mail
                         </div>
                         <div class="card-content" id="email">
-                            [User mail placeholder]
                         </div>
                         <br>
                         <div class="card-header">
                             Available Stores
                         </div>
                         <div class="card-content" id="accessible_stores">
-                            [Accessible stores placeholder]
+                        </div>
+                        <br>
+                        <div class="card-content justify-content-between">
+                            <button class="btn btn-secondary" id="edit-info" onclick="editProfile()">
+                                Edit profile
+                            </button>
+                            <button class="btn btn-error" id="cancel-info" onclick="location.reload()" style="display: none">
+                                Cancel
+                            </button>
                         </div>
                         <script>
+                            function submit() {
+                                const token = sessionStorage.getItem("token");
+                                const email = sessionStorage.getItem("email");
+                                let firstNameElement = document.getElementById("first_name");
+                                let inputFirstName = firstNameElement.children[0].value || firstNameElement.children[0].placeholder;
+                                let lastNameElement = document.getElementById("last_name");
+                                let inputLastName = lastNameElement.children[0].value || lastNameElement.children[0].placeholder;
+                                $.ajax({
+                                    url: "rest/account/" + email,
+                                    method: 'PUT',
+                                    headers: {'Authorization': token},
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({
+                                        "first_name": inputFirstName,
+                                        "last_name": inputLastName,
+                                        "password": "",
+                                        "type": ""
+                                    }),
+                                    success: function (response) {
+                                        if (response.startsWith("fail")) {
+                                            console.log("failure");
+                                        } else {
+                                            location.reload();
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        console.log("unsuccessful request; " +
+                                            "textStatus=" + textStatus + ", " +
+                                            "errorThrown=" + errorThrown + ", " +
+                                            "jqXHR=");
+                                        console.log(jqXHR)
+                                    }
+                                });
+                            }
+                            function editProfile() {
+                                let buttonEditElement = document.getElementById("edit-info");
+                                buttonEditElement.setAttribute("class", "btn btn-primary");
+                                buttonEditElement.innerText = "Submit";
+                                buttonEditElement.onclick = function() {submit();}
+                                let buttonCancelElement = document.getElementById("cancel-info");
+                                buttonCancelElement.style.display = "initial";
+
+                                let firstNameElement = document.getElementById("first_name");
+                                firstNameElement.innerHTML = '<input type="text" class="input" placeholder="' + firstNameElement.innerText + '">';
+                                let lastNameElement = document.getElementById("last_name");
+                                lastNameElement.innerHTML = '<input type="text" class="input" placeholder="' + lastNameElement.innerText + '">';
+                            }
                             function fillInData() {
                                 // also checks logged in
                                 try {
@@ -157,9 +213,10 @@
                                         headers: {'Authorization': token},
                                         dataType: "json",
                                         success: function(response) {
-                                            let usernameElement = document.getElementById("username");
-                                            usernameElement.innerHTML = '<h3 style="margin-bottom: 0px">First Name</h3>' + response.first_name
-                                                                        + '<h3 style="margin-bottom: 0px">Last Name</h3>' + response.last_name;
+                                            let firstNameElement = document.getElementById("first_name");
+                                            firstNameElement.innerText = response.first_name;
+                                            let lastNameElement = document.getElementById("last_name");
+                                            lastNameElement.innerText = response.last_name;
                                             let accessLevelElement = document.getElementById("access_level");
                                             accessLevelElement.innerText = response.type;
                                             let emailElement = document.getElementById("email");
