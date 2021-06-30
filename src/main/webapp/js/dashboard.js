@@ -133,8 +133,6 @@ function logOut() {
 function checkLogin() {
     // check logged in
     try {
-        // const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=', 2)[1];
-        // const email = document.cookie.split('; ').find(row => row.startsWith('email=')).split('=', 2)[1];
         const token = sessionStorage.getItem("token");
         const email = sessionStorage.getItem("email");
         $.ajax({
@@ -144,6 +142,11 @@ function checkLogin() {
             dataType: "json",
             success: function(response) {
                 console.log(response);
+                if (response.type === "admin") {
+                    let navSideBarElement = document.getElementById("nav");
+                    let adminRedirectElement = navSideBarElement.children[3];
+                    adminRedirectElement.style.display = "initial";
+                }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log("unsuccessful request");
