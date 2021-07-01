@@ -144,6 +144,8 @@
                                     }
                                 })
                             });
+                        </script>
+                        <script>
                             window.addEventListener("load", function(){
                                 $.ajax({
                                     url: "rest/app",
@@ -337,6 +339,26 @@
                                 })
                             });
                         </script>
+                        <script>
+                            window.addEventListener("load", function(){
+                                $.ajax({
+                                    url: "rest/app",
+                                    method: 'POST',
+                                    dataType: 'json',
+                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;5-7-0-0-0-0-0-0",
+                                    success: function(response) {
+                                        let array = [[ 'AveragePriceCategoryOne' ]];
+                                        for (let item of response) {
+                                            array.push([item.avg]);
+                                        }
+                                        var totalLossesCategory = 1410 * array[1][0]
+
+                                        document.getElementById("AveragePriceCategoryOne").innerHTML = array[1][0].toFixed(2);
+                                        document.getElementById("totalLossesCategory").innerHTML = totalLossesCategory.toFixed(2);
+                                    }
+                                })
+                            });
+                        </script>
                         Category <b><span id="category_MOST"></span></b> has <b><span id="categoryTheft_MOST"></span></b> stolen items.<br>
                         The average is <b><span id="categoryAverage_MOST"></span></b> stolen items per store.
                     </div>
@@ -440,26 +462,6 @@
             <div class="flex vertical-700" style="margin-top: -13px">
                 <div class="card card-error">
                     <div class="card-content">
-                        <script>
-                            window.addEventListener("load", function(){
-                                $.ajax({
-                                    url: "rest/app",
-                                    method: 'POST',
-                                    dataType: 'json',
-                                    data: "SELECT array_to_json(array_agg(t)) FROM ( ? ) AS t;5-7-0-0-0-0-0-0",
-                                    success: function(response) {
-                                        let array = [[ 'AveragePriceCategoryOne' ]];
-                                        for (let item of response) {
-                                            array.push([item.avg]);
-                                        }
-                                        var totalLossesCategory = 1410 * array[1][0]
-
-                                        document.getElementById("AveragePriceCategoryOne").innerHTML = array[1][0].toFixed(2);
-                                        document.getElementById("totalLossesCategory").innerHTML = totalLossesCategory.toFixed(2);
-                                    }
-                                })
-                            });
-                        </script>
                         This results in a total loss of <b>€ <span id="totalLossesCategory"></span></b>, with an average of <b>€ <span id="AveragePriceCategoryOne"></span></b> per item.
                     </div>
                 </div>
@@ -493,7 +495,7 @@
                 <!-- CHART -->
                 <div class="flex vertical">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-pie-1" style="height: 400px; overflow-x: scroll"></div>
+                        <div class="card-image" id="chart-canvas-pie-1" style="height: 400px; overflow-x: hidden; overflow-y: hidden"></div>
                             <script>
                                 window.addEventListener("load", function() {
                                     $.ajax({
@@ -781,7 +783,7 @@
                 </div>
                 <div class="flex vertical grow-2">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-timestamps" style="height: 400px; width: 720px; overflow-x: scroll; margin-bottom: -10px">
+                        <div class="card-image" id="chart-canvas-timestamps" style="height: 400px; width: 720px; overflow-x: scroll; overflow-y: hidden; margin-bottom: -10px">
                             <div id="weekDays" style="padding-bottom: 10px">
                                 <script>
                                     window.addEventListener("load", function(){
