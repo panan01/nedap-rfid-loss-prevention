@@ -434,7 +434,7 @@ public class sqlUtils {
                 generatedQuery += "SELECT DISTINCT nedap.article.product, COUNT(nedap.article.product), article.price FROM nedap.article, alarm WHERE store_id = 1023553 AND article.id = alarm.article_id GROUP BY nedap.article.product, article.price ORDER BY COUNT(nedap.article.product) DESC";
                 break;
             case '5':
-                generatedQuery += "SELECT AVG(price) FROM article WHERE category = 1";
+                generatedQuery += "SELECT AVG(price) FROM nedap.article WHERE category = 1";
                 break;
             case '6':
                 generatedQuery += "SELECT day AS weekday, COUNT(day) FROM (SELECT trim(to_char(timestamp, 'day')) AS day, store_id FROM nedap.alarm) AS day_table GROUP BY day ORDER BY CASE WHEN day = 'monday' THEN 1 WHEN day = 'tuesday' THEN 2 WHEN day = 'wednesday' THEN 3 WHEN day = 'thursday' THEN 4 WHEN day = 'friday' THEN 5 WHEN day = 'saturday' THEN 6 WHEN day = 'sunday' THEN 7 END ASC";
