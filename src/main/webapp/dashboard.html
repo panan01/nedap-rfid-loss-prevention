@@ -551,8 +551,8 @@
 
                 <!-- CHART -->
                 <div class="flex vertical">
-                    <div class="card">
-                        <div class="card-image" id="chart-canvas-1" style="height: 400px">
+                    <div class="card" style="overflow-x: hidden">
+                        <div class="card-image" id="chart-canvas-1" style="height: 400px; overflow-x: hidden">
                         </div>
                         <script>
                             window.addEventListener("load", function(){
@@ -783,8 +783,8 @@
                 </div>
                 <div class="flex vertical grow-2">
                     <div class="card">
-                        <div class="card-image" id="chart-canvas-timestamps" style="height: 400px; width: 720px; overflow-x: scroll; overflow-y: hidden; margin-bottom: -10px">
-                            <div id="weekDays" style="padding-bottom: 10px">
+                        <div class="card-image" id="chart-canvas-timestamps" style="height: 400px; width: 720px; overflow-x: hidden; overflow-y: hidden; margin-bottom: -10px">
+                            <div id="weekDays" style="padding-bottom: 10px; overflow-x: hidden; overflow-y: hidden;">
                                 <script>
                                     window.addEventListener("load", function(){
                                         $.ajax({
@@ -850,7 +850,7 @@
                                     });
                                 </script>
                             </div>
-                            <div id="hours">
+                            <div id="hours" style="overflow-x: hidden; overflow-y: hidden;">
                                 <script>
                                     window.addEventListener("load", function(){
                                         $.ajax({
